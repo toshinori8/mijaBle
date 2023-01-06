@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flat navigator</title>
+</head>
+<body>
+
+    <style >
+
+        body{
+            margin: 0;
+            padding: 0;
+            background-color: #f1f1f1;
+
+        }
+#root {
+    background: linear-gradient(90deg, #e96005 0%, #3F5EFB 100%);  background-repeat: no-repeat;
+ padding: none;
+ position: fixed;
+ margin: none;
+    width: 100%;
+    height: 100%;
+    background-size: 200% 200%;
+  background-position: 50% 50%;
+  transition: 0.5s;
+}
+
+#root.active {
+    /* background: linear-gradient(90deg, #e96005 0%, #3F5EFB 10%);  background-repeat: no-repeat; */
+    background-position: 100% 100%;
+  transition: 0.5s;
+}
+
+    </style>
+
+
+    <div id="root">
+
+        
+
+
+
+
+    </div>
+
+    <script type="text/javascript">
+
+
+
+        const root = document.getElementById('root');
+        console.log(root);
+        root.addEventListener('click', function() {
+        root.classList.toggle('active');
+        
+    });
+
+
+</script>
+    
+  </body>
+</html>
