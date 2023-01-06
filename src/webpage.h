@@ -17,12 +17,8 @@ const char webpage[] PROGMEM = R"rawliteral(
     
 </head>
 <body>
-    <h1>ESP8266 Web Server</h1>
-    <p>LED Control</p>
-    <form action="/led" method="get">
-        <input type="submit" value="ON" name="on">
-        <input type="submit" value="OFF" name="off">
-    </form>
+  
+    <button class="button button2" onclick="window.location.href = '/config';">Web Server Config</button>
 </body>
 </html>
 

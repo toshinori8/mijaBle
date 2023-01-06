@@ -20,34 +20,34 @@
 
 WebSocketsServer webSocket(8080);
 
-void onWsEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
-  switch (type) {
+// void onWsEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+//   switch (type) {
  
-    case WStype_DISCONNECTED:
-      // obsługa rozłączenia klienta
-      Serial.println("Client disconnected from WebSocket ");
-      break;
-    // case WStype_TEXT: 
-    //   // obsługa wiadomości tekstowej od klienta
-    //   String messageText = String((char*)payload).substring(0, length);
-    //   //Serial.println("Otrzymano wiadomość tekstową od klienta: " + messageText);
-    //   break; // dodaj instrukcję break; tutaj
-    case WStype_CONNECTED:
-      // obsługa połączenia klienta
-      String message = "{\"response\":\"connected\"}";
-      webSocket.sendTXT(num, message);
-      break;
-  }
-}
+//     case WStype_DISCONNECTED:
+//       // obsługa rozłączenia klienta
+//       Serial.println("Client disconnected from WebSocket ");
+//       break;
+//     // case WStype_TEXT: 
+//     //   // obsługa wiadomości tekstowej od klienta
+//     //   String messageText = String((char*)payload).substring(0, length);
+//     //   //Serial.println("Otrzymano wiadomość tekstową od klienta: " + messageText);
+//     //   break; // dodaj instrukcję break; tutaj
+//     case WStype_CONNECTED:
+//       // obsługa połączenia klienta
+//       String message = "{\"response\":\"connected\"}";
+//       webSocket.sendTXT(num, message);
+//       break;
+//   }
+// }
 
 
 
-StaticJsonDocument<200> doc;
+// StaticJsonDocument<200> doc;
  
 
 
 
-const char thingName[] = "Netatmo_Relay";
+const char thingName[] = "MijaBle";
 const char wifiInitialApPassword[] = "oooooooo";
 
 DNSServer dnsServer;
@@ -66,7 +66,6 @@ void handleRoot()
 }
 
 
-//#define LED 1            //builtin led
 #define BLUETOOTH_SCAN_TIME  10 // seconds
 
 long previousMillis = 0;        // last time
@@ -90,7 +89,7 @@ const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600;
 const int   daylightOffset_sec = 3600;
 
-void otaStart();
+//void otaStart();
 
 String getTime()
 {
@@ -320,10 +319,7 @@ void initBluetooth()
 }
 
 
-static void scanCompleteCB(BLEScanResults scanResults)
-{
-  Serial.println("Scan complete!");
-}
+
 
 
 
@@ -342,23 +338,15 @@ void setup()
   Serial.println("Ready.");
 
   // uruchomienie serwera HTTP
-  server.begin();
+  // server.begin();
   Serial.println("HTTP server started");
 
   // uruchomienie serwera WebSocket
   webSocket.begin();
-  webSocket.onEvent(onWsEvent);
+  // webSocket.onEvent(onWsEvent);
   Serial.println("WebSocket server started");
 
-  // // Connect to Wi-Fi network with SSID and password
-  // WiFi.begin(ssid, password);
-  // while (WiFi.status() != WL_CONNECTED) 
-  // {
-  //   delay(500);
-  //   Serial.print("IP: ");
-  //   Serial.println(WiFi.localIP());
-  //   Serial.print("Connected to WiFi..");
-  // }
+ 
 
   //init and get the time
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
@@ -392,7 +380,7 @@ void setup()
 
   //bluetooth
   initBluetooth();
-  otaStart();
+  //otaStart();
 }
 
 void loop()
@@ -400,7 +388,7 @@ void loop()
   //handle webserver requests
   //server.handleClient();
 
-  //timer
+  // timer 
   unsigned long currentMillis = millis();
   if(currentMillis - previousMillis > interval)
   {
@@ -414,8 +402,8 @@ void loop()
 
       iotWebConf.doLoop();
       //timers.process();
-      webSocket.loop();
-      ArduinoOTA.handle();
+      //webSocket.loop();
+      //ArduinoOTA.handle();
 
 }
 
