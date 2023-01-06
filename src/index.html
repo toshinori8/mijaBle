@@ -5,8 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flat navigator</title>
-</head>
+
+    <link rel="stylesheet" href="style.css">
+  </head>
 <body>
+
 
     <style >
 
@@ -39,7 +42,49 @@
 
     <div id="root">
 
-        
+      <section id="sha_temp_body" class="col-12">
+        <div class="row  top-buffer col_gradient">
+           <div class="col-5 top">
+             <span class="sha_temp white_back">
+               <span>
+                   <span class="temp-data"> 16<span class="small_01">.7</span> <sup>°C</sup> </span>
+                       <hr class="line_">
+                     <span class="hum-data"> 48<span class="small_01">.3</span> <span class="sup">%</span> 
+                 </span>
+               </span>
+             </span>
+           </div>
+           <div class="col-7 sha_tile top-buffer height_auto">
+                 <div class="white_back">
+                     <div class="col-12">
+                 <span class="sha_switch pull-right off x2"></span>
+      </div>
+                 <input class="input_" type="text" value="Kuchnia"> 
+                 <span>F5:c3:4a:67:d2:d9</span>
+             </div>
+               </div>    
+         </div><div class="row  top-buffer">
+           <div class="col-5">
+             <span class="sha_temp">
+               <span>
+                   <span class="temp-data"> 16<span class="small_01">.7</span> <sup>°C</sup> </span>
+                       <hr class="line_">
+                     <span class="hum-data"> 48<span class="small_01">.3</span> <span class="sup">%</span> 
+                 </span>
+               </span>
+             </span>
+           </div>
+           <div class="col-7 sha_tile top-buffer height_auto">
+                 <div>
+                     <div class="col-12">
+                 <span class="sha_switch pull-right off x2"></span>
+      </div>
+                 <input class="input_" type="text" value="Kuchnia"> 
+                 <span>F5:c3:4a:67:d2:d9</span>
+             </div>
+               </div>    
+         </div>
+       </section>    
 
 
 
@@ -51,14 +96,11 @@
 
 
         const root = document.getElementById('root');
-        console.log(root);
-        root.addEventListener('click', function() {
-        root.classList.toggle('active');
         
-    });
-
 
 </script>
     
+
+
   </body>
 </html>
