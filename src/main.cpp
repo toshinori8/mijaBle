@@ -9,16 +9,47 @@
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
 //sstream
+#include <ArduinoJson.h>
+// IOT portal
+#include <WebSocketsServer.h>
+#include <IotWebConf.h>
 #include <sstream>
 //time
 #include "time.h"
 #include <webPage.h>
-// Replace with your network credentials
 
-const char* ssid     = "|oooooi|";
-const char* password = "pmgana921";
+WebSocketsServer webSocket(8080);
 
-// Set web server port number to 80
+void onWsEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+  switch (type) {
+ 
+    case WStype_DISCONNECTED:
+      // obsługa rozłączenia klienta
+      Serial.println("Client disconnected from WebSocket ");
+      break;
+    // case WStype_TEXT: 
+    //   // obsługa wiadomości tekstowej od klienta
+    //   String messageText = String((char*)payload).substring(0, length);
+    //   //Serial.println("Otrzymano wiadomość tekstową od klienta: " + messageText);
+    //   break; // dodaj instrukcję break; tutaj
+    case WStype_CONNECTED:
+      // obsługa połączenia klienta
+      String message = "{\"response\":\"connected\"}";
+      webSocket.sendTXT(num, message);
+      break;
+  }
+}
+
+
+
+StaticJsonDocument<200> doc;
+ 
+
+
+
+const char thingName[] = "Netatmo_Relay";
+const char wifiInitialApPassword[] = "oooooooo";
+
 DNSServer dnsServer;
 WebServer server(80);
 IotWebConf iotWebConf(thingName, &dnsServer, &server, wifiInitialApPassword);
