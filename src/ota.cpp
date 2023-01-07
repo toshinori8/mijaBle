@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 
+bool Arduino_Ota_progress = false;
+
+
 void otaStart() {
 
   ArduinoOTA.setHostname("ClearGrassHost");
@@ -21,6 +24,8 @@ void otaStart() {
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+
+    Arduino_Ota_progress = true;
 
     String textt = "Progress: %u%%\r" + String((progress / (total / 100)));
 
