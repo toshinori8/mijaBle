@@ -1,36 +1,47 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
-// Load Wi-Fi library
 #include <WiFi.h>
-#include <WebServer.h>
+#include <LittleFS.h>
+#include <ESPAsyncWebServer.h>
+#include <WiFiClientSecure.h>
+#include <AsyncWebSocket.h>
+#include "AsyncJson.h"
+// #include "ArduinoJson.h"
 
-//sstream
-// #include <ArduinoJson.h>
-// IOT portal
-// #include <WebSocketsServer.h>
-// #include <IotWebConf.h>
 #include <sstream>
-//time
 #include "time.h"
-#include <webPage.h>
 #include <ble.h>
 
-bool ArduinoOTA_progress;
 
-// WebSocketsServer webSocket(8080);
+// define files
+File pokoje;
+File devices;
+
+
+AsyncWebServer server(80);
+AsyncWebSocket ws("/ws");
+
+void ble_scan_loop();
+void otaStart();
 
 // void onWsEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
 //   switch (type) {
- 
 //     case WStype_DISCONNECTED:
 //       // obsługa rozłączenia klienta
 //       Serial.println("Client disconnected from WebSocket ");
 //       break;
-//     // case WStype_TEXT: 
-//     //   // obsługa wiadomości tekstowej od klienta
-//     //   String messageText = String((char*)payload).substring(0, length);
-//     //   //Serial.println("Otrzymano wiadomość tekstową od klienta: " + messageText);
-//     //   break; // dodaj instrukcję break; tutaj
+//     case WStype_TEXT:
+//      {//   // obsługa wiadomości tekstowej od klienta
+//       String messageText = String((char*)payload).substring(0, length);
+//       if(messageText=="getDevicesData"){
+          
+//       String json = "";
+//       serializeJson(doc, json);
+//       Serial.println("|Sending JSON| " + json);
+//       webSocket.sendTXT(num, json);
+//       }
+//      }
+//       break;
 //     case WStype_CONNECTED:
 //       // obsługa połączenia klienta
 //       String message = "{\"response\":\"connected\"}";
@@ -41,42 +52,26 @@ bool ArduinoOTA_progress;
 
 
 
-// StaticJsonDocument<200> doc;
- 
+// function to save data to file
 
+bool saveFile(String path, String data){
+ File file = LittleFS.open(path, "w");
+  if (!file)
+  {
+    Serial.println("Failed to open file for writing");
+    return false;
+  } else{
+      file.print(data);
+      Serial.print("File saved: ");
+      file.close();
+      return true;
+  }
 
-
-// const char thingName[] = "MijaBle";
-// const char wifiInitialApPassword[] = "oooooooo";
-
-
-WebServer server(80);
-// IotWebConf iotWebConf(thingName, &dnsServer, &server, wifiInitialApPassword);
-
-
-void ble_scan_loop();
-void handleRoot()
-{
-  // if (iotWebConf.handleCaptivePortal())
-  // {
-  //   return;
-  // }
-    server.send(200, "text/html", webpage);
-}
-
-
-void otaStart();
-
-
-
+};
 
 void setup() 
 {
   Serial.begin(115200);
-
-  // // -- Initializing the configuration.
-   ///iotWebConf.init();
-
 
   // Connect to Wi-Fi network with SSID and password
   WiFi.begin("oooooio", "pmgana921");
@@ -89,68 +84,80 @@ void setup()
   }
 
 
-  // -- Set up required URL handlers on the web server.
-  server.on("/", handleRoot);
-  //server.on("/config", []{ iotWebConf.handleConfig(); });
-  
-  //server.onNotFound([](){ iotWebConf.handleNotFound(); });
-  // Serial.println("Ready.");
-
- 
-
   // uruchomienie serwera WebSocket
-  // webSocket.begin();
-  // webSocket.onEvent(onWsEvent);
-  //Serial.println("WebSocket server started");
-
- 
+  Serial.println("WebSocket server started");
 
   //init and get the time
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   Serial.println("Current device time: " + getTime());
 
-  //refreshData
-  // server.on("/json", []()
-  // {
-  //   String html = printAllDataJson();
-    
-  //   //print data as json
-  //   server.send(200, "text / plain", html);
-  // });
+  
+  if(!LittleFS.begin()){
+    Serial.println("An Error has occurred while mounting LittleFS");
+    return;
+  }
+  
+  pokoje = LittleFS.open("/assets/pokoje.json", "r");
+  devices = LittleFS.open("/assets/devices.json", "r");
 
-  //root
+  server.on("/JSONpokoje", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/assets/pokoje.json", "application/json");
+  });
+  server.on("/JSONdevices", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/assets/devices.json", "application/json");
+  });
+  
 
-  server.on("/config", []()
+AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/saveRooms", [](AsyncWebServerRequest *request, JsonVariant &json) {
+  StaticJsonDocument<200> data;
+  if (json.is<JsonArray>())
   {
-    String html = "<html>";
-      html += "<body><h1>MijaBle</h1><br><br>";
-      html += "Current device time: " + getTime();
-      html += "<br><br>"; 
+    data = json.as<JsonArray>();
+  }
+  else if (json.is<JsonObject>())
+  {
+    data = json.as<JsonObject>();
+  } 
 
-      html += "<p>config</p>";    
-           
-      html +="</body></html>";
-    
-    server.send(200, "text / plain", html);
+ 
+  //save data to file
+  if(saveFile("/assets/pokoje.json", data.as<String>())){
+    Serial.println("File saved");
+    request->send(200, "application/json", "{\"response\":\"dataSaved\"}");
+  } else{
+    Serial.println("Error saving file");
+    request->send(200, "application/json", "{\"response\":\"errorSavingData\"}");
+  };
+
+ 
+});
+
+server.addHandler(handler);
+  
+ 
+  
+  server.on("/pokoje.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/pokoje.css", "text/css");
+  });
+
+  server.on("/pokoje.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/pokoje.js", "text/javascript");
+  });
+
+  server.on("/pokoje.html", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/pokoje.html", "text/html");
+  });
+
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/pokoje.html", "text/html");
   });
 
 
-  server.on("/clear", []()
-  {
-    String html = "<html>";
-      html += "<body><h1>esp32_cleargrass_wifi Webinterface</h1><br><br>";
-      html += "Current device time: " + getTime();
-      html += "<br><br>";    
-      html += printAllData();
-           
-      html +="</body></html>";
-    
-    server.send(200, "text / plain", html);
-  });
+
 
   // uruchomienie serwera HTTP
   server.begin();
-  Serial.println("HTTP server started");
+  Serial.println("ASYNC server started");
   Serial.println(WiFi.localIP());
 
   //bluetooth
@@ -165,9 +172,7 @@ void loop()
         ArduinoOTA.handle();
 
 
-  if( ArduinoOTA_progress > 0) {
-    return;
-  }
+  
 
 // if (mode == WIFI_STA) {
 //   Serial.println("WiFi mode: Station (Client)");
@@ -177,7 +182,7 @@ void loop()
 //   Serial.println("WiFi mode: Access Point + Station");
 // }
 
-      server.handleClient();
+     
       ble_scan_loop();
       //iotWebConf.doLoop();
       //timers.process();

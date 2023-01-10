@@ -5,19 +5,20 @@
 #include <BLEUtils.h>
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
-
+#include <ArduinoJson.h> 
 
 #define BLUETOOTH_SCAN_TIME  10 // seconds
 
-long previousMillis = 0;        // last time
-long interval = 1000 * 20;           // interval at which to scan for sensor data
-                                      //each 20 seconds scan for 10 seconds
-                                      //so 10 seconds stay free for wifi connection then
+DynamicJsonDocument doc(2048); // Json document for storing devices data 
+
+long previousMillis = 0;              // last time
+long interval = 1000 * 20;            // interval at which to scan for sensor data                                      //each 20 seconds scan for 10 seconds
+                                      // so 10 seconds stay free for wifi connection then
 
 BLEScan *pBLEScan;
 
 const int maxDataCount = 15;
-String myData[ maxDataCount ][ 7 ]; //15 sensors at max at the moment
+String myData[ maxDataCount ][ 7 ]; //15 sensors at max at the moment 
   //0 = mac
   //1 = temp
   //2 = hum
@@ -25,14 +26,11 @@ String myData[ maxDataCount ][ 7 ]; //15 sensors at max at the moment
   //4 = tempTimestamp
   //5 = humTimestamp
   //6 = batTimestamp
-
+ 
+  
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600;
 const int   daylightOffset_sec = 3600;
-
-
-
-
 
 
 
@@ -62,7 +60,8 @@ String floatToString(float f)
 String printData(int i)
 {
   if (myData[i][0] != NULL)
-    return myData[i][0] + ", Temp: " + myData[i][1] + ", Hum: " + myData[i][2] + ", Bat: " + myData[i][3]  + ", tempDate: " + myData[i][4]  + ", humDate: " + myData[i][5]  + ", batDate: " + myData[i][6];
+    
+    return myData[i][0] + ", | Temp: " + myData[i][1] + ", Hum: " + myData[i][2] + ", Bat: " + myData[i][3];
   else
     return "";
 }
@@ -111,6 +110,31 @@ String printAllDataJson()
   return result;
 }
 
+void addDataToJson(String mac, float temp, float hum, float bat, String name) {
+  bool deviceFound = false;
+  
+  for (int i = 0; i < doc.size(); i++) {
+    if (doc[i]["mac"] == mac) {
+      deviceFound = true;
+      if(temp != 0){doc[i]["temp"]  = temp;}
+      if(hum  != 0){doc[i]["hum"]   = hum;}
+      if(bat  != 0){doc[i]["bat"]   = bat;}
+      if(name != "")  {doc[i]["name"]  = name;}  
+      break;
+    }
+  }
+  if (!deviceFound) {
+
+    JsonObject device = doc.createNestedObject();
+    
+    
+      device["mac"] = mac;
+      if(temp != 0){device["temp"]  = temp;}
+      if(hum  != 0){device["hum"]   = hum;}
+      if(bat  != 0){device["bat"]   = bat;}
+      if(name != "")  {device["name"]  = name;}  
+  }
+}
 
 void setData(String mac, float temp, float hum, float bat)
 {
@@ -134,33 +158,36 @@ void setData(String mac, float temp, float hum, float bat)
   //finally set the data
   String currentDate = getTime();
   myData[index][0] = mac;
-  if (temp != NULL)
+  if (temp != 0)
   {
     myData[index][1] = floatToString(temp);
     myData[index][4] = currentDate;
   };
   
-  if (hum != NULL)
+  if (hum != 0)
   {
     myData[index][2] = floatToString(hum);
     myData[index][5] = currentDate;
   };
   
-  if (bat != NULL)
+  if (bat != 0)
   {
     myData[index][3] = floatToString(bat);
     myData[index][6] = currentDate;
   };
 
+
   //print the data to the serial monitor
-  Serial.println(printData(index));
+  //Serial.println(printData(index));
 }
 class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 {
     void onResult(BLEAdvertisedDevice advertisedDevice)
     {
+        
         String mac = advertisedDevice.getAddress().toString().c_str();
-
+      
+        
         //we're only interested in bluetooth devices sending service data 
         //and if the service uuid always starts with "0000fe95-0000-1000-8000-00805f9b34fb"
         if (advertisedDevice.haveServiceData() && advertisedDevice.getServiceDataUUID().toString() == "0000fe95-0000-1000-8000-00805f9b34fb")
@@ -180,15 +207,15 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
             std::stringstream ss;
             ss << "fe95" << charServiceData;
             
-            Serial.print("Payload:");
-            Serial.println(ss.str().c_str());
+            // Serial.print("Payload:");
+            // Serial.println(ss.str().c_str());
 
             //
             unsigned long value, value2;
             char charValue[5] = {0,};
 
-            Serial.print("Message: ");
-            Serial.println(cServiceData[11]);
+            //Serial.print("Message: ");
+            //Serial.println(cServiceData[11]);
 
             switch (cServiceData[11])
             {   
@@ -196,16 +223,22 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
                     sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
                     value = strtol(charValue, 0, 16);  
                     setData(mac, (float)value/10, NULL, NULL); 
+
+                    addDataToJson(mac, (float)value/10, NULL, NULL, "");
                     break;
                 case 0x06: //6  //only hum
                     sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
                     value = strtol(charValue, 0, 16);               
                     setData(mac, NULL, (float)value/10, NULL);
+
+                    addDataToJson(mac, NULL, (float)value/10, NULL, "");
                     break;
                 case 0x0A: //10  //only battery
                     sprintf(charValue, "%02X", cServiceData[14]);
                     value = strtol(charValue, 0, 16);                
                     setData(mac, NULL, NULL, (float)value);
+
+                    addDataToJson(mac, NULL, NULL, (float)value, "");
                     break;
                 case 0x0D: //13  //battery and hum
                     sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
@@ -213,6 +246,8 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
                     sprintf(charValue, "%02X%02X", cServiceData[17], cServiceData[16]);
                     value2 = strtol(charValue, 0, 16);                               
                     setData(mac, (float)value/10, (float)value2/10, NULL);
+                    
+                    addDataToJson(mac, (float)value/10, (float)value2/10, NULL, "");
                     break;
             }
         }
@@ -229,6 +264,7 @@ void initBluetooth()
     pBLEScan->setActiveScan(false); //active scan uses more power, but get results faster
 }
 
+// Scan
 
 static void scanCompleteCB(BLEScanResults scanResults)
 {
@@ -255,3 +291,5 @@ void ble_scan_loop(){
 
 
 };
+
+

@@ -1,3 +1,7 @@
 {
-    "xmlTools.enableXmlTreeViewCursorSync": true
+    "xmlTools.enableXmlTreeViewCursorSync": true,
+    "files.associations": {
+        "sstream": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

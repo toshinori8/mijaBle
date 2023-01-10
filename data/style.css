@@ -1,13 +1,3 @@
-@font-face {
-  font-family: 'lcd';
-  src: url('aclock.eot'); /* IE9 Compat Modes */
-  src: url('aclock.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('aclock.woff2') format('woff2'), /* Super Modern Browsers */
-       url('aclock.woff') format('woff'), /* Pretty Modern Browsers */
-       url('aclock.ttf')  format('truetype'), /* Safari, Android, iOS */
-       url('aclock.svg#svgFontName') format('svg'); /* Legacy iOS */
-}
-
 body
 {
     padding:0px;
