@@ -106,10 +106,9 @@ void setup()
   server.on("/JSONdevices", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(LittleFS, "/assets/devices.json", "application/json");
   });
-  
 
 AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/saveRooms", [](AsyncWebServerRequest *request, JsonVariant &json) {
-  StaticJsonDocument<200> data;
+  StaticJsonDocument<1024> data;
   if (json.is<JsonArray>())
   {
     data = json.as<JsonArray>();
@@ -118,8 +117,7 @@ AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/saveRoo
   {
     data = json.as<JsonObject>();
   } 
-
- 
+  
   //save data to file
   if(saveFile("/assets/pokoje.json", data.as<String>())){
     Serial.println("File saved");
