@@ -90,25 +90,34 @@ void setup()
   //init and get the time
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   Serial.println("Current device time: " + getTime());
-
   
   if(!LittleFS.begin()){
     Serial.println("An Error has occurred while mounting LittleFS");
     return;
   }
   
-  pokoje = LittleFS.open("/assets/pokoje.json", "r");
-  devices = LittleFS.open("/assets/devices.json", "r");
+  // pokoje = LittleFS.open("/assets/pokoje.json", "r");
+  // devices = LittleFS.open("/assets/devices.json", "r");
+
 
   server.on("/JSONpokoje", HTTP_GET, [](AsyncWebServerRequest *request){
+    
+    // send pokoje as response 
     request->send(LittleFS, "/assets/pokoje.json", "application/json");
+    
   });
+  
   server.on("/JSONdevices", HTTP_GET, [](AsyncWebServerRequest *request){
+
+    // send devices as response
     request->send(LittleFS, "/assets/devices.json", "application/json");
+  
   });
 
 AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/saveRooms", [](AsyncWebServerRequest *request, JsonVariant &json) {
-  StaticJsonDocument<1024> data;
+  
+  StaticJsonDocument<2024> data;
+
   if (json.is<JsonArray>())
   {
     data = json.as<JsonArray>();
@@ -117,10 +126,18 @@ AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/saveRoo
   {
     data = json.as<JsonObject>();
   } 
-  
-  //save data to file
-  if(saveFile("/assets/pokoje.json", data.as<String>())){
+          
+    String jsonStr;      
+    serializeJson(data, jsonStr);
+  Serial.println(jsonStr);
+  // save data to file 
+  if(saveFile("/assets/pokoje.json", jsonStr )){
     Serial.println("File saved");
+
+    
+
+      // Serial.print(data);
+
     request->send(200, "application/json", "{\"response\":\"dataSaved\"}");
   } else{
     Serial.println("Error saving file");

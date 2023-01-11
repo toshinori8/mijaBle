@@ -96,6 +96,12 @@ document.addEventListener("DOMContentLoaded", function () {
       ".room-name_small"
     ).textContent = deviceNameByMac(roomMac);
     $("#editRoomModal").modal("hide");
+
+    // SaveRoom JSON on board
+    saveRoomsFunction().then(() => {
+      alertModal("Zapisano zmiany");
+    });
+
   });
 
   // Po kliknięciu przycisku "Dodaj pokój" pokaż modal z formularzem dodawania pokoju
@@ -143,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     addTouchSwipeAction(newRoomElement);
     roomList.appendChild(newRoomElement);
+    return true;
   }
 
   
