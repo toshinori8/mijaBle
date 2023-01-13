@@ -8,8 +8,8 @@ function getJSON(url) {
   return fetch(url).then((response) => response.json());
 }
 
-server = "http://192.168.8.94";
-//server ='http://' + window.location.hostname + '';
+// server = "http://192.168.8.94";
+server ='http://' + window.location.hostname + '';
 
 
 
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       });
 
-      getJSON(server+"/JSONpokoje")
+      getJSON(server+"/JSONrooms")
         .then((data) => {
           rooms = data;
           rooms.forEach((room) => {
@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       currentEditetdRoom = element;
 
+
       $("#editRoomModal").modal("show");
     });
   }
@@ -103,6 +104,25 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
   });
+
+  document.getElementById("delElement").addEventListener("click", (event) =>{
+            
+    currentEditetdRoom.remove();
+    saveRoomsFunction().then(() => {
+      alertModal("Zapisano zmiany");
+        // hide modal edit  
+        $("#editRoomModal").modal("hide");
+    });
+
+  });
+
+  document.getElementById("exitBtn").addEventListener("click", (event) =>{
+
+        window.location.href = "/";
+
+
+  });
+
 
   // Po kliknięciu przycisku "Dodaj pokój" pokaż modal z formularzem dodawania pokoju
   $("#addRoomBtn").click(function () {
@@ -185,8 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
       let res = JSON.parse(this.response);
   
       if (this.status == 200 && res.response == "dataSaved") {
-        // window.location.href = "/";
-        console.log("dataSaved");
+        // console.log("dataSaved");
       } else if (res.response != "dataSaved") {
         alertModal("Nie udało się zapisać danych");
       }

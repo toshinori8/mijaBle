@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
@@ -7,7 +7,6 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
@@ -15,34 +14,30 @@
       integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="pokoje.css" />
+    <link rel="stylesheet" href="style.css" />
 
-    <title>Pokoje</title>
+    <title>Rooms</title>
   </head>
   <body>
-   
 
     <!-- główny ekran-->
     <div class="container mt-5">
       <div class="row">
         <div class="col-12">
-          <!-- <h1>Lista pokojów</h1> -->
-          <!-- <p class="lead"> -->
-            <!-- Przeciągnij w prawo lub w lewo, aby potwierdzić usunięcie pokoju lub -->
-            <!-- wejść w ustawienia -->
-          <!-- </p> -->
+          <h1>Room list</h1>
+          <!-- <p class="lead">
+            Przeciągnij w prawo lub w lewo, aby potwierdzić usunięcie pokoju lub
+            wejść w ustawienia
+          </p> -->
           <button class="btn btn-primary float-right" id="addRoomBtn">
-            Dodaj pokój
+            Add room
           </button>
-          <!-- <button class="btn btn-light float-left" id="exitBtn"> 
-            exit
-          </button> -->
         </div>
       </div>
       <div class="row mt-3">
         <div class="col-12">
           <div class="list-group" id="roomList">
-            <!-- Tutaj będą wyświetlane pokoje pobieane z JSON-->
+            <!-- Here goes rooms from JSON-->
             
             
 
@@ -52,15 +47,12 @@
       </div>
     </div>
 
-   
-
-
     <!-- Modal z formularzem dodawania pokoju -->
     <div class="modal modal-blur modal-fade" tabindex="-1" id="addRoomModal">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Dodaj pokój</h5>
+            <h5 class="modal-title">Add room</h5>
             <button
               type="button"
               class="close"
@@ -77,8 +69,8 @@
                 <input type="text" class="form-control" id="roomNameInput" />
               </div>
               <div class="form-group">
-                <label for="add_RoomMacInput">Adres MAC</label>
-                <select class="form-control roomMacInput" id="add_RoomMacInput"></select>
+                <label for="roomMacInput">Adres MAC</label>
+                <select class="form-control" id="roomMacInput"></select>
               </div>
             </form>
           </div>
@@ -139,9 +131,9 @@
                   <input type="text" class="form-control" id="editRoomNameInput" placeholder="Nazwa pokoju">
                 </div>
                 <div class="form-group">
-                  <label for="edit_RoomMacInput">Adres MAC</label>
+                  <label for="editRoomMacInput">Adres MAC</label>
                   <!-- Lista z adresami MAC -->
-                  <select class="form-control roomMacInput" id="edit_RoomMacInput">
+                  <select class="form-control" id="editRoomMacInput">
                    
                     <!-- Wypełnione z JSON -->
 
@@ -150,7 +142,7 @@
                 </div>
                 <div class="form-group">
                   <!-- Pole do edycji adresu MAC -->
-                  <input type="text" class="form-control" id="edit_RoomMacInputCustom" placeholder="aktualny MAC" disabled>
+                  <input type="text" class="form-control" id="editRoomMacInputCustom" placeholder="Wprowadź adres MAC">
                 </div>
                 <!-- Przycisk zapisania zmian -->
                 <!-- <button type="submit" class="btn btn-primary">Zapisz</button> -->
@@ -161,28 +153,13 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-          <button type="button" class="btn btn-primary" id="saveRoomData">Zapisz zmiany</button>
+          <button type="button" class="btn btn-primary">Zapisz zmiany</button>
         </div>
       </div>
     </div>
   </div>
 
- <!-- Error modal  -->
-  
- <div id="alertModal" class="modal modal-blur modal-fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 id="alert-modal-title" class="modal-title"></h4>
-      </div>
-      <div id="alert-modal-body" class="modal-body"></div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
+
    
     <script
       src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
@@ -200,6 +177,10 @@
       crossorigin="anonymous"
     ></script>
 
-    <script src="pokoje.js"></script>
+   <script src="/app.js" type="text/javascript"></script>
+
+
   </body>
 </html>
+
+

@@ -1,0 +1,1 @@
+void otaStart(char host[]);

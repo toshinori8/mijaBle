@@ -1,3 +1,10 @@
+
+   @font-face {
+    font-family: "lcd";
+    src: url("aclock.ttf") format("truetype"); /* Safari, Android, iOS */
+  }
+
+
 body
 {
     padding:0px;
@@ -37,7 +44,7 @@ body.dark #sha_temp_body .sha_temp {
 .height_auto{
     
 height: auto;
-    min-height: 300px;
+min-height: 230px;
     
 }
 
@@ -56,6 +63,7 @@ height: auto;
 #sha_header_bar
 {
     color: rgba(49,69,106,0.6);
+
 }
 
 #sha_header_bar span
@@ -69,10 +77,6 @@ height: auto;
     font-weight: 500;
     padding-top: 10px;
 }
-
-
-
-
 
 
 #sha_header_bar span.heading
@@ -103,6 +107,7 @@ body.dark span.sha_temp .temp-data
 #sha_button_list 
 {
     margin-top: 10px;
+    margin-bottom: 15px;
 }
 
 #sha_button_list ul
@@ -178,13 +183,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     
 }
 
-#sha_temp_body
-{
- 
-
-  
-    margin-top: 23px;
-}
 .white_back{
   background-color: rgba(241,241,241,1.3) !important;
 }
@@ -450,6 +448,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 transform: scale(0.5);    
     
 }
+.sha_switch.enable_heat{
+
+    position: relative;
+    right: 33px;
+    z-index: 30000;
+    bottom: -203px;
+
+
+}
+
  .sha_switch
 {
     position: relative;
@@ -516,4 +524,88 @@ transform: scale(0.5);
 
 .yt:hover {
   background: rgba(0, 0, 0, 0.4);
+}
+
+
+
+
+.room_element .encoder{
+ 
+    position: absolute;
+    top: 45px;
+    opacity:0.0;
+    left: 35px;
+    width: 230px;
+    height: 229px;
+    z-index: 40000;
+    /* content: "asd"; */
+    /* border-radius: 122px; */
+    /* padding-top: 120px; */
+    /* border: 1px solid rgba(25,25,25,1); */
+    /* background-color: rgba(0,0,0,0.1); */
+}
+
+.room_element .encoder .backx{
+    position: absolute;
+    width: 158px;
+    background: rgba(235, 235, 235, 0.98);
+    height: 95px;
+    height: 141px;
+    top: 42px;
+    left: 33px;
+    border-radius: 99px;
+    transition: all ease 0.5s;
+    opacity: 1;
+
+}
+.room_element .encoder .backx .heat_value{
+
+    font-size: 63px;
+    margin-left: 16px;
+    font-weight: bold;
+    margin-top: 23px;
+    font-family: 'lcd', Fallback, sans-serif;
+    color: rgba(48, 67, 104, 1.000);
+
+}
+.room_element .mac_device{
+display:none;
+
+}
+.room_element .menu_room{
+
+    width: 75%;
+    background-color: rgba(0,0,0,0.1);
+    min-height: 186px;
+    margin-top: 43px;
+    position: absolute;
+    padding-left: 27px;
+    right: 0px;
+    text-align: right;
+    padding-right: 16px;
+
+
+}
+.room_element .menu_room .roomName{
+    font-size: 25px;
+    font-weight: 500;
+    /* color: rgba(49,69,106,0.8); */
+color:rgba(241, 241, 241, 1.000);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 10px;
+    /* background-color: rgba(0,0,0,0.1); */
+    /* border: 1px solid rgba(0,0,0,0.1); */
+    /* box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); */
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+    writing-mode:vertical-rl;
+
+    /* transform: rotate3d(1,1,1,45deg); */
 }

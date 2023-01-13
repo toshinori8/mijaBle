@@ -6,23 +6,25 @@
 #include <WiFiClientSecure.h>
 #include <AsyncWebSocket.h>
 #include "AsyncJson.h"
-// #include "ArduinoJson.h"
-
+#include <ESPmDNS.h>
 #include <sstream>
 #include "time.h"
 #include <ble.h>
+#include <ota.h>
 
+char * hostName = "CleargrassTermostat";
 
-// define files
-File pokoje;
-File devices;
-
+int SLEEP_TIME = 10; //seconds
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
+// define files
+File rooms;
+File devicesF;
+
+ 
 void ble_scan_loop();
-void otaStart();
 
 // void onWsEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
 //   switch (type) {
@@ -50,10 +52,7 @@ void otaStart();
 //   }
 // }
 
-
-
 // function to save data to file
-
 bool saveFile(String path, String data){
  File file = LittleFS.open(path, "w");
   if (!file)
@@ -66,7 +65,6 @@ bool saveFile(String path, String data){
       file.close();
       return true;
   }
-
 };
 
 void setup() 
@@ -83,8 +81,7 @@ void setup()
     Serial.print("Connected to WiFi..");
   }
 
-
-  // uruchomienie serwera WebSocket
+  // WebSocket server started
   Serial.println("WebSocket server started");
 
   //init and get the time
@@ -96,28 +93,26 @@ void setup()
     return;
   }
   
-  // pokoje = LittleFS.open("/assets/pokoje.json", "r");
-  // devices = LittleFS.open("/assets/devices.json", "r");
-
-
-  server.on("/JSONpokoje", HTTP_GET, [](AsyncWebServerRequest *request){
-    
-    // send pokoje as response 
-    request->send(LittleFS, "/assets/pokoje.json", "application/json");
-    
+  server.on("/JSONrooms", HTTP_GET, [](AsyncWebServerRequest *request){
+    // send rooms as response 
+    request->send(LittleFS, "/assets/rooms.json", "application/json");
   });
   
   server.on("/JSONdevices", HTTP_GET, [](AsyncWebServerRequest *request){
+  // send devices as response
 
-    // send devices as response
-    request->send(LittleFS, "/assets/devices.json", "application/json");
-  
+Serial.println("Sending devices data");
+    String jsonStr;      
+    serializeJson(devices, jsonStr);
+    Serial.print(jsonStr);
+
+    request->send(200, "application/json", jsonStr);
+
   });
 
 AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/saveRooms", [](AsyncWebServerRequest *request, JsonVariant &json) {
-  
-  StaticJsonDocument<2024> data;
 
+  StaticJsonDocument<2024> data;
   if (json.is<JsonArray>())
   {
     data = json.as<JsonArray>();
@@ -129,14 +124,7 @@ AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/saveRoo
           
     String jsonStr;      
     serializeJson(data, jsonStr);
-  Serial.println(jsonStr);
-  // save data to file 
-  if(saveFile("/assets/pokoje.json", jsonStr )){
-    Serial.println("File saved");
-
-    
-
-      // Serial.print(data);
+    if(saveFile("/assets/rooms.json", jsonStr )){
 
     request->send(200, "application/json", "{\"response\":\"dataSaved\"}");
   } else{
@@ -147,62 +135,78 @@ AsyncCallbackJsonWebHandler *handler = new AsyncCallbackJsonWebHandler("/saveRoo
  
 });
 
-server.addHandler(handler);
+  server.addHandler(handler);
   
- 
-  
-  server.on("/pokoje.css", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/pokoje.css", "text/css");
+
+  /// SERVE ROOMS PAGE 
+  server.on("/assets/rooms.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/assets/rooms.css", "text/css");
+  });
+  server.on("/assets/rooms.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/assets/rooms.js", "text/javascript");
+  });
+  server.on("/rooms.html", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/rooms.html", "text/html");
+  });
+  server.on("/rooms", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/rooms.html", "text/html");
   });
 
-  server.on("/pokoje.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/pokoje.js", "text/javascript");
-  });
 
-  server.on("/pokoje.html", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/pokoje.html", "text/html");
+  /// SERVE INDEX PAGE 
+  server.on("/assets/index.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/assets/index.css", "text/css");
   });
-
+  server.on("/assets/index.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/assets/index.js", "text/javascript");
+  });
+  server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/index.html", "text/html");
+  });
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/pokoje.html", "text/html");
+    request->send(LittleFS, "/index.html", "text/html");
   });
+  server.on("aclock.ttf", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/assets/aclock.ttf", "font/ttf");
+  }); 
 
 
 
 
-  // uruchomienie serwera HTTP
-  server.begin();
-  Serial.println("ASYNC server started");
-  Serial.println(WiFi.localIP());
+
+if (MDNS.begin(hostName)) {
+    server.begin();
+    Serial.println("ASYNC server started");
+    Serial.print("MDNS responder started at: http://");
+    Serial.print(hostName);
+    Serial.print(".local at: ");
+    Serial.println(WiFi.localIP());
+
+  }
+  // HTTP server started
+  
 
   //bluetooth
   initBluetooth();
-  otaStart();
+  otaStart(hostName);
 }
 
 void loop()
 {
-
-
-        ArduinoOTA.handle();
-
-
-  
-
-// if (mode == WIFI_STA) {
-//   Serial.println("WiFi mode: Station (Client)");
-// } else if (mode == WIFI_AP) {
-//   Serial.println("WiFi mode: Access Point");
-// } else if (mode == WIFI_AP_STA) {
-//   Serial.println("WiFi mode: Access Point + Station");
-// }
-
-     
+      ArduinoOTA.handle();
       ble_scan_loop();
-      //iotWebConf.doLoop();
       //timers.process();
-      //webSocket.loop();
 
+
+
+#if SLEEP_TIME > 0
+  //esp_sleep_enable_timer_wakeup(SLEEP_TIME * 1000000); // translate second to micro second
+  Serial.printf("Enter deep sleep for %d seconds...\n\r", (SLEEP_TIME));
+  delay(10);
+  //esp_deep_sleep_start();
+  esp_deep_sleep(1000000LL * SLEEP_TIME);
+  Serial.println(F("After deep sleep"));
+#endif
 
 }
 
@@ -540,12 +544,4 @@ void loop()
 //   int count = foundDevices.getCount();
 //   printf("Found device count : %d\n", count);
 
-// #if SLEEP_TIME > 0
-//   //esp_sleep_enable_timer_wakeup(SLEEP_TIME * 1000000); // translate second to micro second
-//   Serial.printf("Enter deep sleep for %d seconds...\n\r", (SLEEP_TIME));
-//   delay(10);
-//   //esp_deep_sleep_start();
-//   esp_deep_sleep(1000000LL * SLEEP_TIME);
-//   Serial.println(F("After deep sleep"));
-// #endif
 // }

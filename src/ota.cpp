@@ -1,12 +1,13 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
+#include <main.h>
 
-bool Arduino_Ota_progress = false;
 
 
-void otaStart() {
 
-  ArduinoOTA.setHostname("ClearGrassHost");
+void otaStart(char host[]){
+
+  ArduinoOTA.setHostname(host);
   ArduinoOTA.onStart([]() {
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH) {
@@ -24,9 +25,6 @@ void otaStart() {
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-
-    Arduino_Ota_progress = true;
-
     String textt = "Progress: %u%%\r" + String((progress / (total / 100)));
 
   });
@@ -48,8 +46,6 @@ void otaStart() {
   Serial.println("Ready");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-
-
 
 
 }
