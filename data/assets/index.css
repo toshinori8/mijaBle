@@ -529,48 +529,50 @@ transform: scale(0.5);
 
 
 
-.room_element .encoder{
- 
+ .enc{
+    opacity:0;
     position: absolute;
-    top: 45px;
-    opacity:0.0;
-    left: 35px;
-    width: 230px;
+    /* left: 35px; */
+    margin-left: 24px;
+    width: 191px;
+    /* top: 51px; */
     height: 229px;
-    z-index: 40000;
-    /* content: "asd"; */
+    z-index: 140000;
+    /* height: 229px; */
+    margin-top: 26px;
     /* border-radius: 122px; */
     /* padding-top: 120px; */
-    /* border: 1px solid rgba(25,25,25,1); */
-    /* background-color: rgba(0,0,0,0.1); */
-}
+     background-color: rgba(0,0,0,0.1);
+    transition: all ease 0.5s;
 
-.room_element .encoder .backx{
+    }
+
+.enc .backx{
     position: absolute;
     width: 158px;
     background: rgba(235, 235, 235, 0.98);
-    height: 95px;
+    /* height: 95px; */
     height: 141px;
-    top: 42px;
-    left: 33px;
+    margin-top: -182px;
+    margin-left: 14px;
     border-radius: 99px;
     transition: all ease 0.5s;
     opacity: 1;
+    z-index: 90000000;
 
 }
-
-.room_element .encoder:hover{
-    opacity:1.0;
-    transition: all ease 0.5s;
-} 
-
-.room_elemet:hover{
-
-    opacity:0;
+ 
+.enc.visible{
+    opacity:1;
     transition: all ease 0.5s;
 
 }
-.room_element .encoder .backx .heat_value{
+ /* .enc:hover{
+        opacity:1;
+    transition: all ease 0.5s;
+
+} */
+.enc .backx .heat_value{
 
     font-size: 63px;
     margin-left: 16px;
