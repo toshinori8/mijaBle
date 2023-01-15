@@ -9,47 +9,84 @@ function getJSON(url) {
 }
 
 // server = "http://192.168.8.94";
-server ='http://' + window.location.hostname + '';
+// server ='http://' + window.location.hostname;
+server = "//cleargrasstermostat.local";
 
+function getDevices(){
 
-
-document.addEventListener("DOMContentLoaded", function () {
-  // get initial data from server
   getJSON(server+"/JSONdevices")
     .then((data) => {
       devices = data;
+      
+      
 
+      // if devices length is grater than 0
+      
       const select = document.querySelectorAll(".roomMacInput");
-      devices.forEach((device) => {
-        select.forEach((selectBox) => {
-          let option = document.createElement("option");
-          option.value = device.mac;
-          option.text = device.name;
-          selectBox.appendChild(option);
-        });
-      });
+      if(devices.length !=0){ 
+                devices.forEach((device) => {
+                  select.forEach((selectBox) => {
+                    let option = document.createElement("option");
+                    option.value = device.mac;
+                    option.text = device.name;
+                    selectBox.appendChild(option);
+                  });
+                });
+          return true;
 
-      getJSON(server+"/JSONrooms")
-        .then((data) => {
-          rooms = data;
-          rooms.forEach((room) => {
-            addRoom(room);
-          });
-        })
-        .catch((error) => {
-          console.log(error + "error getting Rooms");
-        });
+      }else{
+        return false;
+      };
+     
+      
+     
+
     })
     .catch((error) => {
       console.log(error + "error getting Devices");
+      return false;
     });
+    return true;
+
+};
+
+function deviceNameByMac(mac) {
+  const device = devices.find((device) => device.mac === mac);
+  if (device) {
+    return device.name;
+  } else {
+    return "Brak nazwy";
+  }
+}
+
+function alertModal(body) {
+  $("#alert-modal-body").html(body);
+  $("#alertModal").modal("show");
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  
+  console.log("DOM loaded");
+
+  if (getDevices()){
+    getJSON(server+"/JSONrooms")
+    .then((data) => {
+      
+      rooms = data;
+      console.log(rooms);
+      rooms.forEach((room) => {
+        addRoom(room);
+      });
+    })
+    .catch((error) => {
+      console.log(error + "error getting Rooms");
+    });
+
+  };
 
   ////   THE REST OF THE CODE IS HERE
 
-  function alertModal(body) {
-    $("#alert-modal-body").html(body);
-    $("#alertModal").modal("show");
-  }
 
   document
     .getElementById("edit_RoomMacInput")
@@ -57,14 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("edit_RoomMacInputCustom").value = this.value;
     });
 
-  function deviceNameByMac(mac) {
-    const device = devices.find((device) => device.mac === mac);
-    if (device) {
-      return device.name;
-    } else {
-      return "Brak nazwy";
-    }
-  }
+ 
 
   function addTouchSwipeAction(element) {
     element.addEventListener("click", (event) => {
@@ -76,7 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
       ).value = element.querySelector(".room-mac").textContent;
 
       currentEditetdRoom = element;
-
 
       $("#editRoomModal").modal("show");
     });
@@ -99,28 +128,25 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#editRoomModal").modal("hide");
 
     // SaveRoom JSON on board
-    saveRoomsFunction().then(() => {
+    if(saveRoomsFunction()){
       alertModal("Zapisano zmiany");
-    });
+    };
 
   });
 
   document.getElementById("delElement").addEventListener("click", (event) =>{
             
     currentEditetdRoom.remove();
-    saveRoomsFunction().then(() => {
+    if(saveRoomsFunction()){
       alertModal("Zapisano zmiany");
         // hide modal edit  
         $("#editRoomModal").modal("hide");
-    });
+    };
 
   });
 
   document.getElementById("exitBtn").addEventListener("click", (event) =>{
-
         window.location.href = "/";
-
-
   });
 
 
@@ -172,48 +198,44 @@ document.addEventListener("DOMContentLoaded", function () {
     return true;
   }
 
-  
-
-  
-
-  
-
-
-  
-
   // POST data to server /saveRooms
-  let saveRoomsFunction = () => {
+    let saveRoomsFunction = () => {
 
-    let rooms = document.querySelectorAll(".room");
-    let roomsData = [];
-    rooms.forEach((room) => {
-      roomsData.push({
-        name: room.querySelector(".room-name").textContent,
-        mac: room.querySelector(".room-mac").textContent,
+      let rooms = document.querySelectorAll(".room");
+      let roomsData = [];
+      rooms.forEach((room) => {
+        roomsData.push({
+          name: room.querySelector(".room-name").textContent,
+          mac: room.querySelector(".room-mac").textContent,
+        });
       });
-    });
-    let data = JSON.stringify(roomsData);
-
-    var xmlhttp = new XMLHttpRequest(); // new HttpRequest instance
-    
-    xmlhttp.open("POST", server+"/saveRooms");
-    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xmlhttp.send(data);
-    
-    xmlhttp.onreadystatechange = function () {
-      // get json response from server
-      let res = JSON.parse(this.response);
+      let data = JSON.stringify(roomsData);
   
-      if (this.status == 200 && res.response == "dataSaved") {
-        // console.log("dataSaved");
-      } else if (res.response != "dataSaved") {
-        alertModal("Nie udało się zapisać danych");
-      }
-    };
-    xmlhttp.onerror = function (error) {
-      alertModal("Nie udało się zapisać danych");
-      console.log(error);
-    };
+      var xmlhttp = new XMLHttpRequest(); // new HttpRequest instance
+      
+      xmlhttp.open("POST", server+"/saveRooms");
+      xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      xmlhttp.send(data);
+      
+      xmlhttp.onreadystatechange = function () {
+        // get json response from server
+        let res = JSON.parse(this.responseText);
 
-  };
+        if (this.status == 200 && res.response == "dataSaved") {
+          // console.log("dataSaved");
+        } else if (res.response != "dataSaved") {
+          alertModal("Nie udało się zapisać danych");
+          return false;
+        }
+      };
+      xmlhttp.onerror = function (error) {
+        alertModal("Nie udało się zapisać danych");
+        console.log(error);
+  
+        return false;
+      };
+  
+      return true;
+  
+    };
 });

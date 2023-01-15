@@ -1,1 +1,9 @@
-[{"name":"Łazienka","mac":"00:11:22:33:44:55"},{"name":"Poduszkarnia (Pracownia Ewa)","mac":"00:11:22:33:44:55"},{"name":"Pracownia Adam","mac":"00:11:22:33:44:55"},{"name":"Pralnia","mac":"00:11:22:33:44:55"},{"name":"Czytelnia","mac":"66:77:88:99:AA:BB"},{"name":"Przedpokój","mac":"66:77:88:99:AA:BB"},{"name":"Spiarnia","mac":"66:77:88:99:AA:BB"}]
+[
+  { "id": "0", "name": "Łazienka", "mac": "00:11:22:33:44:55", "minTemp": "20" },
+  { "id": "1", "name": "Poduszkarnia (Pracownia Ewa)", "mac": "00:11:22:33:44:55", "minTemp": "22" },
+  { "id": "2", "name": "Pracownia Adam", "mac": "00:11:22:33:44:55", "minTemp": "23" },
+  { "id": "3", "name": "Pralnia", "mac": "00:11:22:33:44:55", "minTemp": "25" },
+  { "id": "4", "name": "Czytelnia", "mac": "66:77:88:99:AA:BB", "minTemp": "25" },
+  { "id": "5", "name": "Przedpokój", "mac": "66:77:88:99:AA:BB", "minTemp": "22" },
+  { "id": "6", "name": "Spiarnia", "mac": "66:77:88:99:AA:BB", "minTemp": "18" }
+]

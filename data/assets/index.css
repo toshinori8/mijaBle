@@ -27,7 +27,7 @@ body.dark{
 }
 
 
-body.dark #sha_temp_body .sha_temp {
+body.dark .sha_temp_body .sha_temp {
     margin-top: 20px;
 
     background-color: azure;
@@ -189,7 +189,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 
 
-#sha_temp_body .sha_tile .white_back{ 
+.sha_temp_body .sha_tile .white_back{ 
 
     position: absolute;
    z-index: 120;
@@ -198,7 +198,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 }
 
 
-#sha_temp_body .sha_temp
+.sha_temp_body .sha_temp
 {   
     margin-top: 20px;
     z-index: 10000;
@@ -214,7 +214,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
                 0.5px 0.5px 0 rgba(0,0,0,0.02);
 }
 
-#sha_temp_body .sha_temp > span
+.sha_temp_body .sha_temp > span
 {
     position: relative;
     display: inline-block;
@@ -225,14 +225,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 
 
-#sha_temp_body .sha_temp > span{
+.sha_temp_body .sha_temp > span{
     position: relative;
     top: 120px;
     left: -10px;
     
     
 }
-#sha_temp_body .sha_temp > span > span.temp-data
+.sha_temp_body .sha_temp > span > span.temp-data
 {
     font-size: 80px;
     font-weight:normal;
@@ -241,12 +241,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     color: rgba(49,69,106,1);
      font-family: 'lcd', Fallback, sans-serif;
 }
-#sha_temp_body .small_01{
+.sha_temp_body .small_01{
     
     font-size: 30px;
     font-weight: bolder;
 }
-#sha_temp_body sup{
+.sha_temp_body sup{
     
     position: relative;
     left: 120px;
@@ -254,7 +254,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
         
 }
 
-#sha_temp_body .sha_temp > span > span.hum-data
+.sha_temp_body .sha_temp > span > span.hum-data
 {
     position: absolute;
     font-size: 45px;
@@ -265,12 +265,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     color: rgba(49,69,106,1);
      font-family: 'lcd', Fallback, sans-serif;
 }
-#sha_temp_body span.hum-data .small_01{
+.sha_temp_body span.hum-data .small_01{
     
     font-size: 30px;
     font-weight: bolder;
 }
-#sha_temp_body span.hum-data span.sup{
+.sha_temp_body span.hum-data span.sup{
     
     position: absolute;
     top: 0px;
@@ -281,7 +281,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 }
 
 
-#sha_temp_body .sha_temp > span > span.temp-data sup
+.sha_temp_body .sha_temp > span > span.temp-data sup
 {
     position: absolute;
     font-size: 15px;
@@ -289,7 +289,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     top: 24%;
 }
 
-#sha_temp_body .sha_temp > span > span.temp-info
+.sha_temp_body .sha_temp > span > span.temp-info
 {
     position: absolute;
     font-size: 14px;
@@ -305,7 +305,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 
 
-#sha_temp_body .sha_temp:before
+.sha_temp_body .sha_temp:before
 {
     position: absolute;
     content: '';
@@ -325,7 +325,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     }
 
 
-#sha_temp_body .sha_temp hr.line_{
+.sha_temp_body .sha_temp hr.line_{
     width: 160px;
     position: relative;
     top: -39px;
@@ -334,7 +334,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     
 }
 
-#sha_temp_body .sha_temp:after
+.sha_temp_body .sha_temp:after
 {
     position: absolute;
     content: '';
@@ -558,6 +558,18 @@ transform: scale(0.5);
     opacity: 1;
 
 }
+
+.room_element .encoder:hover{
+    opacity:1.0;
+    transition: all ease 0.5s;
+} 
+
+.room_elemet:hover{
+
+    opacity:0;
+    transition: all ease 0.5s;
+
+}
 .room_element .encoder .backx .heat_value{
 
     font-size: 63px;
@@ -590,22 +602,21 @@ display:none;
     font-size: 25px;
     font-weight: 500;
     /* color: rgba(49,69,106,0.8); */
-color:rgba(241, 241, 241, 1.000);
+    color: rgba(241, 241, 241, 1.000);
     margin-top: 10px;
     margin-bottom: 10px;
     text-align: left;
     padding-left: 10px;
-    padding-right: 10px;
+    padding-right: 2px;
     padding-top: 5px;
     padding-bottom: 5px;
     border-radius: 10px;
     /* background-color: rgba(0,0,0,0.1); */
     /* border: 1px solid rgba(0,0,0,0.1); */
-    /* box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); */
+    /* box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 10%); */
     width: 100%;
-    text-align: center;
+    text-align: right;
     margin-bottom: 10px;
-    writing-mode:vertical-rl;
-
-    /* transform: rotate3d(1,1,1,45deg); */
+    /* writing-mode: vertical-rl; */
+    /* transform: rotate3d(1,1,1,45deg);
 }
