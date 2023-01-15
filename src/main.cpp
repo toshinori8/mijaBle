@@ -49,7 +49,7 @@ void setup()
  
 
   // Connect to Wi-Fi network with SSID and password
-  WiFi.begin("oooooio", "pmgana921");
+  WiFi.begin("|oooooi|", "pmgana921");
   while (WiFi.status() != WL_CONNECTED) 
   {
     delay(500);

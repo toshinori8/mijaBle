@@ -1,13 +1,13 @@
 
 
 class Room {
-  constructor(id, name, temperature, humidity, minTemp, sensorMac) {
+  constructor(id, name, temperature, humidity, minTemp, mac) {
     this.id           = id;
     this.name         = name;
     this.temperature  = temperature;
-    this.minTemp      = minTemp;
     this.humidity     = humidity;
-    this.sensorMac    = sensorMac;
+    this.minTemp      = minTemp;
+    this.mac          = mac;
   }
 }
 
@@ -19,44 +19,23 @@ class Termostat {
 
   }
 
-  addRoom(id, name, temperature, humidity, minTemp, sensorMac) {
+  addRoom(id, name, temperature, humidity, minTemp, macAddress) {
   
-    this.rooms.push(new Room(id, name, temperature, humidity, minTemp, sensorMac));
-    console.log(id);
+    this.rooms.push(new Room(id, name, temperature, humidity, minTemp, macAddress));
     this.createRoom(id);
-    
   
   }
 
   createEncoder(id){
    let  element = document.querySelector(`#room-${id} #encoder-${id}`);  
-    console.log(element);
-
-    // element.setAttribute("style", `
-    // position: re;
-    // top: 45px;
-    // opacity:0.4;
-    // left: 35px;
-    // width: 230px;
-    // height: 229px;
-    // z-index: 40000;
-    // `);
-    // console.log(document.querySelector("#room-0"));
-    element.addEventListener("mouseleave", function(){
-
-      $(this).removeClass("visible");
-
+      element.addEventListener("mouseleave", function(){
+        $(this).removeClass("visible");
 
     });
     element.addEventListener("mouseenter", function(){
 
-
-//      console.log(`mouseenter $#room-${id} #encoder-${id}`);
-    //   // console.log($("#room-0 #encoder-0"));
-     // console.log(this);
     $(this).addClass("visible");
      let elementUpdate= $(this).find(".heat_value");
-     console.log(elementUpdate);
         $(this).find(".dial").knob({
               readOnly: false,
               height: 220,
@@ -70,13 +49,9 @@ class Termostat {
               fgColor: "#7ba8c9",
               bgColor: "none",
               change: function (v) {
-                //val = v.toString().slice(0, 4);
-                console.log(v.toString().slice(0, 4));
                 $(elementUpdate).html(v.toString().slice(0, 4));
-                // console.log();
               }
         });
-
 
     });
 
@@ -85,7 +60,12 @@ class Termostat {
 
 
   }
+  alertModal(body) {
 
+    $("#alert-modal-body").html(body);
+    $("#alertModal").modal("show");
+  
+  }
   updateTemp(id, newTemperature) {    
 
     // find room with id
@@ -110,32 +90,60 @@ class Termostat {
   
   }
 
-  
+ 
   
   createRoom(id) {
-
-    
+       
         let room = this.rooms.find((room) => room.id == id);
         let container = document.querySelector("#roomContainer");
         let newRoom = document.createElement("div");
         
+        
+        // get room device data 
+        let device = this.devices.find((device) => device.mac == room.mac);
+        if(device == undefined){
+          console.log('no device for room ' + room.id + ' with mac ' + room.mac + ' found');
+        }else{
+        console.log('device for room ' + room.id + ' with mac ' + room.mac + ' found')};
+
+       console.log(device);
+
+
+        // if room.minTemp is set
+        let minTemp = room.minTemp; if(minTemp==undefined){minTemp=16};
+        
+        let temp = [1,1];
+        if(device.temp==undefined){
+         console.log('no temp for room ');
+        }else{
+          temp =device.temp.toString().split(".");
+          if(temp[1] == undefined){temp[1]="0"};
+          if(temp[0] == undefined){temp[0]=0};
+        };
+
+        
+        // if (device.temp == undefined){
+        //   device.temp=16;
+        // }else{
+        // };
+        // // 
+        
         newRoom.id = `room-${room.id}`;
         newRoom.innerHTML = `
         <div class="room_element sha_temp_body">
-          
             <div  id="encoder-${room.id}" class="enc">
               <input class="dial noselect" value="0" min-value="12" max-value="36">
-              <div class="backx"><div class="heat_value">80</div></div>
+              <div class="backx"><div class="heat_value">${minTemp}</div></div>
             </div>
             <div class="row top-buffer ">
                 <div class="col-12">
                     <span class="sha_temp white_back">
                         <span>
-                            <span class="temp-data">1<span class="small_01">.2</span> <sup>°C</sup></span>
+                            <span class="temp-data">${temp[0]}<span class="small_01">.${temp[1]}</span> <sup>°C</sup></span>
                                 <hr class="line_">
                             <span class="hum-data">0<span class="small_01">.0</span>
                             <span class="sup">%</span>
-                            <span class="hidden_span mac_device">`+room.sensorMac+`</span>
+                            <span class="hidden_span mac_device">`+room.mac+`</span>
                     </span>
                     </span>
                     </span>
@@ -201,22 +209,49 @@ function getForecast() {
 let termostat = new Termostat();
 document.addEventListener("DOMContentLoaded", function () {
   
-  fetch("http://cleargrasstermostat.local/JSONrooms")
+  // get devices from JSON file
+  getJSON("http://cleargrasstermostat.local/JSONdevices").then((data) => {
+
+
+   
+    termostat.devices = data;
+
+    fetch("http://cleargrasstermostat.local/JSONrooms")
   .then(response => response.json())
   .then(data => {
-  
 
-    //termostat.rooms = data;
-      
+    
+   
+
+      // create rooms
+      // if room has device in devices array, then create room
       for (let roomData of data) {
+        //console.log(termostat.devices);
         console.log(roomData);
-        termostat.addRoom(roomData.id, roomData.name, roomData.temperature, roomData.minTemp,roomData.sensorMac);
+        if(termostat.devices.find((device) => device.mac == roomData.mac.toString())){
+          console.log('device for room ' + roomData.id + ' with mac ' + roomData.mac + ' found');
+          document.querySelector(".loader").remove();
+          
+          termostat.addRoom(roomData.id, roomData.name, roomData.temperature, roomData.humidity, roomData.minTemp, roomData.mac);
+        }
+        else{
+          termostat.alertModal('Są pokoje bez przypisanych urządzeń. Sprawdź  <a href="http://cleargrasstermostat.local/settings">ustawienia</a>');
+          console.log('no device for room ' + roomData.id + ' with mac ' + roomData.mac + ' found');
+        } 
+
+
+     
+        
       }
+     
     })
     .catch((error) => {
-      console.log(error + "error creating Rooms");
+      console.log(error + "   error creating Rooms");
     });
 
+
+  });
+  
   // interaction();
 
   runEvery(10, getForecast);

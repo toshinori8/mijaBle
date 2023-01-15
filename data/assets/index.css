@@ -28,6 +28,9 @@ body.dark{
 
 
 body.dark .sha_temp_body .sha_temp {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     margin-top: 20px;
 
     background-color: azure;
@@ -46,6 +49,13 @@ body.dark .sha_temp_body .sha_temp {
 height: auto;
 min-height: 230px;
     
+}
+
+
+.loader svg {
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
 }
 
 #sha_app
@@ -93,6 +103,9 @@ body.dark i.fa,
 body.dark span.sha_temp .temp-info,
 body.dark span.sha_temp .temp-data
 {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     transition: color ease 1s;    
     color: rgba(50,50,50,0.7) !important;
 } 
@@ -190,7 +203,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 
 .sha_temp_body .sha_tile .white_back{ 
-
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     position: absolute;
    z-index: 120;
     
@@ -199,7 +214,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 
 .sha_temp_body .sha_temp
-{   
+{  
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */ 
     margin-top: 20px;
     z-index: 10000;
     position: absolute;
@@ -216,6 +234,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 .sha_temp_body .sha_temp > span
 {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     position: relative;
     display: inline-block;
     top: 50%;
@@ -229,11 +250,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     position: relative;
     top: 120px;
     left: -10px;
-    
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     
 }
 .sha_temp_body .sha_temp > span > span.temp-data
 {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     font-size: 80px;
     font-weight:normal;
     
@@ -242,12 +268,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
      font-family: 'lcd', Fallback, sans-serif;
 }
 .sha_temp_body .small_01{
-    
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     font-size: 30px;
     font-weight: bolder;
 }
 .sha_temp_body sup{
-    
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     position: relative;
     left: 120px;
      font-size: 70px;
@@ -256,6 +286,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 .sha_temp_body .sha_temp > span > span.hum-data
 {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     position: absolute;
     font-size: 45px;
     font-weight:normal;
@@ -266,12 +299,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
      font-family: 'lcd', Fallback, sans-serif;
 }
 .sha_temp_body span.hum-data .small_01{
-    
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     font-size: 30px;
     font-weight: bolder;
 }
 .sha_temp_body span.hum-data span.sup{
-    
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     position: absolute;
     top: 0px;
     left: 70px;
@@ -283,6 +320,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 .sha_temp_body .sha_temp > span > span.temp-data sup
 {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     position: absolute;
     font-size: 15px;
     font-weight: 500;
@@ -291,6 +331,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 .sha_temp_body .sha_temp > span > span.temp-info
 {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     position: absolute;
     font-size: 14px;
     font-weight: 500;
@@ -454,7 +497,9 @@ transform: scale(0.5);
     right: 33px;
     z-index: 30000;
     bottom: -203px;
-
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 
 }
 
@@ -469,11 +514,17 @@ transform: scale(0.5);
      background: rgba(255, 127, 71,.9);
     box-shadow: inset 4px 4px 8px rgba(0,0,0,0.15);
     margin-top: 2px;
-  
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
  .sha_switch:before
 {
+
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     content: '';
     position: absolute;
     width: 30px;
@@ -530,56 +581,67 @@ transform: scale(0.5);
 
 
  .enc{
-    opacity:0;
+    background: transparent;
+    opacity: 0;
     position: absolute;
     /* left: 35px; */
-    margin-left: 24px;
+    margin-left: 5px;
     width: 191px;
     /* top: 51px; */
     height: 229px;
     z-index: 140000;
     /* height: 229px; */
-    margin-top: 26px;
+    margin-top: 25px;
     /* border-radius: 122px; */
     /* padding-top: 120px; */
-     background-color: rgba(0,0,0,0.1);
+    /* background-color: rgba(0,0,0,0.1); */
     transition: all ease 0.5s;
-
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     }
 
 .enc .backx{
+    
     position: absolute;
     width: 158px;
     background: rgba(235, 235, 235, 0.98);
     /* height: 95px; */
     height: 141px;
     margin-top: -182px;
-    margin-left: 14px;
+    margin-left: 33px;
     border-radius: 99px;
     transition: all ease 0.5s;
     opacity: 1;
     z-index: 90000000;
-
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
  
 .enc.visible{
     opacity:1;
     transition: all ease 0.5s;
-
+    background: none;
 }
- /* .enc:hover{
-        opacity:1;
+ .enc:hover{
+    background: none;
+    opacity:1;
     transition: all ease 0.5s;
 
-} */
+}
 .enc .backx .heat_value{
-
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+    select: none;
     font-size: 63px;
-    margin-left: 16px;
+    margin-left: 11px;
     font-weight: bold;
     margin-top: 23px;
     font-family: 'lcd', Fallback, sans-serif;
     color: rgba(48, 67, 104, 1.000);
+    background: transparent;
 
 }
 .room_element .mac_device{
@@ -587,7 +649,7 @@ display:none;
 
 }
 .room_element .menu_room{
-
+    background: transparent;
     width: 75%;
     background-color: rgba(0,0,0,0.1);
     min-height: 186px;
@@ -601,6 +663,9 @@ display:none;
 
 }
 .room_element .menu_room .roomName{
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
     font-size: 25px;
     font-weight: 500;
     /* color: rgba(49,69,106,0.8); */

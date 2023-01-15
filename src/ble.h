@@ -71,20 +71,16 @@ String floatToString(float f){
 
 void updateDevice(String mac, String type, float data){
 
-  Serial.print("Updating device: ");
-  Serial.print(mac);
-  Serial.print(" type: ");
-  Serial.print(type);
-  Serial.print(" data: ");
-  Serial.println(data);
-
   
+
+  String dataString = floatToString(data);
+
   bool deviceFound = false;
 
   for (int i = 0; i < devices.size(); i++) {
     if (devices[i]["mac"] == mac) {
       deviceFound = true;
-      if(data){devices[i][type]  = data;}
+      if(data){devices[i][type]  = dataString;}
       break;
     }
   }
@@ -92,7 +88,7 @@ void updateDevice(String mac, String type, float data){
   if (!deviceFound) {
     JsonObject device = devices.createNestedObject();
     device["mac"] = mac;
-    if(data){device[type]  = data;}
+    if(data){device[type]  = dataString;}
   }
 
 
@@ -131,7 +127,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
             //
             unsigned long value, value2;
             char charValue[5] = {0,};
-
+            float roundedValue  = 0.0;
             //Serial.print("Message: ");
             //Serial.println(cServiceData[11]);
 
@@ -140,22 +136,26 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
                 case 0x04: //4  //only temp
                     sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
                     value = strtol(charValue, 0, 16);  
-
-                    updateDevice(mac, "temp", (float)value/10);
+                    Serial.println("charValue");
+                    Serial.println(value/10);
+                    roundedValue = round((float)value/10 * 100.0) / 100.0;
+                    updateDevice(mac, "temp", roundedValue);
                     
                     break;
                 case 0x06: //6  //only hum
                     sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
                     value = strtol(charValue, 0, 16);               
-
-                    updateDevice(mac, "hum", (float)value/10);
+                    roundedValue = round((float)value/10 * 10.0) / 10.0;
+                    updateDevice(mac, "hum", roundedValue);
 
                     break;
                 case 0x0A: //10  //only battery
                     sprintf(charValue, "%02X", cServiceData[14]);
-                    value = strtol(charValue, 0, 16);                
-
-                    updateDevice(mac, "bat", (float)value/10);
+                    value = strtol(charValue, 0, 16);   
+                    Serial.println("charValue");
+                    Serial.println(value/10);             
+                    roundedValue = round((float)value/10 * 10.0) / 10.0;
+                    updateDevice(mac, "bat", roundedValue);
 
                     break;
                 case 0x0D: //13  //battery and hum
