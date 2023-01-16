@@ -150,11 +150,9 @@ void setup()
 
 server.on("/saveRooms", HTTP_POST, [](AsyncWebServerRequest * request){}, NULL,[](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
  
-
     for (size_t i = 0; i < len; i++) {
         Serial.write(data[i]);
     }
- 
        
     String jsonStr = (char*)data;
     
@@ -175,38 +173,23 @@ server.on("/saveRooms", HTTP_POST, [](AsyncWebServerRequest * request){}, NULL,[
   });  
 
 
-
-  /// SERVE ROOMS PAGE 
-  server.on("/assets/rooms.css", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/assets/rooms.css", "text/css");
-  });
-  server.on("/assets/rooms.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/assets/rooms.js", "text/javascript");
-  });
-  server.on("/rooms.html", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/setup", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(LittleFS, "/rooms.html", "text/html");
   });
-  server.on("/rooms", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/rooms.html", "text/html");
-  });
-
-
-  /// SERVE INDEX PAGE 
-  server.on("/assets/index.css", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/assets/index.css", "text/css");
-  });
-  server.on("/assets/index.js", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/assets/index.js", "text/javascript");
-  });
-  server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/index.html", "text/html");
-  });
+ 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(LittleFS, "/index.html", "text/html");
   });
-  server.on("aclock.ttf", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/assets/aclock.ttf", "font/ttf");
-  }); 
+
+
+  server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
+  server.serveStatic("/assets/", LittleFS, "/assets/");
+  server.serveStatic("/assets/img/", LittleFS, "/assets/img/");
+
+
+
+
+
 
 
 
@@ -220,14 +203,12 @@ if (MDNS.begin(hostName)) {
     Serial.print(".local at: ");
     Serial.println(WiFi.localIP());
   }
-  // HTTP server started
-  
-
-  //bluetooth
-   loadDevices();
+  //  HTTP server started
+  //  bluetooth
+  loadDevices();
   initBluetooth();
-
   otaStart(hostName);
+
 }
 
 void loop()

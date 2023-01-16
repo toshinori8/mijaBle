@@ -1,5 +1,5 @@
 [
   { "name": "Czujnik waleria", "mac": "58:2d:34:10:d6:0d" },
   { "name": "Czujnik kuchnia", "mac": "58:2d:34:10:d6:00" },
-  { "name": "Czujnik łazienka", "mac": "CC:DD:EE:FF:00:11" }
+  { "name": "Czujnik łazienka", "mac": "00:11:22:33:44:55", "temp":"12.5", "hum":"62.5"}
 ]

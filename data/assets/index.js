@@ -20,10 +20,49 @@ class Termostat {
   }
 
   addRoom(id, name, temperature, humidity, minTemp, macAddress) {
-  
+   
     this.rooms.push(new Room(id, name, temperature, humidity, minTemp, macAddress));
     this.createRoom(id);
-  
+    console.log("add room complete");
+  }
+
+
+  updateRoomData(id, temperature, humidity, minTemp) {
+    let room = this.rooms.find((room) => room.id == id);
+    if(room){
+      room.temperature = temperature;
+      room.humidity = humidity;
+      room.minTemp = minTemp;
+    }
+  }
+
+
+  updateRoomData_HTML(id) {
+      // get room data from HTML  
+      let room = this.rooms.find((room) => room.id == id);
+      let temp = document.querySelector("#room-"+id+" .temp-data").firstChild.data;
+      let hum = document.querySelector("#room-"+id+" .hum-data").firstChild.data;
+      let minTemp = document.querySelector("#room-"+id+" .heat_value").firstChild.data;
+      // update room data
+      room.temperature = temp;  
+      room.humidity = hum;
+      room.minTemp = minTemp;
+      console.log(`update room ID: ${id} complete`);
+      termostat.logRoomData(id);
+
+
+  }
+
+  logRoomData(id) {
+    let room = this.rooms.find((room) => room.id == id);
+    
+
+    if(room){
+      console.log("………………………………………………………………………………………………………………………………………………………………………………………………………");
+      console.log("|room id : " + id + "| |name :"+room.name + "| |minTemp : "+room.minTemp+"|");
+      console.log("|macAddress : "+ room.mac+ "| |temperature : " + room.temperature + "| |humidity : " + room.humidity+"|");  
+    }
+
   }
 
   createEncoder(id){
@@ -35,6 +74,11 @@ class Termostat {
     element.addEventListener("mouseenter", function(){
 
     $(this).addClass("visible");
+
+    // find room with id
+    let room = termostat.rooms.find((room) => room.id == id);
+      
+
      let elementUpdate= $(this).find(".heat_value");
         $(this).find(".dial").knob({
               readOnly: false,
@@ -50,6 +94,12 @@ class Termostat {
               bgColor: "none",
               change: function (v) {
                 $(elementUpdate).html(v.toString().slice(0, 4));
+                // set minTemp in rooms array
+                room.minTemp = v;
+                
+                termostat.updateRoomData_HTML(id);
+                
+                //termostat.updateRoomData(id,device.temp, device.hum, device.minTemp);
               }
         });
 
@@ -102,12 +152,10 @@ class Termostat {
         // get room device data 
         let device = this.devices.find((device) => device.mac == room.mac);
         if(device == undefined){
-          console.log('no device for room ' + room.id + ' with mac ' + room.mac + ' found');
         }else{
-        console.log('device for room ' + room.id + ' with mac ' + room.mac + ' found')};
-
-       console.log(device);
-
+        console.log("device data");
+        console.log(device);
+        };
 
         // if room.minTemp is set
         let minTemp = room.minTemp; if(minTemp==undefined){minTemp=16};
@@ -121,12 +169,19 @@ class Termostat {
           if(temp[0] == undefined){temp[0]=0};
         };
 
+
+        let humidity = [1,1];
+        if(device.hum==undefined){
+         console.log('no humidity for room ');
+        }else{
+          humidity =device.hum.toString().split(".");
+          if(humidity[1] == undefined){humidity[1]="0"};
+          if(humidity[0] == undefined){humidity[0]=0};
+        };
+
+       
         
-        // if (device.temp == undefined){
-        //   device.temp=16;
-        // }else{
-        // };
-        // // 
+       
         
         newRoom.id = `room-${room.id}`;
         newRoom.innerHTML = `
@@ -141,7 +196,7 @@ class Termostat {
                         <span>
                             <span class="temp-data">${temp[0]}<span class="small_01">.${temp[1]}</span> <sup>°C</sup></span>
                                 <hr class="line_">
-                            <span class="hum-data">0<span class="small_01">.0</span>
+                            <span class="hum-data">${humidity[0]}<span class="small_01">.${humidity[1]}</span>
                             <span class="sup">%</span>
                             <span class="hidden_span mac_device">`+room.mac+`</span>
                     </span>
@@ -157,7 +212,12 @@ class Termostat {
         </div>`;
 
         container.appendChild(newRoom);
+        
+        termostat.updateRoomData(id,device.temp, device.hum, device.minTemp);
+        
+        
         this.createEncoder(room.id);
+
   }
   
 
@@ -226,17 +286,26 @@ document.addEventListener("DOMContentLoaded", function () {
       // create rooms
       // if room has device in devices array, then create room
       for (let roomData of data) {
+
+
+
+
         //console.log(termostat.devices);
         console.log(roomData);
-        if(termostat.devices.find((device) => device.mac == roomData.mac.toString())){
-          console.log('device for room ' + roomData.id + ' with mac ' + roomData.mac + ' found');
-          document.querySelector(".loader").remove();
+        find = termostat.devices.find((device) => device.mac == roomData.mac.toString());
+        loader =document.querySelector(".loader");
+        if(find != undefined){
+
+            console.log("findłem device");
+            console.log(find.mac);
+          // console.log('device for room ' + roomData.id + ' with mac ' + roomData.mac + ' found');
+          if(loader){loader.remove()};
           
           termostat.addRoom(roomData.id, roomData.name, roomData.temperature, roomData.humidity, roomData.minTemp, roomData.mac);
         }
         else{
-          termostat.alertModal('Są pokoje bez przypisanych urządzeń. Sprawdź  <a href="http://cleargrasstermostat.local/settings">ustawienia</a>');
-          console.log('no device for room ' + roomData.id + ' with mac ' + roomData.mac + ' found');
+          termostat.alertModal('Są pokoje bez przypisanych urządzeń, </br>sprawdź  <a href="http://cleargrasstermostat.local/settings">ustawienia.</a>');
+          // console.log('no device for room ' + roomData.id + ' with mac ' + roomData.mac + ' found');
         } 
 
 
