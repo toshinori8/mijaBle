@@ -7,11 +7,9 @@
 <h2 align=center>#ESP32 #CGG1 #Mija #ble</h2>
 
 
-
 <p align=center>
-![screenshot](https://github.com/toshinori8/mijaBle/blob/master/images/image01.jpg)
+<img  src="https://github.com/toshinori8/mijaBle/blob/master/images/image01.jpg"/>
 </p>
-
 <p align="center">
   <a href="#key-features">Key Features</a> •
   <a href="#how-to-use">How To Use</a> •
