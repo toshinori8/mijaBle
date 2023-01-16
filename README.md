@@ -2,18 +2,15 @@
 <h1>ESP32-C3 Automated floor heating system with Mija bluettoth devices as room temperature sensors</h1>
 
 
-<h1 align="center">
-  <br>
-  <img src="https://github.com/toshinori8/mijaBle/blob/master/images/image01.jpg" alt="MijaBle" width="200">
-  <br>
-  
-  <br>
-</h1>
+
 
 <h2 align=center>#ESP32 #CGG1 #Mija #ble</h2>
 
 
 
+<p align=center>
+![screenshot](https://github.com/toshinori8/mijaBle/blob/master/images/image01.jpg)
+</p>
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
@@ -24,7 +21,6 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](https://github.com/toshinori8/mijaBle/blob/master/images/image01.jpg)
 
 ## Key Features
 
