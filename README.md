@@ -1,5 +1,5 @@
 
-<h1>ESP32-C3 Automated floor heating system with Mija bluettoth devices as room temperature sensors</h1>
+<h1>ESP32-C3 Automated floor heating system with Mija CGG1 bluetooth devices as rooms temperature sensors</h1>
 
 
 
