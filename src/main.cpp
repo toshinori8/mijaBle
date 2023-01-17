@@ -40,13 +40,14 @@ bool saveFile(String path, String data){
   }
 };
 
+
+
+
+
+
 void setup() 
 {
   Serial.begin(115200);
-  
-  // Load devices data stored with names;
-  
- 
 
   // Connect to Wi-Fi network with SSID and password
   WiFi.begin("|oooooi|", "pmgana921");
@@ -69,7 +70,11 @@ void setup()
     Serial.println("An Error has occurred while mounting LittleFS");
     return;
   }
-  
+
+
+
+
+
   DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
 
   server.on("/JSONrooms", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -88,67 +93,8 @@ void setup()
 
   });
 
-// Save devices data from request 
-//   AsyncCallbackJsonWebHandler *handlerSaveDevices = new AsyncCallbackJsonWebHandler("/saveDevices", [](AsyncWebServerRequest *request, JsonVariant &json) {
 
-//   StaticJsonDocument<2024> data;
-//   if (json.is<JsonArray>())
-//   {
-//     data = json.as<JsonArray>();
-//   }
-//   else if (json.is<JsonObject>())
-//   {
-//     data = json.as<JsonObject>();
-//   } 
-
-         
-//     String jsonStr;      
-//     serializeJson(data, jsonStr);
-//     if(saveFile("/assets/devices.json", jsonStr )){
-              
-
-//     request->send(200, "application/json", "{\"response\":\"dataSaved\"}", 
-//         { "Access-Control-Allow-Origin": "*" });
-
-//   } else{
-//     Serial.println("Error saving file");
-//     request->send(200, "application/json", "{\"response\":\"errorSavingData\"}");
-//   };
-
- 
-// });
-
-
-//   AsyncCallbackJsonWebHandler *handlerSaveRooms = new AsyncCallbackJsonWebHandler("/saveRooms", [](AsyncWebServerRequest *request, JsonVariant &json) {
-
-//   StaticJsonDocument<2024> data;
-//   if (json.is<JsonArray>())
-//   {
-//     data = json.as<JsonArray>();
-//   }
-//   else if (json.is<JsonObject>())
-//   {
-//     data = json.as<JsonObject>();
-//   } 
-          
-//     String jsonStr;      
-//     serializeJson(data, jsonStr);
-//     if(saveFile("/assets/rooms.json", jsonStr )){
-
-//     request->send(200, "application/json", "{\"response\":\"dataSaved\"}");
-//   } else{
-//     Serial.println("Error saving file");
-//     request->send(200, "application/json", "{\"response\":\"errorSavingData\"}");
-//   };
-
- 
-// });
-
-  // server.addHandler(handlerSaveRooms);
-  // server.addHandler(handlerSaveDevices);
-  
-
-server.on("/saveRooms", HTTP_POST, [](AsyncWebServerRequest * request){}, NULL,[](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
+    server.on("/saveRooms", HTTP_POST, [](AsyncWebServerRequest * request){}, NULL,[](AsyncWebServerRequest * request, uint8_t *data, size_t len, size_t index, size_t total) {
  
     for (size_t i = 0; i < len; i++) {
         Serial.write(data[i]);
@@ -190,11 +136,6 @@ server.on("/saveRooms", HTTP_POST, [](AsyncWebServerRequest * request){}, NULL,[
 
 
 
-
-
-
-
-
 if (MDNS.begin(hostName)) {
     server.begin();
     Serial.println("ASYNC server started");
@@ -226,4 +167,5 @@ void loop()
   Serial.println(F("After deep sleep"));
 #endif
 }
+
 
