@@ -1,34 +1,33 @@
 #include <Arduino.h>
-
-// bluetooth stuff
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEScan.h>
+#include <ArduinoJson.h>
 #include <BLEAdvertisedDevice.h>
-#include <ArduinoJson.h> 
+#include <BLEDevice.h>
+#include <BLEScan.h>
+#include <BLEUtils.h>
+#include <sstream>
+#include "main.h"
 
-#define BLUETOOTH_SCAN_TIME  10 // seconds
-DynamicJsonDocument devices(2048); // Json document for storing devices data 
 
-File devicesF;
 
-long previousMillis = 0;              // last time
-long interval = 1000 * 20;            // interval at which to scan for sensor data                                      //each 20 seconds scan for 10 seconds
-                                      // so 10 seconds stay free for wifi connection then
+
+long previousMillis = 0; // last time
+long interval =
+    1000 *
+    20; // interval at which to scan for sensor data //each 20 seconds scan for
+        // 10 seconds so 10 seconds stay free for wifi connection then
 // Load from littlefs devices.json
 
-void loadDevices(){
+void loadDevices() {
   devicesF = LittleFS.open("/assets/devices.json", "r");
-  if (!devicesF)
-  {
+  if (!devicesF) {
     Serial.println("Failed to open devices.json for reading");
-  } else{
+  } else {
     DeserializationError error = deserializeJson(devices, devicesF);
-    
-      Serial.println("Devices loaded");
-      // print devices content 
-      serializeJson(devices, Serial);
-      Serial.println();
+
+    Serial.println("Devices loaded");
+    // print devices content
+    serializeJson(devices, Serial);
+    Serial.println();
 
     if (error) {
       Serial.print(F("deserializeJson() failed: "));
@@ -38,40 +37,9 @@ void loadDevices(){
   }
 }
 
-
-
 BLEScan *pBLEScan;
 
-  
-const char* ntpServer = "pool.ntp.org";
-const long  gmtOffset_sec = 3600;
-const int   daylightOffset_sec = 3600;
-
-
-
-String getTime(){
-  struct tm timeinfo;
-  if(!getLocalTime(&timeinfo))
-  {
-    Serial.println("Failed to obtain time");
-    return "";
-  }
-  char timeStringBuff[50]; //50 chars should be enough
-  strftime(timeStringBuff, sizeof(timeStringBuff), "%d.%m.%Y %H:%M:%S", &timeinfo);
-  String time(timeStringBuff);
-  return time;
-}
-
-String floatToString(float f){
-  String s = String(f,1);
-  return s;
-}
-
-
-
-void updateDevice(String mac, String type, float data){
-
-  
+void updateDevice(String mac, String type, float data) {
 
   String dataString = floatToString(data);
 
@@ -80,7 +48,9 @@ void updateDevice(String mac, String type, float data){
   for (int i = 0; i < devices.size(); i++) {
     if (devices[i]["mac"] == mac) {
       deviceFound = true;
-      if(data){devices[i][type]  = dataString;}
+      if (data) {
+        devices[i][type] = dataString;
+      }
       break;
     }
   }
@@ -88,135 +58,126 @@ void updateDevice(String mac, String type, float data){
   if (!deviceFound) {
     JsonObject device = devices.createNestedObject();
     device["mac"] = mac;
-    if(data){device[type]  = dataString;}
-  }
-
-
-};
-
-
-
-class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
-{
-    void onResult(BLEAdvertisedDevice advertisedDevice)
-    {
-        
-        String mac = advertisedDevice.getAddress().toString().c_str();
-        //we're only interested in bluetooth devices sending service data 
-        //and if the service uuid always starts with "0000fe95-0000-1000-8000-00805f9b34fb"
-        if (advertisedDevice.haveServiceData() && advertisedDevice.getServiceDataUUID().toString() == "0000fe95-0000-1000-8000-00805f9b34fb")
-        {
-            //get the service data
-            std::string strServiceData = advertisedDevice.getServiceData();
-            uint8_t cServiceData[100];
-            char charServiceData[100];
-            //copy the service data to a char array
-            strServiceData.copy((char *)cServiceData, strServiceData.length(), 0);
-            //convert the service data to a hex string
-            for (int i=0;i<strServiceData.length();i++)
-            {
-                sprintf(&charServiceData[i*2], "%02x", cServiceData[i]);
-            }
-            
-            std::stringstream ss;
-            ss << "fe95" << charServiceData;
-            
-            // Serial.print("Payload:");
-            // Serial.println(ss.str().c_str());
-
-            //
-            unsigned long value, value2;
-            char charValue[5] = {0,};
-            float roundedValue  = 0.0;
-            //Serial.print("Message: ");
-            //Serial.println(cServiceData[11]);
-
-            switch (cServiceData[11])
-            {   
-                case 0x04: //4  //only temp
-                    sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
-                    value = strtol(charValue, 0, 16);  
-                    Serial.println("charValue");
-                    Serial.println(value/10);
-                    roundedValue = round((float)value/10 * 100.0) / 100.0;
-                    updateDevice(mac, "temp", roundedValue);
-                    
-                    break;
-                case 0x06: //6  //only hum
-                    sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
-                    value = strtol(charValue, 0, 16);               
-                    roundedValue = round((float)value/10 * 10.0) / 10.0;
-                    updateDevice(mac, "hum", roundedValue);
-
-                    break;
-                case 0x0A: //10  //only battery
-                    sprintf(charValue, "%02X", cServiceData[14]);
-                    value = strtol(charValue, 0, 16);   
-                    Serial.println("charValue");
-                    Serial.println(value/10);             
-                    roundedValue = round((float)value/10 * 10.0) / 10.0;
-                    updateDevice(mac, "bat", roundedValue);
-
-                    break;
-                case 0x0D: //13  //battery and hum
-                    sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
-                    value = strtol(charValue, 0, 16);                                    
-                    sprintf(charValue, "%02X%02X", cServiceData[17], cServiceData[16]);
-                    value2 = strtol(charValue, 0, 16);                               
-
-                    //updateDevice(mac, "hum", (float)value/10);
-                    //updateDevice(mac, "bat", (float)value2/10);
-
-                    break;
-            }
-        }
+    if (data) {
+      device[type] = dataString;
     }
+  }
 };
 
+class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
+  void onResult(BLEAdvertisedDevice advertisedDevice) {
 
+    String mac = advertisedDevice.getAddress().toString().c_str();
+    // we're only interested in bluetooth devices sending service data
+    // and if the service uuid always starts with
+    // "0000fe95-0000-1000-8000-00805f9b34fb"
+    if (advertisedDevice.haveServiceData() &&
+        advertisedDevice.getServiceDataUUID().toString() ==
+            "0000fe95-0000-1000-8000-00805f9b34fb") {
+      // get the service data
+      std::string strServiceData = advertisedDevice.getServiceData();
+      uint8_t cServiceData[100];
+      char charServiceData[100];
+      // copy the service data to a char array
+      strServiceData.copy((char *)cServiceData, strServiceData.length(), 0);
+      // convert the service data to a hex string
+      for (int i = 0; i < strServiceData.length(); i++) {
+        sprintf(&charServiceData[i * 2], "%02x", cServiceData[i]);
+      }
 
-void initBluetooth()
-{
-    BLEDevice::init("");
-    pBLEScan = BLEDevice::getScan(); //create new scan
-    pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks(), true);  //true needed to get multiple messages per mac address
-    pBLEScan->setActiveScan(false); //active scan uses more power, but get results faster
+      std::stringstream ss;
+      ss << "fe95" << charServiceData;
+
+      // Serial.print("Payload:");
+      // Serial.println(ss.str().c_str());
+
+      //
+      unsigned long value, value2;
+      char charValue[5] = {
+          0,
+      };
+      float roundedValue = 0.0;
+      // Serial.print("Message: ");
+      // Serial.println(cServiceData[11]);
+
+      switch (cServiceData[11]) {
+      case 0x04: // 4  //only temp
+        sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
+        value = strtol(charValue, 0, 16);
+        Serial.println("charValue");
+        Serial.println(value / 10);
+        roundedValue = round((float)value / 10 * 100.0) / 100.0;
+        updateDevice(mac, "temp", roundedValue);
+        updateDevice(mac, "lastSeen", getTime());
+
+        break;
+      case 0x06: // 6  //only hum
+        sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
+        value = strtol(charValue, 0, 16);
+        roundedValue = round((float)value / 10 * 10.0) / 10.0;
+        updateDevice(mac, "hum", roundedValue);
+        updateDevice(mac, "lastSeen", getTime());
+
+        break;
+      case 0x0A: // 10  //only battery
+        sprintf(charValue, "%02X", cServiceData[14]);
+        value = strtol(charValue, 0, 16);
+        Serial.println("charValue");
+        Serial.println(value / 10);
+        roundedValue = round((float)value / 10 * 10.0) / 10.0;
+        updateDevice(mac, "bat", roundedValue);
+        updateDevice(mac, "lastSeen", getTime());
+
+        break;
+      case 0x0D: // 13  //battery and hum
+        sprintf(charValue, "%02X%02X", cServiceData[15], cServiceData[14]);
+        value = strtol(charValue, 0, 16);
+        sprintf(charValue, "%02X%02X", cServiceData[17], cServiceData[16]);
+        value2 = strtol(charValue, 0, 16);
+
+        // updateDevice(mac, "hum", (float)value/10);
+        // updateDevice(mac, "bat", (float)value2/10);
+
+        break;
+      }
+    }
+  }
+};
+
+void initBluetooth() {
+  BLEDevice::init("");
+  pBLEScan = BLEDevice::getScan(); // create new scan
+  pBLEScan->setAdvertisedDeviceCallbacks(
+      new MyAdvertisedDeviceCallbacks(),
+      true); // true needed to get multiple messages per mac address
+  pBLEScan->setActiveScan(
+      false); // active scan uses more power, but get results faster
 }
 
 // Scan
 
-static void scanCompleteCB(BLEScanResults scanResults)
-{
+static void scanCompleteCB(BLEScanResults scanResults) {
   Serial.println("Scan complete!");
 }
 
+// Loop
+void ble_scan_loop() {
 
-
-
-// Loop 
-void ble_scan_loop(){
-
-  // timer 
+  // timer
   unsigned long currentMillis = millis();
-  if(currentMillis - previousMillis > interval)
-  {
-    // save the last time you blinked the LED 
-    previousMillis = currentMillis;   
+  if (currentMillis - previousMillis > interval) {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
 
-    //scan for the sensors asynchronously
+    // scan for the sensors asynchronously
     Serial.printf("Start BLE scan for %d seconds...\n", BLUETOOTH_SCAN_TIME);
     pBLEScan->start(BLUETOOTH_SCAN_TIME, scanCompleteCB);
   }
-
-
 };
 
-
-
-
-
 // class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
-//     uint8_t getServiceData(uint8_t uuid_len, uint8_t* payload, uint8_t length, uint8_t* data) {
+//     uint8_t getServiceData(uint8_t uuid_len, uint8_t* payload, uint8_t
+//     length, uint8_t* data) {
 //       if (length < uuid_len)
 //         return 0;
 //       if (length > uuid_len) {
@@ -226,7 +187,8 @@ void ble_scan_loop(){
 //       return 0;
 //     }
 
-//     uint8_t tryParsePayload(uint8_t* payload, size_t payload_len, uint8_t* service_data) {
+//     uint8_t tryParsePayload(uint8_t* payload, size_t payload_len, uint8_t*
+//     service_data) {
 //       int8_t length;
 //       uint8_t ad_type;
 //       uint8_t sizeConsumed = 0;
@@ -237,7 +199,8 @@ void ble_scan_loop(){
 //         payload++;                  // Skip to type
 //         sizeConsumed += 1 + length; // increase the size consumed.
 
-//         if (length != 0) { // A length of 0 indicates that we have reached the end.
+//         if (length != 0) { // A length of 0 indicates that we have reached
+//         the end.
 //           ad_type = *payload;
 //           payload++;
 //           length--;
@@ -270,9 +233,10 @@ void ble_scan_loop(){
 //       return value;
 //     }
 
-//    
+//
 
-//     void processData(XiaomiDevice device, uint8_t* payload, size_t len, char* addr) {
+//     void processData(XiaomiDevice device, uint8_t* payload, size_t len, char*
+//     addr) {
 //       uint8_t data[30];
 //       uint8_t raw_data_length = tryParsePayload(payload, len, data);
 //       if (raw_data_length == 0) {
@@ -321,7 +285,8 @@ void ble_scan_loop(){
 //         }
 
 //         const uint8_t value_length = data[data_offset + 2];
-//         if ((value_length < 1) || (value_length > 4) || (raw_data_length < (3 + value_length))) {
+//         if ((value_length < 1) || (value_length > 4) || (raw_data_length < (3
+//         + value_length))) {
 //           Serial.printf("Skip! Value has wrong size (%d)!", value_length);
 //           break;
 //         }
@@ -379,7 +344,8 @@ void ble_scan_loop(){
 
 //     void onResult(BLEAdvertisedDevice advertisedDevice)
 //     {
-//       if (!advertisedDevice.haveName() || !advertisedDevice.haveServiceData())
+//       if (!advertisedDevice.haveName() ||
+//       !advertisedDevice.haveServiceData())
 //         return;
 
 //       std::string dname = advertisedDevice.getName();

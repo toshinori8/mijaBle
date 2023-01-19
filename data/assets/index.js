@@ -20,7 +20,6 @@ class Termostat {
       new Room(id, name, temperature, humidity, minTemp, macAddress)
     );
     this.createRoom(id);
-    
   }
 
   updateRoomData(id, temperature, humidity, minTemp) {
@@ -137,15 +136,13 @@ class Termostat {
     let room = this.rooms.find((room) => room.id == id);
     room.humidity = newHumidity;
 
-    
     let hum = newHumidity.toString().split(".");
     // if(typeof newHumidity == "string"){
     //   let hum = newHumidity.split(".");
     // }else{
-    //   
+    //
     // }
 
-    
     document.querySelector("#room-" + id + " .hum-data").firstChild.data =
       hum[0];
     if (hum[1] == undefined) {
@@ -164,7 +161,7 @@ class Termostat {
     let device = this.devices.find((device) => device.mac == room.mac);
     if (device == undefined) {
     } else {
-     }
+    }
 
     // if room.minTemp is set
     let minTemp = room.minTemp;
@@ -208,7 +205,7 @@ class Termostat {
             </div>
             <div class="row top-buffer ">
                 <div class="col-12">
-                    <span class="sha_temp white_back">
+                          <span class="sha_temp white_back">
                         <span>
                             <span class="temp-data">${temp[0]}<span class="small_01">.${temp[1]}</span> <sup>°C</sup></span>
                                 <hr class="line_">
@@ -281,65 +278,47 @@ function getForecast() {
 
 function getDevicesActualData() {
   getJSON("http://cleargrasstermostat.local/JSONdevices").then((data) => {
+    // update devices with new data
+    for (let device of data) {
+      termostat.devices.find((d) => d.mac == device.mac).temp = device.temp;
+      termostat.devices.find((d) => d.mac == device.mac).hum = device.hum;
+      termostat.devices.find((d) => d.mac == device.mac).name = device.name;
+    }
 
-      
-      // update devices with new data
-      for (let device of data) {
-        termostat.devices.find((d) => d.mac == device.mac).temp = device.temp;
-        termostat.devices.find((d) => d.mac == device.mac).hum = device.hum;
-        termostat.devices.find((d) => d.mac == device.mac).name = device.name;
-      }
+    // update rooms with new data
+    // for (let room of termostat.rooms) {
+    //   let device = termostat.devices.find((device) => device.mac == room.mac);
+    //   if (device == undefined) {
+    //   } else {
 
-      // update rooms with new data
-      // for (let room of termostat.rooms) {
-      //   let device = termostat.devices.find((device) => device.mac == room.mac);
-      //   if (device == undefined) {
-      //   } else {
-          
-      //     console.log(device);
-        
-      //   }
+    //     console.log(device);
 
-      // }
-      for (let device of termostat.devices) {
-        let room = termostat.rooms.find((room) => room.mac == device.mac);
-        if (room == undefined) {
-        } else {
-          console.log(room);
-          console.log(typeof device.hum);
-          if (device.hum != undefined) {
-            termostat.updateHumidity(room.id, device.hum);
-          }
-          if (device.temp != undefined) {
-            termostat.updateTemperature(room.id, device.temp);
-          }
+    //   }
 
-          // termostat.updateHumidity(room.id, device.hum);
-          // termostat.updateTemperature(room.id, device.temp);
-
+    // }
+    for (let device of termostat.devices) {
+      let room = termostat.rooms.find((room) => room.mac == device.mac);
+      if (room == undefined) {
+      } else {
+        console.log(room);
+        console.log(typeof device.hum);
+        if (device.hum != undefined) {
+          termostat.updateHumidity(room.id, device.hum);
+        }
+        if (device.temp != undefined) {
+          termostat.updateTemperature(room.id, device.temp);
         }
 
-
-
-
+        // termostat.updateHumidity(room.id, device.hum);
+        // termostat.updateTemperature(room.id, device.temp);
       }
+    }
 
+    //termostat.updateRoomData(room.id, device.temp, device.hum, device.minTemp);
+    // termostat.updateHumidity(room.id, device.hum.asFloat());
+    // termostat.updateTemperature(room.id, device.temp.asFloat());
 
-
-      
-        
-      
-
-        
-        //termostat.updateRoomData(room.id, device.temp, device.hum, device.minTemp);
-        // termostat.updateHumidity(room.id, device.hum.asFloat());
-        // termostat.updateTemperature(room.id, device.temp.asFloat());
-
-        //
-     
-     
-
-
+    //
   });
 }
 
@@ -381,7 +360,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => {
         console.log(error + "   error creating Rooms");
       });
-      
+
     runEvery(0.1, getDevicesActualData); // 0.1 min
   });
 
