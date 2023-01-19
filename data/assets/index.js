@@ -75,6 +75,57 @@ class Termostat {
       );
     }
   }
+  createGraph(id) {
+    let ctx = document.getElementById(`chart-${id}`).getContext("2d");
+
+    // let buttonYear= document.querySelector(`#chart-container-${id} .year-scale`);
+    let buttonMonth = document.querySelector(
+      `#chart-container-${id} .month-scale`
+    );
+    // let buttonWeek= document.queryquerySelector(`#chart-container-${id} .week-scale`);
+    let buttonDay = document.querySelector(
+      `#chart-container-${id} .day-scale`
+    );
+
+    buttonDay.addEventListener("click", function () {
+      var chartDay = new Chart(ctx, {
+        type: "line",
+        data: sensorDataDay,
+        options: {
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                },
+              },
+            ],
+          },
+        },
+      });
+    });
+
+    buttonMonth.addEventListener("click", function () {
+      var chartMonth = new Chart(ctx, {
+        type: "line",
+        data: genMonthData(),
+        options: {
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                },
+              },
+            ],
+          },
+        },
+      });
+    });
+  
+  
+  }
+
 
   createEncoder(id) {
     let element = document.querySelector(`#room-${id} #encoder-${id}`);
@@ -222,6 +273,20 @@ class Termostat {
                 <h1 class="roomName">` +
       room.name +
       `</h1>
+
+      <div class="chart-container" id="chart-container-${room.id}">
+      <div class="chart-container-header">Wykresy ogrzewania</div>
+      <canvas class="chart" id="chart-${room.id}"></canvas>
+     
+      <div class="buttons-container">
+      <button class="year-scale">Rok</button>
+      <button class="month-scale">Miesiąc</button>
+      <button class="day-scale">Dzień</button>
+    </div>
+
+     
+      </div>
+    
             </div>
             <div class="height_auto">
             </div>
@@ -233,6 +298,7 @@ class Termostat {
     termostat.updateRoomData(id, device.temp, device.hum, device.minTemp);
 
     this.createEncoder(room.id);
+    this.createGraph(room.id);
   }
 } // end class Termostat
 

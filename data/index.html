@@ -11,9 +11,7 @@
       integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
       crossorigin="anonymous"
     ></script>
-    <script 
-      src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-Knob/1.2.13/jquery.knob.min.js">
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-Knob/1.2.13/jquery.knob.min.js"></script>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -38,13 +36,11 @@
     />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js"></script>
-    
+
     <script src="//s3-us-west-2.amazonaws.com/s.cdpn.io/16327/DrawSVGPlugin.js?r=12"></script>
     <script src="//s3-us-west-2.amazonaws.com/s.cdpn.io/16327/MorphSVGPlugin.min.js?r=1899"></script>
-    
 
     <link rel="stylesheet" href="assets/index.css" />
-   
   </head>
   <body class="light">
     <div class="container-fluid white_back">
@@ -52,40 +48,70 @@
         <!-- Start Section Header Bar -->
         <section id="sha_header_bar" class="col-12">
           <div class="row">
-           
             <div class="col-10">
               <span class="sub-heading">Xiaomi CGG1</span>
               <span class="heading">Cellar Dashbord</span>
             </div>
             <div class="col-2 icons_menu_up">
-
-             
-                <a class="header_icons" href="http://Netatmo_Relay.local"><img src="http://cleargrasstermostat.local/assets/img/logo_netatmo.png" width="60px"/></a> 
-                <a class="header_icons" href="http://miniTermo.local"><img src="http://cleargrasstermostat.local/assets/img/logo_MiniThermo.png" width="60px"/></a> 
-                <a class="header_icons" href="/setup"><img src="http://cleargrasstermostat.local/assets/img/setup.png" width="60px"/></a> 
-
+              <a class="header_icons" href="http://Netatmo_Relay.local"
+                ><img
+                  src="http://cleargrasstermostat.local/assets/img/logo_netatmo.png"
+                  width="60px"
+              /></a>
+              <a class="header_icons" href="http://miniTermo.local"
+                ><img
+                  src="http://cleargrasstermostat.local/assets/img/logo_MiniThermo.png"
+                  width="60px"
+              /></a>
+              <a class="header_icons" href="/setup"
+                ><img
+                  src="http://cleargrasstermostat.local/assets/img/setup.png"
+                  width="60px"
+              /></a>
             </div>
           </div>
         </section>
         <!-- End Section Header Bar -->
 
-
-
         <!-- Start Section Body 1 -->
-        <section class="col-12 col_gradient ">
+        <section class="col-12 col_gradient">
           <div id="alert-modal-body" class="modal-body"></div>
-          <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 601 401">
+          <svg
+            class="loader"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 601 401"
+          >
             <!-- from  https://codepen.io/Ranjithkumar10/pen/bwPXXp   -->
             <defs>
               <filter id="goo" color-interpolation-filters="sRGB">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+                <feGaussianBlur
+                  in="SourceGraphic"
+                  stdDeviation="7"
+                  result="blur"
+                />
+                <feColorMatrix
+                  in="blur"
+                  mode="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                  result="goo"
+                />
                 <feBlend in="SourceGraphic" in2="goo" />
-              </filter> 
+              </filter>
             </defs>
-            <rect class="bg" x="0" y="0" width="600" height="400" fill="transparent"/>
-            <g class="ellipses" fill="rgba(252, 119, 16, 0.2)" filter="url(#goo)">
-              <ellipse class="ellipse" cx="300" cy="200" rx="16" ry="16"/>
+            <rect
+              class="bg"
+              x="0"
+              y="0"
+              width="600"
+              height="400"
+              fill="transparent"
+            />
+            <g
+              class="ellipses"
+              fill="rgba(252, 119, 16, 0.2)"
+              filter="url(#goo)"
+            >
+              <ellipse class="ellipse" cx="300" cy="200" rx="16" ry="16" />
               <ellipse class="ellipse" cx="300" cy="200" rx="16" ry="16" />
               <ellipse class="ellipse" cx="300" cy="200" rx="16" ry="16" />
               <ellipse class="ellipse" cx="300" cy="200" rx="16" ry="16" />
@@ -95,19 +121,10 @@
               <ellipse class="ellipse" cx="300" cy="200" rx="16" ry="16" />
             </g>
           </svg>
-         
 
-          
           <div id="roomContainer">
-
-            
             <!-- rooms from JSON goes here -->
-
           </div>
-          
-          
-
-
         </section>
         <!-- End Section Body 1 -->
         <!-- Start Section Body 2 -->
@@ -167,71 +184,12 @@
       </div>
     </div>
 
-
-
-
-
-
     
 
     <script src="assets/index.js"></script>
-
-    <script>
-      var alphaEffect = false;
-      var alphaStart = 1;
-      var scaleFactor = 2.8 // by volume with 8 circs at 16px rad
-      var initialScale = 0.6;
-      var finalScale = initialScale*scaleFactor;
-      var offset = 1/10;
-      var travel = 50;
-      
-      if(alphaEffect) {
-        alphaStart = 0;
-      }
-      
-      TweenMax.set('svg', {
-        visibility: 'visible'
-      });
-      
-      TweenMax.set('.ellipse', { transformOrigin: "50% 50%" });
-      
-      var tl = new TimelineMax({ repeat: -1 });
-      
-        tl.fromTo('.ellipses', 3.5, { x: -(travel) }, { x: travel, ease: Linear.easeNone })
-          .staggerFromTo('.ellipse', 2.5, { x: -350, autoAlpha: alphaStart }, { x: 350, autoAlpha: 1, ease: SlowMo.ease.config(0.25, 1.0, false), transformOrigin: "50% 50%"}, offset, "-=3.4")
-          .staggerFromTo('.ellipse', 1.75, { scale: initialScale }, { scale: finalScale, ease: SlowMo.ease.config(0, 1, true), yoyo: true}, offset, "-=3.0")
-      
-      
-      /*  ==========================================================================
-          SLIDER
-          ========================================================================== */  
-      
-      // var $slider = $('#slider'),
-      //     sliderValue = { value: 0 };
-      
-      // $slider.slider({
-      //   range: false,
-      //   min: 0,
-      //   max: 100,
-      //   step: .1,
-      //   start: function() {
-      //     tl.pause();
-      //   },
-      //   slide: function(event, ui) {
-      //     tl.progress(ui.value / 100);
-      //   },
-      //   stop: function() {
-      //     tl.play();
-      //   }
-      // });
-      
-      tl.eventCallback("onUpdate", function() {
-        // sliderValue.value = tl.progress() * 100;
-        // $slider.slider(sliderValue);
-      });
-      
-                </script>
-
-
+    <script src="assets/socket.js"></script>
+    <script src="assets/preloader_anim.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="assets/graphs.js"></script>
   </body>
 </html>

@@ -65,3 +65,13 @@ bool routesSetup(){
 return true;
 
 };
+
+void initWS(){
+
+   // kod inicjalizujący Websocket
+  server.addHandler(&ws);
+  ws.onEvent(onWsEvent);
+  
+
+
+}

@@ -41,6 +41,7 @@ BLEScan *pBLEScan;
 
 void updateDevice(String mac, String type, float data) {
 
+  
   String dataString = floatToString(data);
 
   bool deviceFound = false;
@@ -50,6 +51,7 @@ void updateDevice(String mac, String type, float data) {
       deviceFound = true;
       if (data) {
         devices[i][type] = dataString;
+        devices[i]["lastSeen"] = getTime();
       }
       break;
     }
@@ -59,6 +61,7 @@ void updateDevice(String mac, String type, float data) {
     JsonObject device = devices.createNestedObject();
     device["mac"] = mac;
     if (data) {
+      device["lastSeen"] = getTime();
       device[type] = dataString;
     }
   }
@@ -108,7 +111,6 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
         Serial.println(value / 10);
         roundedValue = round((float)value / 10 * 100.0) / 100.0;
         updateDevice(mac, "temp", roundedValue);
-        updateDevice(mac, "lastSeen", getTime());
 
         break;
       case 0x06: // 6  //only hum
@@ -116,7 +118,6 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
         value = strtol(charValue, 0, 16);
         roundedValue = round((float)value / 10 * 10.0) / 10.0;
         updateDevice(mac, "hum", roundedValue);
-        updateDevice(mac, "lastSeen", getTime());
 
         break;
       case 0x0A: // 10  //only battery
@@ -126,7 +127,6 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
         Serial.println(value / 10);
         roundedValue = round((float)value / 10 * 10.0) / 10.0;
         updateDevice(mac, "bat", roundedValue);
-        updateDevice(mac, "lastSeen", getTime());
 
         break;
       case 0x0D: // 13  //battery and hum

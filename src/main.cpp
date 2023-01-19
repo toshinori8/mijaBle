@@ -44,6 +44,9 @@ void setup() {
   // set routes of webserver
   routesSetup();
 
+  initWS();
+
+
   if (MDNS.begin(hostName)) {
     server.begin();
     Serial.println("ASYNC server started");

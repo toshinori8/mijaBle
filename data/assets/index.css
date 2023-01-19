@@ -111,7 +111,21 @@ body.dark span.sha_temp .temp-data
 } 
 
 
+.chart-container .chart-container-header
+{
+    color: rgba(49,69,106,0.6);
+    font-size: 12px;
+    font-weight: 500;
+    padding-top: 10px;
+}
+.chart-container .buttons-container
+{
 
+    position: absolute;
+    z-index: 999999;
+    right: 12px;
+    margin-top: -7%;
+}
 
 
 /** End Section Header Bar Style **/
