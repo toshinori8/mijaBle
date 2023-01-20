@@ -5,3 +5,4 @@
 .vscode/ipch
 svelte/node_modules
 .DS_Store
+svelte/node_modules/
