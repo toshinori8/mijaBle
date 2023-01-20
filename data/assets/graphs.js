@@ -64,65 +64,107 @@ const sensorDataWeek = {
 
 let genMonthData = function (month) {
 
-  let sensorDataMonth = {};
-// create JSON object with labels
-  sensorDataMonth.labels = [];
-  for (let i = 1; i <= 31; i++) {
-    sensorDataMonth.labels.push(i);
-
-  } 
-
-// create JSON object with datasets
-  sensorDataMonth.datasets = [];
-  let dataset = {};
-  dataset.label = 'Temperatura aktualna';
-  dataset.data = [];
-  for (let i = 1; i <= 31; i++) {
-    dataset.data.push(Math.floor(Math.random() * 10) + 20);
-  }
-  dataset.backgroundColor = 'rgba(255, 99, 132, 0.2)';
-  dataset.borderColor = 'rgba(255, 99, 132, 1)';
-  sensorDataMonth.datasets.push(dataset);
-
-  dataset = {};
-  dataset.label = 'Temperatura zadana';
-  dataset.data = [];
-  for (let i = 1; i <= 31; i++) {
-    dataset.data.push(21);
-  }
-  dataset.backgroundColor = 'rgba(54, 162, 235, 0.2)';
-  dataset.borderColor = 'rgba(54, 162, 235, 1)';
-  sensorDataMonth.datasets.push(dataset);
-
-
-
-
   const months = ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"];
-  
-  months.forEach((month) => {
-      sensorDataMonth[month] = {
-          "averageCurrentTemperature": getRandomTemperature(-12, 20),
-          "averageTargetTemperature": getRandomTemperature(-12, 20),
-          "averageOutsideTemperature": getRandomTemperature(-10, 30),
-          "averageHeatingState": getRandomHeatingState(),
-          "heatingOnTime": getRandomHeatingTime()
+
+
+  let daysInMonth = new Date(2020, month, 0).getDate();
+  let labels = [];
+  let data = [];
+  for (let i = 1; i <= daysInMonth; i++) {
+    labels.push(i);
+    data.push(Math.floor(Math.random() * 10) + 20);
+  }
+
+  return {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Temperatura aktualna',
+        data: data,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+      },
+      {
+        label: 'Temperatura zadana',
+        data: data,
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+      },
+      {
+        label: 'Temperatura na zewnątrz',
+        data: data,
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        borderColor: 'rgba(153, 102, 255, 1)',
+      },
+      {
+        label: 'Włączenie ogrzewania',
+        data: data,
+        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+        borderColor: 'rgba(255, 206, 86, 1)',
       }
-  });
-  
-  function getRandomTemperature(min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
+    ]
   }
+
+
+//   let sensorDataMonth = {};
+// // create JSON object with labels
+//   sensorDataMonth.labels = [];
+//   for (let i = 1; i <= 31; i++) {
+//     sensorDataMonth.labels.push(i);
+
+//   } 
+
+// // create JSON object with datasets
+//   sensorDataMonth.datasets = [];
+//   let dataset = {};
+//   dataset.label = 'Temperatura aktualna';
+//   dataset.data = [];
+//   for (let i = 1; i <= 31; i++) {
+//     dataset.data.push(Math.floor(Math.random() * 10) + 20);
+//   }
+//   dataset.backgroundColor = 'rgba(255, 99, 132, 0.2)';
+//   dataset.borderColor = 'rgba(255, 99, 132, 1)';
+//   sensorDataMonth.datasets.push(dataset);
+
+//   dataset = {};
+//   dataset.label = 'Temperatura zadana';
+//   dataset.data = [];
+//   for (let i = 1; i <= 31; i++) {
+//     dataset.data.push(21);
+//   }
+//   dataset.backgroundColor = 'rgba(54, 162, 235, 0.2)';
+//   dataset.borderColor = 'rgba(54, 162, 235, 1)';
+//   sensorDataMonth.datasets.push(dataset);
+
+
+
+
+
   
-  function getRandomHeatingState() {
-      return Math.random() < 0.5;
-  }
+//   months.forEach((month) => {
+//       sensorDataMonth[month] = {
+//           "averageCurrentTemperature": getRandomTemperature(-12, 20),
+//           "averageTargetTemperature": getRandomTemperature(-12, 20),
+//           "averageOutsideTemperature": getRandomTemperature(-10, 30),
+//           "averageHeatingState": getRandomHeatingState(),
+//           "heatingOnTime": getRandomHeatingTime()
+//       }
+//   });
   
-  function getRandomHeatingTime() {
-      let hours = Math.floor(Math.random() * 24);
-      let minutes = Math.floor(Math.random() * 60);
-      return `${hours}:${minutes}-${hours + 1}:${minutes}`;
-  }
-  console.log(sensorDataMonth);
+//   function getRandomTemperature(min, max) {
+//       return Math.floor(Math.random() * (max - min + 1)) + min;
+//   }
+  
+//   function getRandomHeatingState() {
+//       return Math.random() < 0.5;
+//   }
+  
+//   function getRandomHeatingTime() {
+//       let hours = Math.floor(Math.random() * 24);
+//       let minutes = Math.floor(Math.random() * 60);
+//       return `${hours}:${minutes}-${hours + 1}:${minutes}`;
+//   }
+//   console.log(sensorDataMonth);
   
   return sensorDataMonth;
   

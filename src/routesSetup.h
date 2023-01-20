@@ -66,12 +66,29 @@ return true;
 
 };
 
+void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len) {
+  if(type == WS_EVT_CONNECT){
+    // kod wykonywany po nawiązaniu połączenia
+    client->printf("Hello Client %u", client->id());
+    client->ping();
+  } else if(type == WS_EVT_DISCONNECT){
+    // kod wykonywany po rozłączeniu
+  } else if(type == WS_EVT_DATA){
+    // kod obsługujący dane przesłane przez klienta
+   // get WS data as JSON object
+
+
+  }
+}
+
+
 void initWS(){
 
    // kod inicjalizujący Websocket
   server.addHandler(&ws);
   ws.onEvent(onWsEvent);
-  
+
 
 
 }
+
