@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+    
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="assets/rooms.css" />
+
+    <title>Rooms</title>
+  </head>
+  <body>
+   
+
+    <!-- główny ekran-->
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-12">
+          <!-- <h1>Lista pokojów</h1> -->
+          <!-- <p class="lead"> -->
+            <!-- Przeciągnij w prawo lub w lewo, aby potwierdzić usunięcie pokoju lub -->
+            <!-- wejść w ustawienia -->
+          <!-- </p> -->
+          <button class="btn btn-primary float-right" id="addRoomBtn">
+            Dodaj pokój
+          </button>
+         
+          <button type="button" class="btn btn-light float-left"id="exitBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
+<path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z"></path>
+<path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z"></path>
+</svg>
+            Home
+          </button>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12">
+          <div class="list-group" id="roomList">
+            <!-- Here goes rooms from JSON-->
+            
+            
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+   
+
+
+    <!-- Modal z formularzem dodawania pokoju -->
+    <div class="modal modal-blur modal-fade" tabindex="-1" id="addRoomModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add room</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="roomNameInput">Nazwa pokoju</label>
+                <input type="text" class="form-control" id="roomNameInput" />
+              </div>
+              <div class="form-group">
+                <label for="add_RoomMacInput">Adres MAC</label>
+                <select class="form-control roomMacInput" id="add_RoomMacInput"></select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Anuluj
+            </button>
+            <button type="button" class="btn btn-primary" id="saveRoomBtn">
+              Zapisz
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <!-- Modal potwierdzenie usunięcia  -->
+    <div
+      class="confirm d-flex justify-content-between align-items-center bg-light p-2 modal-blur modal-fade"
+      style="display: none !important"
+    >
+      <span>Confirm removing room</span>
+      <div>
+        <button type="button" class="btn btn-secondary mr-2">Cancel</button>
+        <button type="button" class="btn btn-danger">Remove</button>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+<!-- Modal Edycja pokoju -->
+<div class="modal modal-blur modal-fade" id="editRoomModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Edit room</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form>
+                <div class="form-group">
+                  <label for="editRoomNameInput">Room name</label>
+                  <input type="text" class="form-control" id="editRoomNameInput" placeholder="Nazwa pokoju">
+                </div>
+                <div class="form-group">
+                  <label for="edit_RoomMacInput">MAC address</label>
+                  <!-- Lista z adresami MAC -->
+                  <select class="form-control roomMacInput" id="edit_RoomMacInput">
+                   
+                    <!-- Wypełnione z JSON -->
+
+
+                  </select>
+                </div>
+                <div class="form-group">
+                  <!-- Pole do edycji adresu MAC -->
+                  <input type="text" class="form-control" id="edit_RoomMacInputCustom" placeholder="aktualny MAC" disabled>
+                </div>
+                <!-- Przycisk zapisania zmian -->
+                <!-- <button type="submit" class="btn btn-primary">Zapisz</button> -->
+              </form>
+          
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="" id="delElement">Remove</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveRoomData">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!-- Error modal  -->
+  
+ <div id="alertModal" class="modal modal-blur modal-fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="alert-modal-title" class="modal-title"></h4>
+      </div>
+      <div id="alert-modal-body" class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+   
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+      integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="assets/rooms.js"></script>
+  </body>
+</html>

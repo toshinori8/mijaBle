@@ -1,0 +1,48 @@
+@font-face {
+    font-family: 'lcd';
+    src: url('aclock.eot'); /* IE9 Compat Modes */
+    src: url('aclock.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('aclock.woff2') format('woff2'), /* Super Modern Browsers */
+         url('aclock.woff') format('woff'), /* Pretty Modern Browsers */
+         url('aclock.ttf')  format('truetype'), /* Safari, Android, iOS */
+         url('aclock.svg#svgFontName') format('svg'); /* Legacy iOS */
+  }
+  
+  .modal-blur {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .modal-fade {
+    -webkit-animation: fadein 0.5s;
+    animation: fadein 0.5s;
+  }
+
+  @-webkit-keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  #roomList .text-muted {
+    float: left;
+    position: absolute;
+    right: 3%;
+    top: 7px;
+
+  }
+  #roomList .text-muted.room-name_small {
+    top : 30px;
+  }
