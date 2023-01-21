@@ -1,27 +1,27 @@
 <script>
     import { getContext } from 'svelte';
     // @ts-ignore
-    const { jsonData, updateJsonData } = getContext(jsonContext);
-    import { onMount } from "svelte";
-    import { setContext } from "svelte";
+    // const { jsonData, updateJsonData } = getContext(jsonStore);
     /**
      * @type {{ name: any; id: any; minTemp: any; temp: any[]; humidity: any[]; mac: any; }}
      */
      export let roomData;
     
 
-    
+
+
+
 
 </script>
 
-<div class="room">
+<!-- <div class="room">
     <h2>{roomData.name}</h2>
-    <!-- Generated HTML for the room goes here, using the roomData parameter -->
     <div class="chart">
-   
+        <canvas id="chart-{roomData.id}"></canvas>
     </div>
-</div>
+</div> -->
 
+ 
 <div class="room_element sha_temp_body">
     <div  id="encoder-{roomData.id}" class="enc">
       <input class="dial noselect" value="0" min-value="12" max-value="36">
@@ -63,4 +63,4 @@
     <div class="height_auto">
     </div>
     </div>
-</div>`;
+</div>
