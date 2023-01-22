@@ -1,16 +1,42 @@
 <script>
-    import { getContext } from 'svelte';
-    // @ts-ignore
-    // const { jsonData, updateJsonData } = getContext(jsonStore);
-    /**
-     * @type {{ name: any; id: any; minTemp: any; temp: any[]; humidity: any[]; mac: any; }}
-     */
-     export let roomData;
-    
+  // @ts-ignore
+  
+  const jq = window.$;
+  import { getContext, onMount } from "svelte";
+  // @ts-ignore
+  // const { jsonData, updateJsonData } = getContext(jsonStore);
+  /**
+   * @type {{ name: any; id: any; minTemp: any; temp: any[]; humidity: any[]; mac: any; }}
+   */
+  export let roomData;
 
 
+  onMount(() => {
+  
+    jq("#encoder-" + roomData.id)
+      .find(".dial")
+      .knob({
+        readOnly: false,
+        height: 220,
+        width: 220,
+        min: 12,
+        max: 36,
+        step: 0.1,
+        thickness: 0.15,
+        displayInput: false,
+        dynamicDraw: true,
+        fgColor: "#7ba8c9",
+        bgColor: "none",
+        change: function (/** @type {any} */ v) {
+          console.log(v);
+          roomData.minTemp = v;
+        },
+      });
 
+    });
+ 
 
+  
 
 </script>
 
@@ -21,46 +47,52 @@
     </div>
 </div> -->
 
- 
 <div class="room_element sha_temp_body">
-    <div  id="encoder-{roomData.id}" class="enc">
-      <input class="dial noselect" value="0" min-value="12" max-value="36">
-      <div class="backx"><div class="heat_value">{roomData.minTemp}</div></div>
-    </div>
-    <div class="row top-buffer ">
-        <div class="col-12">
-                  <span class="sha_temp white_back">
-                <span>
-                    <span class="temp-data">{roomData.temp[0]}<span class="small_01">.{roomData.temp[1]}</span> <sup>°C</sup></span>
-                        <hr class="line_">
-                    <span class="hum-data">{roomData.humidity[0]}<span class="small_01">.{roomData.humidity[1]}</span>
-                    <span class="sup">%</span>
-                    <span class="hidden_span mac_device">
-                        {roomData.mac}</span>
-            </span>
-            </span>
-            </span>
+  <div id="encoder-{roomData.id}" class="enc">
+    <input
+      class="dial noselect"
+      value="0"
+      data-min="12"
+      data-max="30"
+      data-step="0.1"
+    />
+    <div class="backx"><div class="heat_value">{roomData.minTemp}</div></div>
+  </div>
+  <div class="row top-buffer ">
+    <div class="col-12">
+      <span class="sha_temp white_back">
+        <span>
+          <span class="temp-data"
+            >{roomData.temp[0]}<span class="small_01">.{roomData.temp[1]}</span>
+            <sup>°C</sup></span
+          >
+          <hr class="line_" />
+          <span class="hum-data"
+            >{roomData.humidity[0]}<span class="small_01"
+              >.{roomData.humidity[1]}</span
+            >
+            <span class="sup">%</span>
+            <span class="hidden_span mac_device"> {roomData.mac}</span>
+          </span>
+        </span>
+      </span>
     </div>
     <div class="menu_room">
-        <h1 class="roomName">
-{roomData.name}
-</h1>
+      <h1 class="roomName">
+        {roomData.name}
+      </h1>
 
-<div class="chart-container" id="chart-container-{roomData.id}">
-<div class="chart-container-header">Wykresy ogrzewania</div>
-<canvas class="chart" id="chart-{roomData.id}"></canvas>
+      <div class="chart-container" id="chart-container-{roomData.id}">
+        <div class="chart-container-header">Wykresy ogrzewania</div>
+        <canvas class="chart" id="chart-{roomData.id}" />
 
-<div class="buttons-container">
-<button class="year-scale">Rok</button>
-<button class="month-scale">Miesiąc</button>
-<button class="day-scale">Dzień</button>
-</div>
-
-
-</div>
-
+        <div class="buttons-container">
+          <button class="year-scale">Rok</button>
+          <button class="month-scale">Miesiąc</button>
+          <button class="day-scale">Dzień</button>
+        </div>
+      </div>
     </div>
-    <div class="height_auto">
-    </div>
-    </div>
+    <div class="height_auto" />
+  </div>
 </div>
