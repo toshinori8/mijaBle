@@ -1,6 +1,6 @@
 <script>
   // @ts-nocheck
-
+  // let jq = window.$;
   // import Counter from './Counter.svelte';
   // import welcome from '$lib/images/svelte-welcome.webp';
   // import welcome_fallback from '$lib/images/svelte-welcome.png';
@@ -9,21 +9,16 @@
   import Room from "./room.svelte";
   import { writable } from "svelte/store";
   import Loader from "./loader.svelte";
+  import Layout from "./+layout.svelte";
 
-  // const jsonRooms = writable({});
-  // setContext("jsonRooms", jsonRooms);
-  // const jsonDevices = writable({});
-  // setContext("jsonDevices", jsonDevices);
 
-  // let jsonRoomsDataVisible = [];
+  
 
-  // let jsonRoomsData = [];
-  // let jsonDevicesData = [];
 
-  // let roomsWithoutDevices = 0;
-  let retryInterval = 300;
-  let timeLeft = 30; // seconds
+  let retryInterval = 3000;
+
   let errorMessage = "";
+
   let loadingDataState = false;
 
   let jsonRoomsData = [];
@@ -33,61 +28,46 @@
   let roomsWithoutDevices = 0;
   let retry = true;
 
-  onMount(async () => {
-    await fetchData();
-  });
 
-  // async function fetchData() {
-  //   loadingDataState=true;
+  export async function updateRoom(id) {   /// updates room on server
+   
 
-  //   try {
+    let room = jsonRoomsData.find((/** @type {{ id: any; }} */ room) => room.id == id);
 
-  //         const responseRooms = await fetch("http://cleargrasstermostat.local/JSONrooms");
-  //         if (!responseRooms.ok) {
-  //             throw new Error(responseRooms.statusText);
-  //         }
-  //         jsonRoomsData = await responseRooms.json();
-  //         jsonRooms.set(jsonRoomsData);
+    try {
+      const response = await fetch(
+        "http://cleargrasstermostat.local/updateRoom",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(room),
+        }
+      );
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      console.log(response);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
-  //         const responseDevices = await fetch("http://cleargrasstermostat.local/JSONdevices");
-  //         if (!responseDevices.ok) {
-  //             throw new Error(responseDevices.statusText);
-  //         }
-  //         console.log("responseDevices success");
-  //         jsonDevicesData = await responseDevices.json();
-  //         jsonDevices.set(jsonDevicesData);
-  //         loadingDataState=false;
-  //         jsonRoomsData.forEach((room) => {
-  //             jsonDevicesData.forEach((device) => {
-  //                 let tempArray = [];
-  //                 if (device.mac == room.mac) {
-  //                     if (device.temp != null) {
-  //                         room.temp = device.temp.split(".");
-  //                     } else {
-  //                         room.temp = [0, 0];
-  //                     }
-  //                     if (device.humidity != null) {
-  //                         room.humidity = device.humidity.split(".");
-  //                     } else {
-  //                         room.humidity = [0, 0];
-  //                     }
-  //                 } else {
-  //                     roomsWithoutDevices++;
-  //                 }
-  //             });
-  //         });
-  //     } catch (error) {
-  //       loadingDataState=true;
 
-  //         console.error(error);
-  //         console.log("error fetching data for romms and devices");
-  //         setTimeout(fetchData, 3000); // retry after 30 seconds
-  //     }
-  // }
+   function updateData() {  //// updates data on page & roomsData
+    document.getElementById("loading_dot").classList.remove("hidden");
 
+    fetchData().then(() => {
+      document.getElementById("loading_dot").classList.add("hidden");
+    });
+  }
+
+  
   async function fetchData() {
     while (retry) {
       try {
+        loadingDataState = true;
         const response = await fetch(
           "http://cleargrasstermostat.local/JSONrooms"
         );
@@ -97,41 +77,38 @@
         jsonRoomsData = await response.json();
         jsonRooms.set(jsonRoomsData);
 
-          const responseDevices = await fetch("http://cleargrasstermostat.local/JSONdevices");
-          if (!responseDevices.ok) {
-              throw new Error(responseDevices.statusText);
-          }
-          console.log("responseDevices success");
-          jsonDevicesData = await responseDevices.json();
-          jsonDevices.set(jsonDevicesData);
-          loadingDataState=false;
-          jsonRoomsData.forEach((room) => {
-              jsonDevicesData.forEach((device) => {
-                  let tempArray = [];
-                  if (device.mac == room.mac) {
-                      if (device.temp != null) {
-                          room.temp = device.temp.split(".");
-                      } else {
-                          room.temp = [0, 0];
-                      }
-                      if (device.humidity != null) {
-                          room.humidity = device.humidity.split(".");
-                      } else {
-                          room.humidity = [0, 0];
-                      }
-                  } else {
-                      roomsWithoutDevices++;
-                  }
-              });
+        const responseDevices = await fetch(
+          "http://cleargrasstermostat.local/JSONdevices"
+        );
+        if (!responseDevices.ok) {
+          throw new Error(responseDevices.statusText);
+        }
+        jsonDevicesData = await responseDevices.json();
+        jsonDevices.set(jsonDevicesData);
+        loadingDataState = false;
+        jsonRoomsData.forEach((room) => {
+          jsonDevicesData.forEach((device) => {
+            let tempArray = [];
+            if (device.mac == room.mac) {
+              if (device.temp != null) {
+                room.temp = device.temp.split(".");
+              } else {
+                room.temp = [0, 0];
+              }
+              // console.log(device);
+              if (device.hum != null) {
+                room.humidity = device.hum.split(".");
+              } else {
+                room.humidity = [0, 0];
+              }
+            } else {
+              roomsWithoutDevices++;
+            }
           });
-
-
-
+        });
         errorMessage = "Dane pobrane";
         retry = false;
       } catch (error) {
-        //console.log(error);
-        //console.log("responseRooms failed - regeneratig fetch");
         errorMessage =
           "An error occurred while fetching rooms data. Retrying in " +
           retryInterval / 100 +
@@ -141,8 +118,11 @@
         }, retryInterval);
       }
     }
-
   }
+
+  onMount(async () => {
+    await fetchData();
+  });
 </script>
 
 <svelte:head>
@@ -152,7 +132,7 @@
 
 <p>{errorMessage}</p>
 
-<button on:click={fetchData}>pobierz dane</button>
+<button on:click={updateData}>pobierz dane</button>
 
 <section>
   <!-- {#if roomsWithoutDevices > 0}
@@ -171,7 +151,8 @@
     {#each devices as device}
       {#each jsonRoomsData as room}
         {#if device.mac === room.mac}
-          <Room roomData={room} />
+          <p>room data ID - {room.id}</p>
+          <Room roomData={room}  updateRoom={updateRoom}/>
         {/if}
       {/each}
     {/each}

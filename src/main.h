@@ -21,6 +21,8 @@ int SLEEP_TIME = 10; // seconds
 File rooms;
 File devicesF;
 
+
+
 String floatToString(float f){
   String s = String(f,1);
   return s;
@@ -40,6 +42,38 @@ bool saveFile(String path, String data) {
   }
 };
 
+
+
+// ESP32 
+void listAllFilesInDir(const char * dirname,  Stream& out) {
+  out.printf("Listing directory: %s\r\n", dirname);
+
+
+  File root = LittleFS.open(dirname);
+  if (!root) {
+    out.println("- failed to open directory");
+    return;
+  }
+  if (!root.isDirectory()) {
+    out.println(" - not a directory");
+    return;
+  }
+
+  File file = root.openNextFile();
+  while (file) {
+    if (file.isDirectory()) {
+      out.print("  DIR : ");
+      out.println(file.name());
+      listAllFilesInDir(file.path(), Serial);
+    } else {
+      out.print("  FILE: ");
+      out.print(file.name());
+      out.print("\tSIZE: ");
+      out.println(file.size());
+    }
+    file = root.openNextFile();
+  }
+}
 
 String getTime(){
   struct tm timeinfo;

@@ -18,7 +18,7 @@ long interval =
 // Load from littlefs devices.json
 
 void loadDevices() {
-  devicesF = LittleFS.open("/assets/devices.json", "r");
+  devicesF = LittleFS.open("/devices.json", "r");
   if (!devicesF) {
     Serial.println("Failed to open devices.json for reading");
   } else {

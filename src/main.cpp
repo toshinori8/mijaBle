@@ -17,10 +17,8 @@
 //////////////////////////////////////////
 
 
-// void ble_scan_loop();
-// bool initTime();
-// bool routesSetup();
-// void sleepTrigger();
+bool littleFSinitialised = false;
+
 
 void setup() {
   
@@ -35,19 +33,7 @@ void setup() {
   }
 
   initTime();
-
-  if (!LittleFS.begin()) {
-    Serial.println("An Error has occurred while mounting LittleFS");
-    return;
-  }
-
-  // set routes of webserver
-  routesSetup();
-
-  initWS();
-
-
-  if (MDNS.begin(hostName)) {
+   if (MDNS.begin(hostName)) {
     server.begin();
     Serial.println("ASYNC server started");
     Serial.print("MDNS responder started at: http://");
@@ -55,14 +41,62 @@ void setup() {
     Serial.print(".local at: ");
     Serial.println(WiFi.localIP());
   }
+  otaStart(hostName);
+
+  if (!LittleFS.begin()) {
+    Serial.println("An Error has occurred while mounting LittleFS");
+    
+    Serial.println("Formatting LittleFS");
+    if (!LittleFS.format()) {
+        Serial.println("LittleFS format failed");
+    return;
+    }else{
+      Serial.println("LittleFS formatted: please upload files again & restart device");
+    }
+    return;
+  }else{
+
+
+  // set routes of webserver
+  // routesSetup();
+  // initWS();
+  // loadDevices();
+  // initBluetooth();
+
+    // read contetnt of /rooms.json
+    rooms = LittleFS.open("/robots.txt", "r");
+    if (!rooms) {
+      Serial.println("Failed to open file for reading");
+    } else {
+      Serial.println("File opened for reading");
+      while (rooms.available()) {
+
+       
+        Serial.write(rooms.read());
+      }
+
+ littleFSinitialised = true; 
+ // set routes of webserver
+  routesSetup();
+  // initWS();
   loadDevices();
   initBluetooth();
-  otaStart(hostName);
+
+
+
+      rooms.close();
+    }
+
+  }
+
+ 
+
 }
 
 void loop() {
   ArduinoOTA.handle();
+  if(!littleFSinitialised){return;} 
   ble_scan_loop();
   // timers.process();
-  sleepTrigger();
+  // sleepTrigger();
 }

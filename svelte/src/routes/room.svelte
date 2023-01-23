@@ -1,18 +1,24 @@
 <script>
   // @ts-ignore
-  
+
   const jq = window.$;
+
+  // import updateRoom from "./+page.svelte";
+
+/**
+     * @type {(arg0: any) => void}
+     */
+ export let updateRoom;
+
   import { getContext, onMount } from "svelte";
   // @ts-ignore
-  // const { jsonData, updateJsonData } = getContext(jsonStore);
   /**
    * @type {{ name: any; id: any; minTemp: any; temp: any[]; humidity: any[]; mac: any; }}
    */
   export let roomData;
-
+  // get writable
 
   onMount(() => {
-  
     jq("#encoder-" + roomData.id)
       .find(".dial")
       .knob({
@@ -28,24 +34,12 @@
         fgColor: "#7ba8c9",
         bgColor: "none",
         change: function (/** @type {any} */ v) {
-          console.log(v);
-          roomData.minTemp = v;
+          roomData.minTemp = v.toFixed(1).toString();
+          updateRoom(roomData.id);
         },
       });
-
-    });
- 
-
-  
-
+  });
 </script>
-
-<!-- <div class="room">
-    <h2>{roomData.name}</h2>
-    <div class="chart">
-        <canvas id="chart-{roomData.id}"></canvas>
-    </div>
-</div> -->
 
 <div class="room_element sha_temp_body">
   <div id="encoder-{roomData.id}" class="enc">

@@ -2,6 +2,8 @@
 	import Header from './Header.svelte';
 	import './styles.css';
 	import './clear.css';
+
+	
 </script>
 
 <div class="app">

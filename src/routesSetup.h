@@ -14,7 +14,7 @@ bool routesSetup(){
 
   server.on("/JSONrooms", HTTP_GET, [](AsyncWebServerRequest *request) {
     // send rooms.json as response
-    request->send(LittleFS, "/assets/rooms.json", "application/json");
+    request->send(LittleFS, "/rooms.json", "application/json");
   });
 
   server.on("/JSONdevices", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -25,6 +25,55 @@ bool routesSetup(){
     serializeJson(devices, jsonStr);
     request->send(200, "application/json", jsonStr);
   });
+
+ server.on("/updateRoom", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
+      [](AsyncWebServerRequest *request, uint8_t *data, size_t len,
+         size_t index, size_t total) {
+        for (size_t i = 0; i < len; i++) {
+          Serial.write(data[i]);
+        }
+        // Parse json from request to jsonData
+        String jsonStr = (char *)data;
+        DynamicJsonDocument jsonData(2024);
+        DeserializationError error = deserializeJson(jsonData, jsonStr);
+        
+        Serial.println("updateRoom::::::");
+        Serial.println(jsonStr);
+      
+        // if (error) {
+        //   request->send(400, "application/json", "{\"error\":\"invalidJson\"}");
+        //   return;
+        // }
+  
+        // // read rooms.json
+        // File rooms = LittleFS.open("/rooms.json", "r");
+        // DynamicJsonDocument roomsData(2024);
+        // DeserializationError error2 = deserializeJson(roomsData, rooms);
+        // if (error2) {
+        //   request->send(400, "application/json", "{\"error\":\"errorReadingJsonfromDisk\"}");
+        //   return;
+        // }
+        // // find room in rooms.json
+        // String roomName = jsonData["roomName"]; 
+        // JsonArray roomsArray = roomsData["rooms"].as<JsonArray>();
+
+
+        // // find room id in rooms.json
+        // int roomId = -1;
+
+
+
+        // update room  
+        // save rooms to file
+
+
+
+        // if (saveFile("/rooms.json", jsonStr)) {
+        //   request->send(200, "application/json","{\"response\":\"dataSaved\"}");
+        // } else {
+        //   request->send(500, "application/json", "{\"error\":\"saveFailed\"}");
+        // }
+         });
 
   server.on(
       "/saveRooms", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
@@ -42,7 +91,7 @@ bool routesSetup(){
           request->send(400, "application/json", "{\"error\":\"invalidJson\"}");
           return;
         }
-        if (saveFile("/assets/rooms.json", jsonStr)) {
+        if (saveFile("/rooms.json", jsonStr)) {
           request->send(200, "application/json",
                         "{\"response\":\"dataSaved\"}");
         } else {
@@ -59,8 +108,14 @@ bool routesSetup(){
   });
 
   server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
-  server.serveStatic("/assets/", LittleFS, "/assets/");
-  server.serveStatic("/assets/img/", LittleFS, "/assets/img/");
+  server.serveStatic("/_app/", LittleFS, "/_app/");
+  server.serveStatic("/_app/immutable/", LittleFS, "/_app/immutable/");
+  server.serveStatic("/_app/immutable/assets/", LittleFS, "/_app/immutable/assets/");
+  server.serveStatic("/_app/immutable/chunks/", LittleFS, "/_app/immutable/chunks/");
+  server.serveStatic("/_app/immutable/components/", LittleFS, "/_app/immutable/components/");
+  server.serveStatic("/_app/immutable/components/pages/", LittleFS, "/_app/immutable/components/pages/");
+  server.serveStatic("/_app/immutable/modules/", LittleFS, "/_app/immutable/modules/");
+
 
 return true;
 
