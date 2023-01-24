@@ -3,12 +3,12 @@
 
   const jq = window.$;
 
-  // import updateRoom from "./+page.svelte";
 
-/**
-     * @type {(arg0: any) => void}
+
+ /**
+     * @type {(arg0: any) => (arg0: any) => void}
      */
- export let updateRoom;
+  export let updateRoom;
 
   import { getContext, onMount } from "svelte";
   // @ts-ignore
@@ -33,9 +33,12 @@
         dynamicDraw: true,
         fgColor: "#7ba8c9",
         bgColor: "none",
-        change: function (/** @type {any} */ v) {
+        release: function (/** @type {any} */ v) {
           roomData.minTemp = v.toFixed(1).toString();
           updateRoom(roomData.id);
+        },
+        change: function (/** @type {any} */ v) {
+          roomData.minTemp = v.toFixed(1).toString();
         },
       });
   });

@@ -6,3 +6,4 @@
 svelte/node_modules
 .DS_Store
 svelte/node_modules/
+svelte/.svelte-kit/generated/
