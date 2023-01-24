@@ -14,7 +14,12 @@
 #include <time.h>
 #include <Timers.h>
 #include <routesSetup.h>
+#include <termostatRules.h>
 //////////////////////////////////////////
+
+// init timers 
+Timers<4> timers;
+
 
 
 bool littleFSinitialised = false;
@@ -25,11 +30,11 @@ void setup() {
   Serial.begin(115200);
 
   if (ESPConnect.begin(&server)) {
-    Serial.println("Connected to WiFi");
+    Serial.println(F("Connected to WiFi"));
     Serial.println("IPAddress: " + WiFi.localIP().toString());
 
   } else {
-    Serial.println("Failed to connect to WiFi");
+    Serial.println(F("Failed to connect to WiFi"));
   }
 
   initTime();
@@ -65,23 +70,23 @@ void setup() {
 
     server.begin();
     
-    Serial.println("ASYNC server started");
-    Serial.print("MDNS responder started at: http://");
+    Serial.println(F("ASYNC server started"));
+    Serial.print(F("MDNS responder started at: http://"));
     Serial.print(hostName);
-    Serial.print(".local at: ");
+    Serial.print(F(".local at: "));
     Serial.println(WiFi.localIP());
   }
   otaStart(hostName);
 
   if (!LittleFS.begin()) {
-    Serial.println("An Error has occurred while mounting LittleFS");
+    Serial.println(F("An Error has occurred while mounting LittleFS"));
     
-    Serial.println("Formatting LittleFS");
+    Serial.println(F("Formatting LittleFS"));
     if (!LittleFS.format()) {
-        Serial.println("LittleFS format failed");
+        Serial.println(F("LittleFS format failed"));
     return;
     }else{
-      Serial.println("LittleFS formatted: please upload files again & restart device");
+      Serial.println(F("LittleFS formatted: please upload files again & restart device"));
     }
     return;
   }else{
@@ -94,11 +99,11 @@ void setup() {
   // initBluetooth();
 
     // read contetnt of /rooms.json
-    rooms = LittleFS.open("/robots.txt", "r");
+    rooms = LittleFS.open("/rooms.json", "r");
     if (!rooms) {
-      Serial.println("Failed to open file for reading");
+      Serial.println(F("Failed to open file for reading"));
     } else {
-      Serial.println("File opened for reading");
+      Serial.println(F("File opened for reading"));
       while (rooms.available()) {
 
        
@@ -119,14 +124,21 @@ void setup() {
 
   }
 
+
+  // init timers 
+  timers.onTime = onTimer;
+  // timers.attach(0, 1000, function01);
  
 
 }
 
 void loop() {
+  
   ArduinoOTA.handle();
+  
+
   if(!littleFSinitialised){return;} 
   ble_scan_loop();
-  // timers.process();
+  timers.process();
   // sleepTrigger();
 }

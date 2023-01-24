@@ -10,7 +10,6 @@
   import { writable } from "svelte/store";
   import Loader from "./loader.svelte";
   import Layout from "./+layout.svelte";
-  import axios from "axios";
 
   let retryInterval = 3000;
   let errorMessage = "";
@@ -94,18 +93,17 @@
         loadingDataState = false;
         jsonRoomsData.forEach((room) => {
           jsonDevicesData.forEach((device) => {
-            let tempArray = [];
             if (device.mac == room.mac) {
               if (device.temp != null) {
-                room.temp = device.temp.split(".");
+                room.temp = device.temp;
               } else {
-                room.temp = [0, 0];
+                room.temp = 0;
               }
               // console.log(device);
               if (device.hum != null) {
-                room.humidity = device.hum.split(".");
+                room.humidity = device.hum;
               } else {
-                room.humidity = [0, 0];
+                room.humidity = 0;
               }
             } else {
               roomsWithoutDevices++;

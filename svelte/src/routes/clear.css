@@ -242,44 +242,42 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 .sha_temp_body .sha_temp > span
 {
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
-    position: relative;
-    display: inline-block;
-    top: 50%;
-    transform: translateY(-60%);
+     -ms-user-select: none;  
+     display: inline-block;
+     transform: translateY(-60%);
+     position: absolute;
+     top: 123px;
+     left: 22px;
+     -ms-user-select: none;
+     user-select: none;
+
+
 }
 
 
 
-
-.sha_temp_body .sha_temp > span{
-    position: relative;
-    top: 120px;
-    left: -10px;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
-    
-}
 .sha_temp_body .sha_temp > span > span.temp-data
 {
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
-    font-size: 80px;
-    font-weight:normal;
-    
+    user-select: none;
+    font-size: 78px;
+    font-weight: bolder;
+    margin-top: -65px;
+    margin-left: -78px;
+    position: absolute;
     display: block;
+    text-align: right;
+    width: 200px;
     color: rgba(49,69,106,1);
-     font-family: 'lcd', Fallback, sans-serif;
+    font-family: 'lcd', Fallback, sans-serif;
+    text-shadow: 3px 3px 3px rgb(120 120 100 / 16%);
 }
 .sha_temp_body .small_01{
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
-    font-size: 30px;
+    position: absolute;
+    margin-top: 30px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 44px;
     font-weight: bolder;
 }
 .sha_temp_body sup{
@@ -294,17 +292,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 .sha_temp_body .sha_temp > span > span.hum-data
 {
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     position: absolute;
     font-size: 45px;
-    font-weight:normal;
-    margin-top: -54px;
-    margin-left: 50px;
+    font-weight: normal;
+    margin-top: 14px;
+    margin-left: 62px;
     display: block;
     color: rgba(49,69,106,1);
-     font-family: 'lcd', Fallback, sans-serif;
+    font-family: 'lcd', Fallback, sans-serif;
+    text-shadow: 3px 3px 3px rgb(120 120 100 / 13%);
 }
 .sha_temp_body span.hum-data .small_01{
     -webkit-user-select: none; /* Safari */
@@ -314,27 +313,33 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     font-weight: bolder;
 }
 .sha_temp_body span.hum-data span.sup{
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     position: absolute;
-    top: 0px;
-    left: 70px;
-/*    left: 120px;*/
-     font-size: 20px;
+    top: 5px;
+    left: 56px;
+    /* left: 120px; */
+    font-size: 15px;
+    font-weight: 400;
+    text-shadow: none;
+    letter-spacing: 15px;
+    font-family: system-ui;
+    opacity: 0.9;
         
 }
 
 
 .sha_temp_body .sha_temp > span > span.temp-data sup
 {
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     position: absolute;
     font-size: 15px;
     font-weight: 500;
-    top: 24%;
+    top: 16%;
+    margin-left: 87px;
 }
 
 .sha_temp_body .sha_temp > span > span.temp-info
@@ -378,10 +383,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
 
 .sha_temp_body .sha_temp hr.line_{
     width: 160px;
-    position: relative;
-    top: -39px;
+    position: absolute;
+    top: 6px;
     left: 10px;
-   color: black;
+    color: black;
+    opacity: 0.25;
     
 }
 
@@ -677,8 +683,21 @@ margin-right: 10px;
     font-family: 'lcd', Fallback, sans-serif;
     color: rgba(48, 67, 104, 1.000);
     background: transparent;
+    text-shadow: 3px 3px 3px rgb(120 120 100 / 13%);
 
 }
+
+.enc .backx .heat_value:last-letter{
+    font-size: 20px;
+    font-weight: 500;
+    color: rgba(48, 67, 104, 1.000);
+    background: transparent;
+    text-shadow: 3px 3px 3px rgb(120 120 100 / 13%);
+    margin-left: 5px;
+    margin-top: 10px;
+    font-family: 'lcd', Fallback, sans-serif;
+}
+
 .room_element .mac_device{
 display:none;
 

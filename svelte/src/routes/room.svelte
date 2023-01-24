@@ -63,18 +63,40 @@
     <div class="col-12">
       <span class="sha_temp white_back">
         <span>
-          <span class="temp-data"
-            >{roomData.temp[0]}<span class="small_01">.{roomData.temp[1]}</span>
-            <sup>°C</sup></span
-          >
-          <hr class="line_" />
-          <span class="hum-data"
-            >{roomData.humidity[0]}<span class="small_01"
-              >.{roomData.humidity[1]}</span
-            >
-            <span class="sup">%</span>
-            <span class="hidden_span mac_device"> {roomData.mac}</span>
-          </span>
+
+            {#if roomData.temp.toString().includes('.')}
+              <span class="temp-data">{roomData.temp.toString().split('.')[0]}
+                <span class="small_01">.{roomData.temp.toString().split('.')[1]}</span>
+                <sup>°C</sup>
+              </span>
+            {:else}
+              <span class="temp-data">{roomData.temp}<sup>°C</sup></span>
+            {/if}
+
+            <!-- <span class="temp-data">
+            {roomData.temp.toString().split('.')[0]}<span class="small_01">.{roomData.temp.toString().split('.')[1]}</span>
+            <sup>°C</sup>
+            </span> -->
+          
+            <hr class="line_" />
+
+          {#if roomData.temp.toString().includes('.')}
+              <span class="hum-data">{roomData.humidity.toString().split('.')[0]}
+                <span class="sup">%</span></span>
+          {:else}
+
+              <span class="hum-data">{roomData.humidity.toString()}
+                <span class="sup">%</span></span>
+          {/if}
+
+
+
+            <!-- <span class="hum-data"> -->
+                <!-- {roomData.humidity} -->
+                
+                <!-- <span class="sup">%</span> -->
+                <!-- <span class="hidden_span mac_device"> {roomData.mac}</span> -->
+          <!-- </span> -->
         </span>
       </span>
     </div>

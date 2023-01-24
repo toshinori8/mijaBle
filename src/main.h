@@ -32,11 +32,11 @@ String floatToString(float f){
 bool saveFile(String path, String data) {
   File file = LittleFS.open(path, "w");
   if (!file) {
-    Serial.println("Failed to open file for writing");
+    Serial.println(F("Failed to open file for writing"));
     return false;
   } else {
     file.print(data);
-    Serial.print("File saved: ");
+    Serial.print(F("File saved: "));
     file.close();
     return true;
   }
@@ -79,7 +79,7 @@ String getTime(){
   struct tm timeinfo;
   if(!getLocalTime(&timeinfo))
   {
-    Serial.println("Failed to obtain time");
+    Serial.println(F("Failed to obtain time"));
     return "";
   }
   char timeStringBuff[50]; //50 chars should be enough

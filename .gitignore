@@ -8,3 +8,7 @@ svelte/node_modules
 svelte/node_modules/
 svelte/.svelte-kit/generated/
 svelte/.svelte-kit/output/
+svelte/src/routes/.DS_Store
+svelte/.DS_Store
+data/.DS_Store
+svelte/src/routes/.DS_Store

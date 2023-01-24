@@ -1,13 +1,8 @@
-
-// #include <LittleFS.h>
-// #include <ArduinoJson.h>
-
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
 bool routesSetup()
 {
-
 
   // on not found send index.html
   // server.onNotFound([](AsyncWebServerRequest *request)
@@ -24,64 +19,104 @@ bool routesSetup()
 
   server.on("/data/JSONrooms", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    if (request->method() == HTTP_OPTIONS) {
-      request->send(200);
-    }
+    // if (request->method() == HTTP_OPTIONS) {
+    //   request->send(200);
+    // }
       // send rooms.json as response
-    request->send(LittleFS, "/rooms.json", "application/json"); });
+    request->send(LittleFS, "/rooms.json", "application/json"); 
+    Serial.println(F("Sending rooms data"));
+  });
 
   server.on("/data/JSONdevices", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     // send actual devices object as Json in response
 
-    Serial.println("Sending devices data");
+    Serial.println(F("Sending devices data"));
     String jsonStr;
     serializeJson(devices, jsonStr);
-    request->send(200, "application/json", jsonStr); 
-  });
+    request->send(200, "application/json", jsonStr);
+    jsonStr.clear();
 
-  
-  server.on("/data/updateRoom", HTTP_OPTIONS, [](AsyncWebServerRequest *request) {
+     });
 
-    request->send(204);
-      Serial.println("updateRoom::::::");
-      
-  });
-  
+  server.on("/data/updateRoom", HTTP_OPTIONS, [](AsyncWebServerRequest *request)
+            {
+              request->send(204);
               
-          
+            });
 
-
-
-     server.on("/data/updateRoom", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
+  server.on(
+      "/data/updateRoom", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
       [](AsyncWebServerRequest *request, uint8_t *data, size_t len,
          size_t index, size_t total)
       {
-              Serial.println("updateRoom::::::");
+        // for (size_t i = 0; i < len; i++)
+        // {
+        //  // Serial.write(data[i]);
+        // }
 
-        for (size_t i = 0; i < len; i++)
-        {
-          Serial.write(data[i]);
-        }
-
-
-       
         if (!data)
         {
-          request->send(400, "application/json", "{\"error\":\"invalidJson\"}");
+          request->send(400, "application/json", "{\"error\":\"invalidData\"}");
+          Serial.print(F("[  invalidData  ]"));
           return;
         }
         if (data)
         {
-          request->send(200, "application/json",
-                        "{\"response\":\"dataSaved\"}");
+          // parse data from request
+          String jsonStr = (char *)data;
+            
+          DynamicJsonDocument jsonData(1024);
+          DeserializationError error = deserializeJson(jsonData, jsonStr);
+          if (error)
+          {
+            request->send(400, "application/json", "{\"error\":\"invalidJson\"}");
+            Serial.print(F("[  invalidJson  ]"));
+            return;
+          }
+          String id = jsonData["id"];
+
+          File roomsa = LittleFS.open("/rooms.json", "r");
+          String roomsString = roomsa.readString(); // read file to string
+          roomsa.close();
+        
+          DynamicJsonDocument roomsData(1024);
+          DeserializationError error2 = deserializeJson(roomsData, roomsString);
+          if (error2)
+          {
+            request->send(400, "application/json", "{\"error\":\"invalidJsonOnDevice\"}");
+            return;
+          }else{
+              //Find room with ID in rommsData  
+              for (int i = 0; i < roomsData.size(); i++)
+              {
+                
+                
+                if (roomsData[i]["id"] == id)
+                {
+
+                  Serial.println("Updating room: [ " + id+" ]");
+                  roomsData[i]["name"] = jsonData["name"];       
+                  roomsData[i]["minTemp"] = jsonData["minTemp"]; 
+                  roomsData[i]["mac"] = jsonData["mac"];          
+                  
+                  // save updated rooms file
+                  String jsonStr;
+                  serializeJson(roomsData, jsonStr);
+                  saveFile("/rooms.json", jsonStr);
+                  request->send(200, "application/json","{\"response\":\"dataSaved\"}");
+                }
+              }
+
+          }
+          
+        request->send(200, "application/json","{\"response\":\"dataNotSaved\"}");  
         }
         else
         {
           request->send(500, "application/json", "{\"error\":\"saveFailed\"}");
         }
       });
-
 
   server.on(
       "/data/saveRooms", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
@@ -121,7 +156,6 @@ bool routesSetup()
 
   // server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
   server.serveStatic("/", LittleFS, "/");
-
 
   server.serveStatic("/_app/", LittleFS, "/_app/");
   server.serveStatic("/_app/immutable/", LittleFS, "/_app/immutable/");
