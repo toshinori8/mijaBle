@@ -1,7 +1,7 @@
 
    @font-face {
     font-family: "lcd";
-    src: url("aclock.ttf") format("truetype"); /* Safari, Android, iOS */
+    src: url("./aclock.ttf") format("truetype"); /* Safari, Android, iOS */
   }
 
 
@@ -18,13 +18,7 @@ body
 
 
 
-body.dark{
 
-    background-color: black !important;
-     background-size: cover;
-    background-image: url(https://image.freepik.com/free-photo/grey-gradient-room-background-empty-room-light-interior-your-creative-show-display-your-products_9635-3304.jpg);
-
-}
 
 
 body.dark .sha_temp_body .sha_temp {

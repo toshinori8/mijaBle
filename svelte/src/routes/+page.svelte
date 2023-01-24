@@ -5,20 +5,17 @@
   // import welcome from '$lib/images/svelte-welcome.webp';
   // import welcome_fallback from '$lib/images/svelte-welcome.png';
   import { onMount } from "svelte";
-  import { setContext } from "svelte";
+  // import { setContext } from "svelte";
   import Room from "./room.svelte";
   import { writable } from "svelte/store";
   import Loader from "./loader.svelte";
   import Layout from "./+layout.svelte";
+  import axios from "axios";
 
-
-  
 
 
   let retryInterval = 3000;
-
   let errorMessage = "";
-
   let loadingDataState = false;
 
   let jsonRoomsData = [];
@@ -35,16 +32,38 @@
     let room = jsonRoomsData.find((/** @type {{ id: any; }} */ room) => room.id == id);
 
     try {
-      const response = await fetch(
-        "http://cleargrasstermostat.local/updateRoom",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(room),
-        }
-      );
+     
+      var xmlhttp = new XMLHttpRequest(); // new HttpRequest instance
+      
+      xmlhttp.open("POST", "http://cleargrasstermostat.local/data/updateRoom");
+      xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      let data = xmlhttp.send(JSON.stringify(room));
+     
+      // const response = await axios.post(
+      //   "http://cleargrasstermostat.local/data/updateRoom",
+      //   {
+      //     params: {
+      //       id: room.id,
+      //       name: room.name,
+      //       minTemp: room.minTemp,
+      //       mac: room.mac,
+      //     },
+      //   }
+      // );
+
+
+      // const response = await fetch(
+      //   "http://cleargrasstermostat.local/data/updateRoom",
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify(room),
+      //   }
+      // );
+      
+      
       if (!response.ok) {
         throw new Error(response.statusText);
       }
@@ -52,9 +71,9 @@
     } catch (e) {
       console.log(e);
     }
-  }
+    }
 
-
+   
    function updateData() {  //// updates data on page & roomsData
     document.getElementById("loading_dot").classList.remove("hidden");
 
@@ -62,15 +81,22 @@
       document.getElementById("loading_dot").classList.add("hidden");
     });
   }
+   
 
-  
   async function fetchData() {
+    console.log("fetching data");
     while (retry) {
       try {
         loadingDataState = true;
+        // const response = await axios.get({
+        //   url: "http://cleargrasstermostat.local/JSONrooms",
+        // });
+        
         const response = await fetch(
-          "http://cleargrasstermostat.local/JSONrooms"
+          "http://cleargrasstermostat.local/data/JSONrooms"
         );
+        
+        
         if (!response.ok) {
           throw new Error(response.statusText);
         }
@@ -78,7 +104,7 @@
         jsonRooms.set(jsonRoomsData);
 
         const responseDevices = await fetch(
-          "http://cleargrasstermostat.local/JSONdevices"
+          "http://cleargrasstermostat.local/data/JSONdevices"
         );
         if (!responseDevices.ok) {
           throw new Error(responseDevices.statusText);
@@ -151,11 +177,10 @@
     {#each devices as device}
       {#each jsonRoomsData as room}
         {#if device.mac === room.mac}
-          <p>room data ID - {room.id}</p>
           <Room roomData={room}  updateRoom={updateRoom}/>
         {/if}
       {/each}
-    {/each}
+  {/each}
   {/await}
 </section>
 

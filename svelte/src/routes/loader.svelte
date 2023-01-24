@@ -30,6 +30,7 @@
       ".ellipses",
       3.5,
       { x: -travel },
+      // @ts-ignore
       { x: travel, ease: Linear.easeNone }
     )
       .staggerFromTo(
@@ -39,6 +40,7 @@
         {
           x: 350,
           autoAlpha: 1,
+          // @ts-ignore
           ease: SlowMo.ease.config(0.25, 1.0, false),
           transformOrigin: "50% 50%",
         },
@@ -49,6 +51,7 @@
         ".ellipse",
         1.75,
         { scale: initialScale },
+         // @ts-ignore
         { scale: finalScale, ease: SlowMo.ease.config(0, 1, true), yoyo: true },
         offset,
         "-=3.0"

@@ -34,7 +34,37 @@ void setup() {
 
   initTime();
    if (MDNS.begin(hostName)) {
+
+    // CORS VALIDATION DISABLE
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
+  // DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "content-type");
+  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "*");
+
+
+  // DefaultHeaders::Instance().addHeader("Access-Control-Expose-Headers", "content-type");
+  // DefaultHeaders::Instance().addHeader("Access-Control-Max-Age", "86400");
+  // DefaultHeaders::Instance().addHeader("Access-Control-Allow-Credentials", "true");
+  // DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept");
+  // DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
+  // DefaultHeaders::Instance().addHeader("Access-Control-Request-Headers", "content-type");
+  // DefaultHeaders::Instance().addHeader("Access-Control-Request-Method", "POST");
+  // DefaultHeaders::Instance().addHeader("Allow", "GET, POST, HEAD, OPTIONS");
+ 
+  
+  // CORS VALIDATION ENABLE
+
+
+
+
+#ifdef CORS_DEBUG
+    DefaultHeaders::Instance().addHeader(F("Access-Control-Allow-Origin"), F("*"));
+    DefaultHeaders::Instance().addHeader(F("Access-Control-Allow-Headers"), F("content-type"));
+#endif
+
+
     server.begin();
+    
     Serial.println("ASYNC server started");
     Serial.print("MDNS responder started at: http://");
     Serial.print(hostName);
@@ -58,7 +88,7 @@ void setup() {
 
 
   // set routes of webserver
-  // routesSetup();
+  routesSetup();
   // initWS();
   // loadDevices();
   // initBluetooth();
