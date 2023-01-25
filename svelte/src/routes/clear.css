@@ -299,8 +299,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     font-size: 45px;
     font-weight: normal;
     margin-top: 14px;
-    margin-left: 62px;
+    margin-left: 65px;
     display: block;
+    width: 55px;
+    text-align: right;
     color: rgba(49,69,106,1);
     font-family: 'lcd', Fallback, sans-serif;
     text-shadow: 3px 3px 3px rgb(120 120 100 / 13%);

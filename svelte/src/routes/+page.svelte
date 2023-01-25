@@ -96,6 +96,7 @@
             if (device.mac == room.mac) {
               if (device.temp != null) {
                 room.temp = device.temp;
+                console.log(device.temp);
               } else {
                 room.temp = 0;
               }
@@ -111,6 +112,7 @@
           });
         });
         errorMessage = "Dane pobrane";
+
         retry = false;
       } catch (error) {
         errorMessage =
@@ -150,7 +152,7 @@
   {#if loadingDataState === true}
     <Loader />
   {/if}
-
+  <Loader />
   {#await jsonDevicesData then devices}
     {#each devices as device}
       {#each jsonRoomsData as room}

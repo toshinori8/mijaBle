@@ -1,19 +1,19 @@
 <script>
   import { onMount } from "svelte";
 
-  var alphaEffect = false;
+  var alphaEffect = true;
   var alphaStart = 1;
-  var scaleFactor = 2.8; // by volume with 8 circs at 16px rad
+  var scaleFactor = 4.8; // by volume with 8 circs at 16px rad
   var initialScale = 0.6;
   var finalScale = initialScale * scaleFactor;
-  var offset = 1 / 10;
-  var travel = 50;
+  var offset = 1 / 20;
+  var travel = 150;
 
   // tMax = window.TweenMax;
 
   onMount(() => {
     if (alphaEffect) {
-      alphaStart = 0;
+      alphaStart = 1;
     }
 
     // @ts-ignore

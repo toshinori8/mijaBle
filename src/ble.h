@@ -13,7 +13,7 @@ long interval =
         // 10 seconds so 10 seconds stay free for wifi connection then
 // Load from littlefs devices.json
 
-void loadDevices() {
+void loadDevicesToMemory() {
   devicesF = LittleFS.open("/devices.json", "r");
   if (!devicesF) {
     Serial.println(F("Failed to open devices.json for reading"));
@@ -22,6 +22,24 @@ void loadDevices() {
 
     Serial.println(F("Devices loaded"));
     serializeJson(devices, Serial);
+    
+
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+    }
+    devicesF.close();
+  }
+}
+void loadRoomsToMemory() {
+  roomsF = LittleFS.open("/rooms.json", "r");
+  if (!roomsF) {
+    Serial.println(F("Failed to open rooms.json for reading"));
+  } else {
+    DeserializationError error = deserializeJson(rooms, roomsF);
+
+    Serial.println(F("Rooms loaded"));
+    serializeJson(rooms, Serial);
     
 
     if (error) {
