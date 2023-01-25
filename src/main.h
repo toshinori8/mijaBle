@@ -5,7 +5,8 @@
 
 DynamicJsonDocument devices(2048); // Json document for storing devices data 
 
-char* hostName = "CleargrassTermostat";
+// char* hostName = "CleargrassTermostat";
+char hostName[] = "CleargrassTermostat";
 
 
 
