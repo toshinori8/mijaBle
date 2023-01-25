@@ -80,7 +80,7 @@
           
             <hr class="line_" />
 
-          {#if roomData.temp.toString().includes('.')}
+          {#if roomData.humidity.toString().includes('.')}
               <span class="hum-data">{roomData.humidity.toString().split('.')[0]}
                 <span class="sup">%</span></span>
           {:else}

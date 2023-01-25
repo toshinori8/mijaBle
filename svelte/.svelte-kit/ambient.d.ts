@@ -26,9 +26,11 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const NVM_INC: string;
 	export const TERM_PROGRAM: string;
 	export const NODE: string;
 	export const INIT_CWD: string;
+	export const NVM_CD_FLAGS: string;
 	export const SHELL: string;
 	export const TERM: string;
 	export const npm_config_metrics_registry: string;
@@ -43,14 +45,15 @@ declare module '$env/static/private' {
 	export const LC_ALL: string;
 	export const NO_PROXY: string;
 	export const USER: string;
+	export const NVM_DIR: string;
 	export const COMMAND_MODE: string;
 	export const npm_config_globalconfig: string;
 	export const SSH_AUTH_SOCK: string;
 	export const __CF_USER_TEXT_ENCODING: string;
 	export const npm_execpath: string;
 	export const PLATFORMIO_PATH: string;
-	export const VSCODE_AMD_ENTRYPOINT: string;
 	export const ELECTRON_RUN_AS_NODE: string;
+	export const VSCODE_AMD_ENTRYPOINT: string;
 	export const PATH: string;
 	export const npm_package_json: string;
 	export const _: string;
@@ -83,6 +86,7 @@ declare module '$env/static/private' {
 	export const VSCODE_CODE_CACHE_PATH: string;
 	export const VSCODE_IPC_HOOK: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
+	export const NVM_BIN: string;
 	export const npm_config_user_agent: string;
 	export const VSCODE_PID: string;
 	export const GIT_ASKPASS: string;
@@ -123,9 +127,11 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		NVM_INC: string;
 		TERM_PROGRAM: string;
 		NODE: string;
 		INIT_CWD: string;
+		NVM_CD_FLAGS: string;
 		SHELL: string;
 		TERM: string;
 		npm_config_metrics_registry: string;
@@ -140,14 +146,15 @@ declare module '$env/dynamic/private' {
 		LC_ALL: string;
 		NO_PROXY: string;
 		USER: string;
+		NVM_DIR: string;
 		COMMAND_MODE: string;
 		npm_config_globalconfig: string;
 		SSH_AUTH_SOCK: string;
 		__CF_USER_TEXT_ENCODING: string;
 		npm_execpath: string;
 		PLATFORMIO_PATH: string;
-		VSCODE_AMD_ENTRYPOINT: string;
 		ELECTRON_RUN_AS_NODE: string;
+		VSCODE_AMD_ENTRYPOINT: string;
 		PATH: string;
 		npm_package_json: string;
 		_: string;
@@ -180,6 +187,7 @@ declare module '$env/dynamic/private' {
 		VSCODE_CODE_CACHE_PATH: string;
 		VSCODE_IPC_HOOK: string;
 		VSCODE_GIT_IPC_HANDLE: string;
+		NVM_BIN: string;
 		npm_config_user_agent: string;
 		VSCODE_PID: string;
 		GIT_ASKPASS: string;

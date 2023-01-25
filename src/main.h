@@ -4,6 +4,8 @@
 #include <ArduinoJson.h>
 
 DynamicJsonDocument devices(2048); // Json document for storing devices data 
+DynamicJsonDocument rooms(2048); // Json document for storing rooms data
+
 
 char* hostName = "CleargrassTermostat";
 
@@ -20,7 +22,7 @@ int SLEEP_TIME = 10; // seconds
 // define files
 File rooms;
 File devicesF;
-
+File roomsF;
 
 
 String floatToString(float f){
