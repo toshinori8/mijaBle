@@ -15,8 +15,14 @@
   /**
    * @type {{ name: any; id: any; minTemp: any; temp: any[]; humidity: any[]; mac: any; }}
    */
-  export let roomData;
+  export let roomID;
+  let roomData = getContext("jsonRooms").find(
+    (/** @type {{ id: any; }} */ room) => room.id == roomID
+  );
+  let jsonRoomsData = getContext("jsonRooms");
   // get writable
+
+  
 
   onMount(() => {
     jq("#encoder-" + roomData.id)
@@ -46,7 +52,7 @@
 
 
 
-
+<!-- <p>{} </p> -->
 
 <div class="room_element sha_temp_body">
   <div id="encoder-{roomData.id}" class="enc">

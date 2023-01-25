@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <LittleFS.h>
 #include <ArduinoJson.h>
+#include <termostatRules.h>
 
 DynamicJsonDocument devices(2048); // Json document for storing devices data 
 DynamicJsonDocument rooms(2048); // Json document for storing rooms data
@@ -20,8 +21,10 @@ int SLEEP_TIME = 10; // seconds
 
 #define BLUETOOTH_SCAN_TIME 10 // seconds
 
+Thermostat termostat;
+
 // define files
-File rooms;
+
 File devicesF;
 File roomsF;
 
@@ -89,7 +92,7 @@ String getTime(){
   strftime(timeStringBuff, sizeof(timeStringBuff), "%d.%m.%Y %H:%M:%S", &timeinfo);
   String time(timeStringBuff);
   return time;
-  Serial.println('time: ' + time);
+  // Serial.println('time: ' + time);
   
 }
 

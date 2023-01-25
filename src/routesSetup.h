@@ -45,9 +45,7 @@ bool routesSetup()
               
             });
 
-  server.on(
-      "/data/updateRoom", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
-      [](AsyncWebServerRequest *request, uint8_t *data, size_t len,
+  server.on("/data/updateRoom", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len,
          size_t index, size_t total)
       {
         // for (size_t i = 0; i < len; i++)
@@ -76,9 +74,9 @@ bool routesSetup()
           }
           String id = jsonData["id"];
 
-          File roomsa = LittleFS.open("/rooms.json", "r");
-          String roomsString = roomsa.readString(); // read file to string
-          roomsa.close();
+          roomsF = LittleFS.open("/rooms.json", "r");
+          String roomsString = roomsF.readString(); // read file to string
+          roomsF.close();
         
           DynamicJsonDocument roomsData(1024);
           DeserializationError error2 = deserializeJson(roomsData, roomsString);
@@ -118,9 +116,7 @@ bool routesSetup()
         }
       });
 
-  server.on(
-      "/data/saveRooms", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,
-      [](AsyncWebServerRequest *request, uint8_t *data, size_t len,
+  server.on("/data/saveRooms", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,[](AsyncWebServerRequest *request, uint8_t *data, size_t len,
          size_t index, size_t total)
       {
         for (size_t i = 0; i < len; i++)
@@ -148,11 +144,30 @@ bool routesSetup()
         }
       });
 
-  server.on("/setup", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(LittleFS, "/rooms.html", "text/html"); });
+  server.on("/setup", HTTP_GET, [](AsyncWebServerRequest *request){ request->send(LittleFS, "/rooms.html", "text/html"); });
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(LittleFS, "/index.html", "text/html"); });
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){ request->send(LittleFS, "/index.html", "text/html"); });
+
+
+  server.on("/data/click", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+
+              termostat.processData();
+              
+              request->send(200, "text/plain", "Hello, GET: " + request->url());
+            });
+
+
+  server.on("/aclock.ttf", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+              request->send(LittleFS, "/aclock.ttf", "application/octet-stream");
+
+            });
+  server.on("/aclock.woff", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+              request->send(LittleFS, "/aclock.woff", "application/octet-stream");
+
+            });
 
   // server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
   server.serveStatic("/", LittleFS, "/");

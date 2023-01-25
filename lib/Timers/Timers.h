@@ -40,6 +40,7 @@ public:
     _elements[element].func = func;
     _elements[element].interval = interval;
     _elements[element].begin_time = millis();
+
   }
 
   void setInterval(byte element, unsigned long interval)
@@ -69,6 +70,7 @@ public:
         onTime(i);
         _elements[i].func();
         _elements[i].begin_time = actual_time;
+        
       }
     }
   }

@@ -2,10 +2,8 @@
   // @ts-nocheck
   // let jq = window.$;
   // import Counter from './Counter.svelte';
-  // import welcome from '$lib/images/svelte-welcome.webp';
-  // import welcome_fallback from '$lib/images/svelte-welcome.png';
   import { onMount } from "svelte";
-  // import { setContext } from "svelte";
+  import { setContext } from "svelte";
   import Room from "./room.svelte";
   import { writable } from "svelte/store";
   import Loader from "./loader.svelte";
@@ -16,14 +14,16 @@
   let loadingDataState = false;
 
   let jsonRoomsData = [];
-  const jsonRooms = writable(jsonRoomsData);
+  let jsonRooms = writable(jsonDevicesData);
+  setContext(jsonRooms,jsonRoomsData );
   let jsonDevicesData = [];
-  const jsonDevices = writable(jsonDevicesData);
+  let jsonDevices = writable();
+ 
   let roomsWithoutDevices = 0;
   let retry = true;
 
-
-
+  let variableContext = 200;
+  setContext("variableContext", variableContext); 
 
 
   export async function updateRoom(id) {
@@ -63,6 +63,24 @@
 
   }
 
+  function changeData(e) {
+
+    
+    //// updates data on page & roomsData
+      document.getElementById("loading_dot").classList.toggle("hidden");
+
+      // change room data in jsonRoomsData
+        jsonRoomsData.forEach((room) => {
+          room.humidity = 99;
+
+        });
+
+
+        // document.getElementById("loading_dot").classList.add("hidden");
+     
+
+  }
+
   async function fetchData() {
     console.log("fetching data");
     while (retry) {
@@ -81,7 +99,7 @@
         }
         jsonRoomsData = await response.json();
         jsonRooms.set(jsonRoomsData);
-
+        
         const responseDevices = await fetch(
           "http://cleargrasstermostat.local/data/JSONdevices"
         );
@@ -128,6 +146,7 @@
 
   onMount(async () => {
     await fetchData();
+    
   });
 </script>
 
@@ -139,7 +158,7 @@
 <p>{errorMessage}</p>
 
 <button on:click={updateData}>pobierz dane</button>
-
+<button on:click={(e) => changeData(e)}>zmień dane2</button>
 <section>
   <!-- {#if roomsWithoutDevices > 0}
     <div class="errorMessage">{errorMessage}</div>
@@ -150,14 +169,14 @@
   {/if} -->
 
   {#if loadingDataState === true}
-    <Loader />
-  {/if}
   <Loader />
+  {/if}
+
   {#await jsonDevicesData then devices}
     {#each devices as device}
       {#each jsonRoomsData as room}
         {#if device.mac === room.mac}
-          <Room roomData={room} {updateRoom} />
+          <Room roomID={room.id}  {updateRoom}/>
         {/if}
       {/each}
     {/each}
