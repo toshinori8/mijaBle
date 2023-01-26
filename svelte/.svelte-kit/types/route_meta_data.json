@@ -3,5 +3,8 @@
 		"src/routes/+page.js",
 		"src/routes/+layout.js",
 		"src/routes/+layout.js"
+	],
+	"/abo": [
+		"src/routes/+layout.js"
 	]
 }

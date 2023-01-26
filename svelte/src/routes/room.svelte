@@ -9,20 +9,23 @@
      * @type {(arg0: any) => (arg0: any) => void}
      */
   export let updateRoom;
+  export let roomID;
 
   import { getContext, onMount } from "svelte";
   // @ts-ignore
-  /**
-   * @type {{ name: any; id: any; minTemp: any; temp: any[]; humidity: any[]; mac: any; }}
-   */
-  export let roomID;
-  let roomData = getContext("jsonRooms").find(
-    (/** @type {{ id: any; }} */ room) => room.id == roomID
-  );
+  // /**
+  //  * @type {{ name: any; id: any; minTemp: any; temp: any[]; humidity: any[]; mac: any; }}
+  //  */
+  // export let roomID;
+  // let roomData = getContext("jsonRooms").find(
+  //   (/** @type {{ id: any; }} */ room) => room.id == roomID
+  // );
   let jsonRoomsData = getContext("jsonRooms");
+  
+
   // get writable
 
-  
+  let roomData = jsonRoomsData[roomID];
 
   onMount(() => {
     jq("#encoder-" + roomData.id)
@@ -54,6 +57,7 @@
 
 <!-- <p>{} </p> -->
 
+<P>element</P>
 <div class="room_element sha_temp_body">
   <div id="encoder-{roomData.id}" class="enc">
     <input

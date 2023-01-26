@@ -13,17 +13,25 @@
   let errorMessage = "";
   let loadingDataState = false;
 
-  let jsonRoomsData = [];
-  let jsonRooms = writable(jsonDevicesData);
-  setContext(jsonRooms,jsonRoomsData );
-  let jsonDevicesData = [];
-  let jsonDevices = writable();
+  // let jsonRoomsData = [];
+  // let jsonRooms = writable();
+  // setContext(jsonRooms,jsonRooms);
+   let jsonDevicesData = [];
+  // let jsonDevices = writable();
  
+  let jsonRooms = [];
+	let jsonRoomsStore = writable(jsonRooms)
+	
+	$: jsonRoomsStore.set(jsonRooms)
+	
+	setContext('jsonRooms', jsonRoomsStore)
+
+
+
   let roomsWithoutDevices = 0;
   let retry = true;
 
-  let variableContext = 200;
-  setContext("variableContext", variableContext); 
+  
 
 
   export async function updateRoom(id) {
@@ -53,43 +61,39 @@
     }
   }
 
-  function updateData() {
-    //// updates data on page & roomsData
-      document.getElementById("loading_dot").classList.remove("hidden");
+  // function updateData() {
+  //   //// updates data on page & roomsData
+  //     document.getElementById("loading_dot").classList.remove("hidden");
 
-      fetchData().then(() => {
-        document.getElementById("loading_dot").classList.add("hidden");
-      });
+  //     fetchData().then(() => {
+  //       document.getElementById("loading_dot").classList.add("hidden");
+  //     });
 
-  }
+  // }
 
-  function changeData(e) {
+  // function changeData(e) {
 
     
-    //// updates data on page & roomsData
-      document.getElementById("loading_dot").classList.toggle("hidden");
+  //   //// updates data on page & roomsData
+  //     document.getElementById("loading_dot").classList.toggle("hidden");
 
-      // change room data in jsonRoomsData
-        jsonRoomsData.forEach((room) => {
-          room.humidity = 99;
+  //     // change room data in jsonRoomsData
+  //       jsonRoomsData.forEach((room) => {
+  //         room.humidity = 99;
 
-        });
+  //       });
 
 
-        // document.getElementById("loading_dot").classList.add("hidden");
+  //       // document.getElementById("loading_dot").classList.add("hidden");
      
 
-  }
+  // }
 
   async function fetchData() {
     console.log("fetching data");
     while (retry) {
       try {
         loadingDataState = true;
-        // const response = await axios.get({
-        //   url: "http://cleargrasstermostat.local/JSONrooms",
-        // });
-
         const response = await fetch(
           "http://cleargrasstermostat.local/data/JSONrooms"
         );
@@ -97,17 +101,18 @@
         if (!response.ok) {
           throw new Error(response.statusText);
         }
-        jsonRoomsData = await response.json();
-        jsonRooms.set(jsonRoomsData);
-        
+        // jsonRoomsData = await response.json();
+        //  jsonRooms.set(jsonRoomsData);
+        jsonRooms = await response.json();
+
         const responseDevices = await fetch(
           "http://cleargrasstermostat.local/data/JSONdevices"
         );
         if (!responseDevices.ok) {
           throw new Error(responseDevices.statusText);
         }
-        jsonDevicesData = await responseDevices.json();
-        jsonDevices.set(jsonDevicesData);
+         jsonDevicesData = await responseDevices.json();
+        // jsonDevices.set(jsonDevicesData);
         loadingDataState = false;
         jsonRoomsData.forEach((room) => {
           jsonDevicesData.forEach((device) => {
