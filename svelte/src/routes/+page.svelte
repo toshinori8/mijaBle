@@ -13,26 +13,32 @@
   let errorMessage = "";
   let loadingDataState = false;
 
-  // let jsonRoomsData = [];
-  // let jsonRooms = writable();
-  // setContext(jsonRooms,jsonRooms);
-   let jsonDevicesData = [];
-  // let jsonDevices = writable();
- 
-  let jsonRooms = [];
-	let jsonRoomsStore = writable(jsonRooms)
-	
-	$: jsonRoomsStore.set(jsonRooms)
-	
-	setContext('jsonRooms', jsonRoomsStore)
 
-
-
-  let roomsWithoutDevices = 0;
+  let jsonRoomsData = [];
+  let jsonDevicesData = [];
+  
+  
+	let roomsWithoutDevices = 0;
   let retry = true;
 
-  
+  let name = 'world';
+	let nameStore = writable(name)
+	
+	$: nameStore.set(name)
+	
+	setContext('initial', name)
+	setContext('name', nameStore)
 
+  // let rooms = jsonRoomsData; 
+  let rooms = "some data";
+  let roomsStore = writable(rooms)
+  $: roomsStore.set(rooms)
+  setContext('rooms', roomsStore)
+
+  function updateRoomStore(dataIn) {
+    roomsStore.set(dataIn);
+    
+  }
 
   export async function updateRoom(id) {
     
@@ -61,33 +67,36 @@
     }
   }
 
-  // function updateData() {
-  //   //// updates data on page & roomsData
-  //     document.getElementById("loading_dot").classList.remove("hidden");
+  function updateData() {
+    //// updates data on page & roomsData
+      document.getElementById("loading_dot").classList.remove("hidden");
 
-  //     fetchData().then(() => {
-  //       document.getElementById("loading_dot").classList.add("hidden");
-  //     });
+      fetchData().then(() => {
+        document.getElementById("loading_dot").classList.add("hidden");
+      });
 
-  // }
+  }
 
-  // function changeData(e) {
+  function changeData(e) {
 
     
-  //   //// updates data on page & roomsData
-  //     document.getElementById("loading_dot").classList.toggle("hidden");
+    //// updates data on page & roomsData
+      document.getElementById("loading_dot").classList.toggle("hidden");
 
-  //     // change room data in jsonRoomsData
-  //       jsonRoomsData.forEach((room) => {
-  //         room.humidity = 99;
+      // change room data in jsonRoomsData
+        jsonRoomsData.forEach((room) => {
+          room.humidity = 99;
+        
+        });
+        
+        jsonRoomsData[0].name = "changed name";
+        jsonRoomsData[0].temp = 99;
+        updateRoomStore(jsonRoomsData);
 
-  //       });
-
-
-  //       // document.getElementById("loading_dot").classList.add("hidden");
+        // document.getElementById("loading_dot").classList.add("hidden");
      
 
-  // }
+  }
 
   async function fetchData() {
     console.log("fetching data");
@@ -101,9 +110,7 @@
         if (!response.ok) {
           throw new Error(response.statusText);
         }
-        // jsonRoomsData = await response.json();
-        //  jsonRooms.set(jsonRoomsData);
-        jsonRooms = await response.json();
+        jsonRoomsData = await response.json();
 
         const responseDevices = await fetch(
           "http://cleargrasstermostat.local/data/JSONdevices"
@@ -113,6 +120,7 @@
         }
          jsonDevicesData = await responseDevices.json();
         // jsonDevices.set(jsonDevicesData);
+        updateRoomStore(jsonRoomsData);
         loadingDataState = false;
         jsonRoomsData.forEach((room) => {
           jsonDevicesData.forEach((device) => {
@@ -162,6 +170,11 @@
 
 <p>{errorMessage}</p>
 
+
+<input bind:value={name}>
+
+
+
 <button on:click={updateData}>pobierz dane</button>
 <button on:click={(e) => changeData(e)}>zmień dane2</button>
 <section>
@@ -177,10 +190,17 @@
   <Loader />
   {/if}
 
-  {#await jsonDevicesData then devices}
+
+
+  {#await jsonRoomsData then devices}
     {#each devices as device}
       {#each jsonRoomsData as room}
         {#if device.mac === room.mac}
+
+        <!-- Print jsonrooms data -->
+        <!-- <pre>{JSON.stringify(room, null, 2)}</pre> -->
+
+          <p> {room.id}</p>
           <Room roomID={room.id}  {updateRoom}/>
         {/if}
       {/each}

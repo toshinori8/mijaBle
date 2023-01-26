@@ -9,7 +9,10 @@
      * @type {(arg0: any) => (arg0: any) => void}
      */
   export let updateRoom;
-  export let roomID;
+  /**
+     * @type {string | number}
+     */
+   export let roomID;
 
   import { getContext, onMount } from "svelte";
   // @ts-ignore
@@ -20,44 +23,54 @@
   // let roomData = getContext("jsonRooms").find(
   //   (/** @type {{ id: any; }} */ room) => room.id == roomID
   // );
-  let jsonRoomsData = getContext("jsonRooms");
+	
+	const name = getContext('name')
+	const initial = getContext('initial')
+  const rooms = getContext("rooms");
   
-
-  // get writable
-
-  let roomData = jsonRoomsData[roomID];
-
   onMount(() => {
-    jq("#encoder-" + roomData.id)
-      .find(".dial")
-      .knob({
-        readOnly: false,
-        height: 220,
-        width: 220,
-        min: 12,
-        max: 36,
-        step: 0.1,
-        thickness: 0.15,
-        displayInput: false,
-        dynamicDraw: true,
-        fgColor: "#7ba8c9",
-        bgColor: "none",
-        release: function (/** @type {any} */ v) {
-          roomData.minTemp = v.toFixed(1).toString();
-          updateRoom(roomData.id);
-        },
-        change: function (/** @type {any} */ v) {
-          roomData.minTemp = v.toFixed(1).toString();
-        },
-      });
+    
+   
+
+    // jq("#encoder-" + roomData.id)
+    //   .find(".dial")
+    //   .knob({
+    //     readOnly: false,
+    //     height: 220,
+    //     width: 220,
+    //     min: 12,
+    //     max: 36,
+    //     step: 0.1,
+    //     thickness: 0.15,
+    //     displayInput: false,
+    //     dynamicDraw: true,
+    //     fgColor: "#7ba8c9",
+    //     bgColor: "none",
+    //     release: function (/** @type {any} */ v) {
+    //       roomData.minTemp = v.toFixed(1).toString();
+    //       updateRoom(roomData.id);
+    //     },
+    //     change: function (/** @type {any} */ v) {
+    //       roomData.minTemp = v.toFixed(1).toString();
+    //     },
+    //   });
   });
 </script>
 
 
+<div>
+  <h1>roomID {roomID}!</h1>
+  <label for="inpuT">Name change</label>
+  <input bind:value={$name} id="inpuT"/>
+  <hr>
+  <p>Rooms value: {$rooms[roomID].name}</p>
 
-<!-- <p>{} </p> -->
+    <p>{console.log($rooms[roomID])}</p>  
+</div>
 
-<P>element</P>
+
+
+<!-- 
 <div class="room_element sha_temp_body">
   <div id="encoder-{roomData.id}" class="enc">
     <input
@@ -74,39 +87,30 @@
       <span class="sha_temp white_back">
         <span>
 
-            {#if roomData.temp.toString().includes('.')}
-              <span class="temp-data">{roomData.temp.toString().split('.')[0]}
-                <span class="small_01">.{roomData.temp.toString().split('.')[1]}</span>
-                <sup>°C</sup>
-              </span>
-            {:else}
-              <span class="temp-data">{roomData.temp}<sup>°C</sup></span>
-            {/if}
+              {#if roomData.temp.toString().includes('.')}
+                <span class="temp-data">{roomData.temp.toString().split('.')[0]}
+                  <span class="small_01">.{roomData.temp.toString().split('.')[1]}</span>
+                  <sup>°C</sup>
+                </span>
+              {:else}
+                <span class="temp-data">{roomData.temp}<sup>°C</sup></span>
+              {/if}
 
-            <!-- <span class="temp-data">
-            {roomData.temp.toString().split('.')[0]}<span class="small_01">.{roomData.temp.toString().split('.')[1]}</span>
-            <sup>°C</sup>
-            </span> -->
           
             <hr class="line_" />
 
-          {#if roomData.humidity.toString().includes('.')}
-              <span class="hum-data">{roomData.humidity.toString().split('.')[0]}
-                <span class="sup">%</span></span>
-          {:else}
+              {#if roomData.humidity.toString().includes('.')}
+                  <span class="hum-data">{roomData.humidity.toString().split('.')[0]}
+                    <span class="sup">%</span></span>
+              {:else}
 
-              <span class="hum-data">{roomData.humidity.toString()}
-                <span class="sup">%</span></span>
-          {/if}
+                  <span class="hum-data">{roomData.humidity.toString()}
+                    <span class="sup">%</span></span>
+              {/if}
 
 
 
-            <!-- <span class="hum-data"> -->
-                <!-- {roomData.humidity} -->
-                
-                <!-- <span class="sup">%</span> -->
-                <!-- <span class="hidden_span mac_device"> {roomData.mac}</span> -->
-          <!-- </span> -->
+          
         </span>
       </span>
     </div>
@@ -128,4 +132,4 @@
     </div>
     <div class="height_auto" />
   </div>
-</div>
+</div> -->
