@@ -36,6 +36,8 @@
   setContext('rooms', roomsStore)
 
   function updateRoomStore(dataIn) {
+    console.log("updating room store");
+
     roomsStore.set(dataIn);
     
   }
@@ -61,9 +63,9 @@
       if (!response.ok) {
         throw new Error(response.statusText);
       }
-      console.log(response);
+      // console.log(response);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
 
@@ -72,26 +74,52 @@
       document.getElementById("loading_dot").classList.remove("hidden");
 
       fetchData().then(() => {
+        // updateRoomStore(jsonRoomsData);
         document.getElementById("loading_dot").classList.add("hidden");
       });
 
   }
 
-  function changeData(e) {
+  async function changeData(e) {
 
-    
+      console.log('fetching new data');
     //// updates data on page & roomsData
       document.getElementById("loading_dot").classList.toggle("hidden");
 
-      // change room data in jsonRoomsData
-        jsonRoomsData.forEach((room) => {
-          room.humidity = 99;
-        
+      // loadingDataState = true;
+        const response = await fetch(
+          "http://cleargrasstermostat.local/data/JSONdevices"
+        );
+
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        let DevicesData = await response.json();
+        console.log('fetching new data from devices');
+        DevicesData.forEach((dev) => {
+          
+          console.log(dev.mac);
+              jsonRoomsData.forEach((room) => {
+                  if(dev.mac == room.mac){
+                    room.temp = dev.temp;
+                    room.humidity = dev.hum;
+                    console.log('updated room');
+                  }
+
+              });
+                 
         });
+                 updateRoomStore(jsonRoomsData);
+
+        // jsonRoomsData = await response.json();
+      // change room data in jsonRoomsData
+        // jsonRoomsData.forEach((room) => {
+        //   room.humidity = 99;
         
-        jsonRoomsData[0].name = "changed name";
-        jsonRoomsData[0].temp = 99;
-        updateRoomStore(jsonRoomsData);
+        // });
+        
+        // jsonRoomsData[0].name = "changed name";
+        // jsonRoomsData[0].temp = 99;
 
         // document.getElementById("loading_dot").classList.add("hidden");
      
@@ -120,14 +148,15 @@
         }
          jsonDevicesData = await responseDevices.json();
         // jsonDevices.set(jsonDevicesData);
-        updateRoomStore(jsonRoomsData);
+        
         loadingDataState = false;
         jsonRoomsData.forEach((room) => {
           jsonDevicesData.forEach((device) => {
             if (device.mac == room.mac) {
               if (device.temp != null) {
                 room.temp = device.temp;
-                console.log(device.temp);
+                // room.temp = random(10,2);
+                // console.log(device.temp);
               } else {
                 room.temp = 0;
               }
@@ -143,7 +172,7 @@
           });
         });
         errorMessage = "Dane pobrane";
-
+        updateRoomStore(jsonRoomsData);
         retry = false;
       } catch (error) {
         errorMessage =
@@ -157,9 +186,50 @@
     }
   }
 
+  const connectWebsocket = () => {
+  // Create a new websocket
+  const ws = new WebSocket("ws://cleargrasstermostat.local/data/ws");
+  ws.addEventListener("message", (response) => {
+    let type = response.data.split("*")[0];
+    let data = response.data.split("*")[1]; 
+    const incomingData = JSON.parse(data);
+    
+    if(incomingData){
+      console.log(incomingData);
+      console.log(type);
+    }
+    if(type=="devices"){
+
+              jsonDevicesData = incomingData;
+              jsonRoomsData.forEach((room) => {
+                jsonDevicesData.forEach((device) => {
+                  if (device.mac == room.mac) {
+                    if (device.temp != null) {
+                      room.temp = device.temp;
+                     } else {
+                      room.temp = 0;
+                    }
+                    if (device.hum != null) {
+                      room.humidity = device.hum;
+                    } else {
+                      room.humidity = 0;
+                    }
+                  } else {
+                    roomsWithoutDevices++;
+                  }
+                  updateRoomStore(jsonRoomsData);
+                });
+              });
+
+
+    }
+  
+  });
+};
+
   onMount(async () => {
     await fetchData();
-    
+    await connectWebsocket();
   });
 </script>
 
@@ -175,7 +245,7 @@
 
 
 
-<button on:click={updateData}>pobierz dane</button>
+<!-- <button on:click={updateData}>pobierz dane</button> -->
 <button on:click={(e) => changeData(e)}>zmień dane2</button>
 <section>
   <!-- {#if roomsWithoutDevices > 0}
@@ -192,17 +262,13 @@
 
 
 
-  {#await jsonDevicesData then devices}
+  {#await jsonRoomsData then devices}
     {#each devices as device}
       {#each jsonRoomsData as room}
         {#if device.mac === room.mac}
-
-        <!-- Print jsonrooms data -->
-        <!-- <pre>{JSON.stringify(room, null, 2)}</pre> -->
-
-
+            
           <Room roomID={room.id}  {updateRoom}/>
-          <h6>{device.mac} : {room.mac}</h6>
+
         {/if}
       {/each}
     {/each}

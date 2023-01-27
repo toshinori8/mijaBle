@@ -58,6 +58,12 @@ void updateDevice(String mac, String type, float data) {
 
   bool deviceFound = false;
 
+  if(dataString=="0.0"){
+    return;
+  };
+
+
+  Serial.println("Updating device: " + mac + " " + type + " " + dataString);
   for (int i = 0; i < devices.size(); i++) {
     if (devices[i]["mac"] == mac) {
       deviceFound = true;
@@ -70,6 +76,9 @@ void updateDevice(String mac, String type, float data) {
   }
 
   if (!deviceFound) {
+    Serial.println("Device not found, adding new device with datastr: " + dataString);
+
+
     JsonObject device = devices.createNestedObject();
     device["mac"] = mac;
     if (data) {
@@ -77,6 +86,12 @@ void updateDevice(String mac, String type, float data) {
       device[type] = dataString;
     }
   }
+  // send WS message with devices header 
+  String jsonStr;
+  serializeJson(devices, jsonStr);  
+  String message = "devices*" + jsonStr; 
+  ws.textAll(message);
+
 };
 
 class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {

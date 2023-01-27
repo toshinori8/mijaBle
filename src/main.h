@@ -7,6 +7,8 @@
 DynamicJsonDocument devices(2048); // Json document for storing devices data 
 DynamicJsonDocument rooms(2048); // Json document for storing rooms data
 
+AsyncWebServer server(80);
+AsyncWebSocket ws("/data/ws");
 
 // char* hostName = "CleargrassTermostat";
 char hostName[] = "CleargrassTermostat";
@@ -91,8 +93,9 @@ String getTime(){
   char timeStringBuff[50]; //50 chars should be enough
   strftime(timeStringBuff, sizeof(timeStringBuff), "%d.%m.%Y %H:%M:%S", &timeinfo);
   String time(timeStringBuff);
+  Serial.println('time: ' + time);
+
   return time;
-  // Serial.println('time: ' + time);
   
 }
 

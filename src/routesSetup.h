@@ -1,5 +1,5 @@
-AsyncWebServer server(80);
-AsyncWebSocket ws("/ws");
+
+
 
 bool routesSetup()
 {
@@ -189,10 +189,16 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   {
     // kod wykonywany po nawiązaniu połączenia
     client->printf("Hello Client %u", client->id());
+    // wsClients.add(client);
     client->ping();
   }
   else if (type == WS_EVT_DISCONNECT)
   {
+    printf("Client %u disconnected", client->id());
+
+    // remove client from list
+    // wsClients.remove(client);
+    
     // kod wykonywany po rozłączeniu
   }
   else if (type == WS_EVT_DATA)

@@ -105,7 +105,7 @@ void setup()
       littleFSinitialised = true;
       // set routes of webserver
       routesSetup();
-      // initWS();
+      initWS();
       loadDevicesToMemory();
       initBluetooth();
     }
