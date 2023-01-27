@@ -192,7 +192,7 @@
 
 
 
-  {#await jsonRoomsData then devices}
+  {#await jsonDevicesData then devices}
     {#each devices as device}
       {#each jsonRoomsData as room}
         {#if device.mac === room.mac}
@@ -200,8 +200,9 @@
         <!-- Print jsonrooms data -->
         <!-- <pre>{JSON.stringify(room, null, 2)}</pre> -->
 
-          <p> {room.id}</p>
+
           <Room roomID={room.id}  {updateRoom}/>
+          <h6>{device.mac} : {room.mac}</h6>
         {/if}
       {/each}
     {/each}
