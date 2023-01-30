@@ -1,5 +1,5 @@
-<script  >
-	import Battery from './battery.svelte';
+<script>
+  import Battery from "./battery.svelte";
   // @ts-nocheck
   // let jq = window.$;
   // import Counter from './Counter.svelte';
@@ -14,44 +14,26 @@
   let errorMessage = "";
   let loadingDataState = false;
 
-  /**
-     * @type {any[]}
-     */
-  let jsonRoomsData = [];
-  /**
-     * @type {any[]}
-     */
+  let jsonRoomsData = []; 
   let jsonDevicesData = [];
 
   let roomsWithoutDevices = 0;
   let retry = true;
-
-  let name = "world";
-  let nameStore = writable(name);
-
-  $: nameStore.set(name);
-
-  setContext("initial", name);
-  setContext("name", nameStore);
-
-  // let rooms = jsonRoomsData;
-  let rooms = "some data";
+  
+ 
+  let rooms = "rooms data";
   let roomsStore = writable(rooms);
   $: roomsStore.set(rooms);
   setContext("rooms", roomsStore);
 
 
-  // @ts-ignore
   function updateRoomStore(dataIn) {
     roomsStore.set(dataIn);
-    dataIn=dataIn;
+    dataIn = dataIn;
   }
 
-  // @ts-ignore
-   export async function updateRoom(id) {
-    let room = jsonRoomsData.find(
-      (room) => room.id == id
-    );
+  export async function updateRoom(id) {
+    let room = jsonRoomsData.find((room) => room.id == id);
 
     try {
       const response = await fetch(
@@ -77,133 +59,58 @@
 
   function updateData() {
     //// updates data on page & roomsData
-    // @ts-ignore
     document.getElementById("loading_dot").classList.remove("hidden");
 
-    fetchData().then(() => {
-      // updateRoomStore(jsonRoomsData);
-      // @ts-ignore
+    // fetchData().then(() => {
+      jsonRoomsData.forEach((room) => {
+        room.temp = random(20, 30);
+      });
+      updateRoomStore(jsonRoomsData);
+      
       document.getElementById("loading_dot").classList.add("hidden");
-    });
+    // });
   }
 
-  async function changeData() {
- 
-    //// updates data on page & roomsData
-    // @ts-ignore
-    jsonRoomsData.forEach((room) => {
-      
-        room.temp = 30;
-      
-     
-    });
-
-   
-    updateRoomStore(jsonRoomsData);
-
-  }
-
-  // async function fetchData() {
-  
-  //   while (retry) {
-  //     try {
-  //       loadingDataState = true;
-  //       const response = await fetch(
-  //         "http://cleargrasstermostat.local/data/JSONrooms"
-  //       );
-
-  //       if (!response.ok) {
-  //         throw new Error(response.statusText);
-  //       }
-  //       jsonRoomsData = await response.json();
-
-  //       const responseDevices = await fetch(
-  //         "http://cleargrasstermostat.local/data/JSONdevices"
-  //       );
-  //       if (!responseDevices.ok) {
-  //         throw new Error(responseDevices.statusText);
-  //       }
-  //       jsonDevicesData = await responseDevices.json();
-  //       // jsonDevices.set(jsonDevicesData);
-
-  //       loadingDataState = false;
-  //       jsonRoomsData.forEach((room) => {
-  //         jsonDevicesData.forEach((device) => {
-  //           if (device.mac == room.mac) {
-  //             if (device.temp != null) {
-  //               room.temp = device.temp;
-               
-  //             } else {
-  //               room.temp = 0;
-  //             }
-              
-  //             if (device.hum != null) {
-  //               room.hum = device.hum;
-  //             } else {
-  //               room.hum = 0;
-  //             }
-  //             if (device.bat != null) {
-  //               room.bat = device.bat;
-  //             } else {
-  //               room.bat = 0;
-  //             }
-  //           } else {
-  //             roomsWithoutDevices++;
-  //           }
-  //         });
-  //       });
-  //       errorMessage = "Dane pobrane";
-  //       updateRoomStore(jsonRoomsData);
-  //       retry = false;
-  //     } catch (error) {
-  //       errorMessage =
-  //         "An error occurred while fetching rooms data. Retrying in " +
-  //         retryInterval / 100 +
-  //         " seconds.";
-  //       setTimeout(() => {
-  //         retry = true;
-  //       }, retryInterval);
-  //     }
-  //   }
-  // }
   function random(min, max) {
-      return Math.floor(Math.random() * (max - min + 1) + min);
-    } 
-  const connectWebsocket = () => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+
+  let connectWebsocket = () => {
+
+    loadingDataState = true;
+
     console.log("connecting to websocket");
     const ws = new WebSocket("ws://cleargrasstermostat.local/data/ws");
     ws.addEventListener("message", (response) => {
       let type = response.data.split("*")[0];
       let data = response.data.split("*")[1];
 
-      
-
       if (data != null && type == "devices") {
         let incomingData = JSON.parse(data);
-        
-          incomingData.forEach((device) => {
-            jsonRoomsData.find((room) => room.mac == device.mac).temp = device.temp;
-            jsonRoomsData.find((room) => room.mac == device.mac).hum = device.hum;
-            jsonRoomsData.find((room) => room.mac == device.mac).bat = device.bat;
-            jsonRoomsData.find((room) => room.mac == device.mac).lastUpdate = device.lastUpdate;
 
-          });
+        incomingData.forEach((device) => {
+
+          roomsWithoutDevices = jsonRoomsData.filter((room) => room.mac != device.mac).length;
+          
+          jsonRoomsData.find((room) => room.mac == device.mac).temp       = device.temp;
+          jsonRoomsData.find((room) => room.mac == device.mac).hum        = device.hum;
+          jsonRoomsData.find((room) => room.mac == device.mac).bat        = device.bat;
+          jsonRoomsData.find((room) => room.mac == device.mac).lastUpdate = device.lastUpdate;
+
+          loadingDataState = false;
+
+        });
         updateRoomStore(jsonRoomsData);
-       
-
+      
       }
       if (data != null && type == "rooms") {
-      
-          jsonRoomsData = JSON.parse(data);
-
-          console.log("rooms incoming WS");
-
+        jsonRoomsData = JSON.parse(data);
       }
     });
   };
 
   onMount(async () => {
-   // await fetchData();
     await connectWebsocket();
   });
 </script>
@@ -215,8 +122,7 @@
 
 <p>{errorMessage}</p>
 
-<!-- <button on:click={updateData}>pobierz dane</button> -->
-<button on:click={(e) => changeData()}>zmień dane2</button>
+<!-- <button on:click={(e) => updateData()}>zmień dane2</button> -->
 <section>
   {#if roomsWithoutDevices > 0}
     <div class="errorMessage">{errorMessage}</div>
@@ -234,8 +140,7 @@
     {#each devices as device}
       {#each jsonRoomsData as room}
         {#if device.mac === room.mac}
-       
-          <Room roomID={room.id} updateRoom={updateRoom}  />
+          <Room roomID={room.id} {updateRoom} />
         {/if}
       {/each}
     {/each}

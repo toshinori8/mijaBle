@@ -1,87 +1,96 @@
 <script>
   // @ts-ignore
   const jq = window.$;
- 
-  /**
-     * @type {(arg0: any) => void}
-     */
-   export let updateRoom;
-  /**
-   * @type {string | number}
-   */
+  export let updateRoom;
   export let roomID;
 
   import { getContext, onMount } from "svelte";
-    import Battery from "./battery.svelte";
-  // @ts-ignore
-  // /**
-  //  * @type {{ name: any; id: any; minTemp: any; temp: any[]; hum: any[]; mac: any; }}
-  //  */
-  // export let roomID;
-  // let roomData = getContext("jsonRooms").find(
-  //   (/** @type {{ id: any; }} */ room) => room.id == roomID
-  // );
+  import { fade } from "svelte/transition";
+  import Battery from "./battery.svelte";
+
+
+
+  let animate = false
 
   function focus(node) {
-      addDial(node.id.split("-")[1]); 
+    addDial(node.id.split("-")[1]);
   }
 
-  
 
   const name = getContext("name");
   const initial = getContext("initial");
   const rooms = getContext("rooms");
 
-  /**
-   * @param {string | number} element_id
-   */
   function addDial(element_id) {
-
     jq("#encoder-" + element_id)
-        .find(".dial")
-        .knob({
-          readOnly: false,
-          height: 220,
-          width: 220,
-          min: 12,
-          max: 36,
-          step: 0.1,
-          thickness: 0.15,
-          displayInput: false,
-          dynamicDraw: true,
-          fgColor: "#7ba8c9",
-          bgColor: "none",
-          release: function (/** @type {any} */ v) {
-            $rooms[roomID].minTemp = v.toFixed(1).toString();
-            updateRoom($rooms[roomID].id);
-          },
-          change: function (/** @type {any} */ v) {
-            $rooms[roomID].minTemp = v.toFixed(1).toString();
-          },
-        });
-
-   
+      .find(".dial")
+      .knob({
+        readOnly: false,
+        height: 220,
+        width: 220,
+        min: 12,
+        max: 36,
+        step: 0.1,
+        thickness: 0.15,
+        displayInput: false,
+        dynamicDraw: true,
+        fgColor: "#7ba8c9",
+        bgColor: "none",
+        displayPrevious:true,
+        linecap:"round",
+        cursor: 20,
+        
+        release: function (/** @type {any} */ v) {
+          $rooms[roomID].minTemp = v.toFixed(1).toString();
+          updateRoom($rooms[roomID].id);
+          updHeatState()
+        },
+        change: function (/** @type {any} */ v) {
+          $rooms[roomID].minTemp = v.toFixed(1).toString();
+          updHeatState()
+        },
+      });
   }
 
+  function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  let heatState = false;
+
+    function updHeatState() {
+      if ($rooms[roomID].temp < $rooms[roomID].minTemp) {
+        heatState = true;
+      } else {
+        heatState = false;
+      }
+    }
+  
+
+
+  
+
   onMount(() => {
-   
+
 
 
   });
-  
+
+
+
 </script>
 
 {#if $rooms[roomID].temp}
-  <div class="room_element sha_temp_body">
-    <div id="encoder-{$rooms[roomID].id}" class="enc" use:focus>
+  <div class="room_element sha_temp_body {heatState ? 'heat' : 'noheat'}" transition:fade="{{delay: random(0,1000), duration: 500}}">
+    <div id="encoder-{$rooms[roomID].id}" class="enc" use:focus use:updHeatState>
       <input
         class="dial noselect"
         data-min="12"
         data-max="30"
         data-step="0.1"
-        value="{$rooms[roomID].minTemp}"
+        value={$rooms[roomID].minTemp}
       />
-      <div class="backx">
+      <div class="backx" transition:fade>
         <div class="heat_value">{$rooms[roomID].minTemp}</div>
       </div>
     </div>
@@ -102,7 +111,7 @@
             {/if}
 
             <hr class="line_" />
-            <Battery level={$rooms[roomID].bat}/>
+            <Battery level={$rooms[roomID].bat} />
             {#if $rooms[roomID].hum}
               {#if $rooms[roomID].hum.toString().includes(".")}
                 <span class="hum-data"
