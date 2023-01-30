@@ -1,4 +1,4 @@
-<script>
+<script  >
 	import Battery from './battery.svelte';
   // @ts-nocheck
   // let jq = window.$;
@@ -43,17 +43,14 @@
 
   // @ts-ignore
   function updateRoomStore(dataIn) {
-    console.log("updating room store");
-
     roomsStore.set(dataIn);
+    dataIn=dataIn;
   }
 
-  /**
-     * @param {any} id
-     */
+  // @ts-ignore
    export async function updateRoom(id) {
     let room = jsonRoomsData.find(
-      (/** @type {{ id: any; }} */ room) => room.id == id
+      (room) => room.id == id
     );
 
     try {
@@ -75,6 +72,7 @@
     } catch (e) {
       // console.log(e);
     }
+    return id;
   }
 
   function updateData() {
@@ -95,7 +93,7 @@
     // @ts-ignore
     jsonRoomsData.forEach((room) => {
       
-        room.bat = 30;
+        room.temp = 30;
       
      
     });
@@ -105,70 +103,72 @@
 
   }
 
-  async function fetchData() {
+  // async function fetchData() {
   
-    while (retry) {
-      try {
-        loadingDataState = true;
-        const response = await fetch(
-          "http://cleargrasstermostat.local/data/JSONrooms"
-        );
+  //   while (retry) {
+  //     try {
+  //       loadingDataState = true;
+  //       const response = await fetch(
+  //         "http://cleargrasstermostat.local/data/JSONrooms"
+  //       );
 
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        jsonRoomsData = await response.json();
+  //       if (!response.ok) {
+  //         throw new Error(response.statusText);
+  //       }
+  //       jsonRoomsData = await response.json();
 
-        const responseDevices = await fetch(
-          "http://cleargrasstermostat.local/data/JSONdevices"
-        );
-        if (!responseDevices.ok) {
-          throw new Error(responseDevices.statusText);
-        }
-        jsonDevicesData = await responseDevices.json();
-        // jsonDevices.set(jsonDevicesData);
+  //       const responseDevices = await fetch(
+  //         "http://cleargrasstermostat.local/data/JSONdevices"
+  //       );
+  //       if (!responseDevices.ok) {
+  //         throw new Error(responseDevices.statusText);
+  //       }
+  //       jsonDevicesData = await responseDevices.json();
+  //       // jsonDevices.set(jsonDevicesData);
 
-        loadingDataState = false;
-        jsonRoomsData.forEach((room) => {
-          jsonDevicesData.forEach((device) => {
-            if (device.mac == room.mac) {
-              if (device.temp != null) {
-                room.temp = device.temp;
+  //       loadingDataState = false;
+  //       jsonRoomsData.forEach((room) => {
+  //         jsonDevicesData.forEach((device) => {
+  //           if (device.mac == room.mac) {
+  //             if (device.temp != null) {
+  //               room.temp = device.temp;
                
-              } else {
-                room.temp = 0;
-              }
+  //             } else {
+  //               room.temp = 0;
+  //             }
               
-              if (device.hum != null) {
-                room.humidity = device.hum;
-              } else {
-                room.humidity = 0;
-              }
-              if (device.bat != null) {
-                room.bat = device.bat;
-              } else {
-                room.bat = 0;
-              }
-            } else {
-              roomsWithoutDevices++;
-            }
-          });
-        });
-        errorMessage = "Dane pobrane";
-        updateRoomStore(jsonRoomsData);
-        retry = false;
-      } catch (error) {
-        errorMessage =
-          "An error occurred while fetching rooms data. Retrying in " +
-          retryInterval / 100 +
-          " seconds.";
-        setTimeout(() => {
-          retry = true;
-        }, retryInterval);
-      }
-    }
-  }
-
+  //             if (device.hum != null) {
+  //               room.hum = device.hum;
+  //             } else {
+  //               room.hum = 0;
+  //             }
+  //             if (device.bat != null) {
+  //               room.bat = device.bat;
+  //             } else {
+  //               room.bat = 0;
+  //             }
+  //           } else {
+  //             roomsWithoutDevices++;
+  //           }
+  //         });
+  //       });
+  //       errorMessage = "Dane pobrane";
+  //       updateRoomStore(jsonRoomsData);
+  //       retry = false;
+  //     } catch (error) {
+  //       errorMessage =
+  //         "An error occurred while fetching rooms data. Retrying in " +
+  //         retryInterval / 100 +
+  //         " seconds.";
+  //       setTimeout(() => {
+  //         retry = true;
+  //       }, retryInterval);
+  //     }
+  //   }
+  // }
+  function random(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    } 
   const connectWebsocket = () => {
     console.log("connecting to websocket");
     const ws = new WebSocket("ws://cleargrasstermostat.local/data/ws");
@@ -176,47 +176,34 @@
       let type = response.data.split("*")[0];
       let data = response.data.split("*")[1];
 
-
-      if (data != null) {
-        let incomingData = JSON.parse(data);
-        console.log(incomingData);
-        incomingData.forEach((/** @type {{ mac: any; temp: number; humidity: number; bat: number; }} */ room) => {
-          jsonDevicesData.forEach((device) => {
-            if (device.mac == room.mac) {
-              if (device.temp != null) {
-                room.temp = device.temp;
-              } else {
-                room.temp = 0;
-              }
-              if (device.hum != null) {
-                room.humidity = device.hum;
-              } else {
-                room.humidity = 0;
-              }
-              // if(device.bat != null){
-              //   room.bat = device.bat;
-              // } else {
-              //   room.bat = 0;
-              // }
-              room.bat=30;
-            } else {
-              roomsWithoutDevices++;
-            }
-            updateRoomStore(jsonRoomsData);
-          });
-        });
-        
-        updateRoomStore(jsonRoomsData);
       
-      }
 
-      if (type == "rooms") {
+      if (data != null && type == "devices") {
+        let incomingData = JSON.parse(data);
+        
+          incomingData.forEach((device) => {
+            jsonRoomsData.find((room) => room.mac == device.mac).temp = device.temp;
+            jsonRoomsData.find((room) => room.mac == device.mac).hum = device.hum;
+            jsonRoomsData.find((room) => room.mac == device.mac).bat = device.bat;
+            jsonRoomsData.find((room) => room.mac == device.mac).lastUpdate = device.lastUpdate;
+
+          });
+        updateRoomStore(jsonRoomsData);
+       
+
+      }
+      if (data != null && type == "rooms") {
+      
+          jsonRoomsData = JSON.parse(data);
+
+          console.log("rooms incoming WS");
+
       }
     });
   };
 
   onMount(async () => {
-    await fetchData();
+   // await fetchData();
     await connectWebsocket();
   });
 </script>
@@ -229,7 +216,7 @@
 <p>{errorMessage}</p>
 
 <!-- <button on:click={updateData}>pobierz dane</button> -->
-<button on:click={(e) => changeData(e)}>zmień dane2</button>
+<button on:click={(e) => changeData()}>zmień dane2</button>
 <section>
   {#if roomsWithoutDevices > 0}
     <div class="errorMessage">{errorMessage}</div>
@@ -247,7 +234,8 @@
     {#each devices as device}
       {#each jsonRoomsData as room}
         {#if device.mac === room.mac}
-          <Room roomID={room.id} {updateRoom} />
+       
+          <Room roomID={room.id} updateRoom={updateRoom}  />
         {/if}
       {/each}
     {/each}

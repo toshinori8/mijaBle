@@ -235,7 +235,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     border-radius: 100%;
     text-align: center;
     box-shadow: 30px 30px 30px -10px rgba(0,0,0,0.1),
-                -30px -30px 30px -10px rgba(255,255,255,0.4),
+                -10px -10px 20px -10px rgba(255,255,255,0.65),
                 -0.5px -0.5px 0 rgba(255,255,255,1),
                 0.5px 0.5px 0 rgba(0,0,0,0.02);
 }
@@ -554,16 +554,7 @@ transform: scale(0.5);
 }
 /** End Section Footer Style **/
 
- .sha_switch:before{
-    
-    
-}
 
-
- .sha_switch.on:before
-{
- 
-}
 
 .sha_switch.off:before
 {
@@ -677,7 +668,6 @@ margin-right: 10px;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
-    select: none;
     font-size: 63px;
     margin-left: 11px;
     font-weight: bold;

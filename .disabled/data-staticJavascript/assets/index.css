@@ -232,8 +232,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     border-radius: 100%;
     text-align: center;
     box-shadow: 30px 30px 30px -10px rgba(0,0,0,0.1),
-                -30px -30px 30px -10px rgba(255,255,255,0.4),
-                -0.5px -0.5px 0 rgba(255,255,255,1),
+                -10px -30px 30px -10px rgba(255,255,255,0.4),
+                -0.5px -0.5px 0 rgba(255,255,255,0),
                 0.5px 0.5px 0 rgba(0,0,0,0.02);
 }
 

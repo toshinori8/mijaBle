@@ -1,10 +1,11 @@
 <script>
   // @ts-ignore
   const jq = window.$;
+ 
   /**
-   * @type {(arg0: any) => (arg0: any) => void}
-   */
-  export let updateRoom;
+     * @type {(arg0: any) => void}
+     */
+   export let updateRoom;
   /**
    * @type {string | number}
    */
@@ -14,7 +15,7 @@
     import Battery from "./battery.svelte";
   // @ts-ignore
   // /**
-  //  * @type {{ name: any; id: any; minTemp: any; temp: any[]; humidity: any[]; mac: any; }}
+  //  * @type {{ name: any; id: any; minTemp: any; temp: any[]; hum: any[]; mac: any; }}
   //  */
   // export let roomID;
   // let roomData = getContext("jsonRooms").find(
@@ -102,15 +103,15 @@
 
             <hr class="line_" />
             <Battery level={$rooms[roomID].bat}/>
-            {#if $rooms[roomID].humidity}
-              {#if $rooms[roomID].humidity.toString().includes(".")}
+            {#if $rooms[roomID].hum}
+              {#if $rooms[roomID].hum.toString().includes(".")}
                 <span class="hum-data"
-                  >{$rooms[roomID].humidity.toString().split(".")[0]}
+                  >{$rooms[roomID].hum.toString().split(".")[0]}
                   <span class="sup">%</span></span
                 >
               {:else}
                 <span class="hum-data"
-                  >{$rooms[roomID].humidity.toString()}
+                  >{$rooms[roomID].hum.toString()}
                   <span class="sup">%</span></span
                 >
               {/if}

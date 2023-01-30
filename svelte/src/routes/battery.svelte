@@ -78,14 +78,39 @@
     fill: none;
   }
 
+  .battery_level .label{
+    transition: all 0.5s ease;
+    width: 120px;
+    height: 120px;
+    opacity: 1;
+    font-size: 1.4em;
+    position: relative;
+    z-index: 900000;
+    float: right;
+  display: none;
+  }
+
+  .battery_level:hover .label{
+    
+ 
+
+  }
+  .battery_level:hover .battery_level_svg{
+    
+    opacity: 0;
+    display: none;
+  }
+
 </style>
 
 <div class="battery_level">
 
+  <span class="label">{level}%</span>
 
   
 <!-- <p>{level}</p> -->
 {#if level >= 0 }
+    <!-- ts ignore -->
   
 <svg   use:levelColor
   class="battery_level_svg"
@@ -134,7 +159,7 @@
 
     </style></defs
   >
-  <span class="label">1</span>
+
 
 
   

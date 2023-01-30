@@ -14,6 +14,8 @@ bool routesSetup()
   //                   }
   //                 });
 
+  
+
   server.on("/data/JSONrooms", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     request->send(LittleFS, "/rooms.json", "application/json"); 
@@ -168,14 +170,27 @@ bool routesSetup()
   return true;
 };
 
+
+
+
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
 {
   if (type == WS_EVT_CONNECT)
   {
     // kod wykonywany po nawiązaniu połączenia
     client->printf("Hello Client %u", client->id());
-    // wsClients.add(client);
-    client->ping();
+
+        // open file rooms.json   
+        Serial.println(F("Sending rooms data"));
+        roomsF = LittleFS.open("/rooms.json", "r");
+
+        while (roomsF.available())
+        {
+          // send data to client
+          client->text("rooms*"+roomsF.readString());
+          roomsF.close();
+          client->ping();
+        }        
   }
   else if (type == WS_EVT_DISCONNECT)
   {
@@ -184,7 +199,6 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     // remove client from list
     // wsClients.remove(client);
     
-    // kod wykonywany po rozłączeniu
   }
   else if (type == WS_EVT_DATA)
   {
@@ -192,6 +206,10 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     // get WS data as JSON object
   }
 }
+
+
+
+
 
 void initWS()
 {
