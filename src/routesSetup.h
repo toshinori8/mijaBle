@@ -1,6 +1,3 @@
-
-
-
 bool routesSetup()
 {
 
@@ -19,10 +16,6 @@ bool routesSetup()
 
   server.on("/data/JSONrooms", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    // if (request->method() == HTTP_OPTIONS) {
-    //   request->send(200);
-    // }
-      // send rooms.json as response
     request->send(LittleFS, "/rooms.json", "application/json"); 
     Serial.println(F("Sending rooms data"));
   });
@@ -30,7 +23,6 @@ bool routesSetup()
   server.on("/data/JSONdevices", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     // send actual devices object as Json in response
-
     Serial.println(F("Sending devices data"));
     String jsonStr;
     serializeJson(devices, jsonStr);
@@ -40,9 +32,7 @@ bool routesSetup()
      });
 
   server.on("/data/updateRoom", HTTP_OPTIONS, [](AsyncWebServerRequest *request)
-            {
-              request->send(204);
-              
+            { request->send(204);
             });
 
   server.on("/data/updateRoom", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len,
@@ -151,12 +141,9 @@ bool routesSetup()
 
   server.on("/data/click", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-
               termostat.processData();
-              
               request->send(200, "text/plain", "Hello, GET: " + request->url());
             });
-
 
   server.on("/aclock.ttf", HTTP_GET, [](AsyncWebServerRequest *request)
             {
@@ -169,9 +156,7 @@ bool routesSetup()
 
             });
 
-  // server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
   server.serveStatic("/", LittleFS, "/");
-
   server.serveStatic("/_app/", LittleFS, "/_app/");
   server.serveStatic("/_app/immutable/", LittleFS, "/_app/immutable/");
   server.serveStatic("/_app/immutable/assets/", LittleFS, "/_app/immutable/assets/");
@@ -210,8 +195,6 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 
 void initWS()
 {
-
-  // kod inicjalizujący Websocket
   server.addHandler(&ws);
   ws.onEvent(onWsEvent);
 }

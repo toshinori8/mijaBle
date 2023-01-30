@@ -1,8 +1,6 @@
 <script>
   // @ts-ignore
-
   const jq = window.$;
-
   /**
    * @type {(arg0: any) => (arg0: any) => void}
    */
@@ -13,6 +11,7 @@
   export let roomID;
 
   import { getContext, onMount } from "svelte";
+    import Battery from "./battery.svelte";
   // @ts-ignore
   // /**
   //  * @type {{ name: any; id: any; minTemp: any; temp: any[]; humidity: any[]; mac: any; }}
@@ -22,6 +21,12 @@
   //   (/** @type {{ id: any; }} */ room) => room.id == roomID
   // );
 
+  function focus(node) {
+      addDial(node.id.split("-")[1]); 
+  }
+
+  
+
   const name = getContext("name");
   const initial = getContext("initial");
   const rooms = getContext("rooms");
@@ -30,12 +35,8 @@
    * @param {string | number} element_id
    */
   function addDial(element_id) {
-    if (document.getElementById("encoder-" + element_id) == null) {
-      return;
-    } else {
-      console.log("adding dial" + element_id);
-      let elem = document.getElementById("encoder-" + element_id);
-      jq(elem)
+
+    jq("#encoder-" + element_id)
         .find(".dial")
         .knob({
           readOnly: false,
@@ -57,58 +58,27 @@
             $rooms[roomID].minTemp = v.toFixed(1).toString();
           },
         });
-    }
 
-    //     // console.log("$rooms[roomID].id");
-    // jq("#encoder-" + $rooms[roomID].id)
-    //   .find(".dial")
-    //   .knob({
-    //     readOnly: false,
-    //     height: 220,
-    //     width: 220,
-    //     min: 12,
-    //     max: 36,
-    //     step: 0.1,
-    //     thickness: 0.15,
-    //     displayInput: false,
-    //     dynamicDraw: true,
-    //     fgColor: "#7ba8c9",
-    //     bgColor: "none",
-    //     release: function (/** @type {any} */ v) {
-    //       $rooms[roomID].minTemp = v.toFixed(1).toString();
-    //       updateRoom($rooms[roomID].id);
-    //     },
-    //     change: function (/** @type {any} */ v) {
-    //       $rooms[roomID].minTemp = v.toFixed(1).toString();
-    //     },
-    //   });
+   
   }
 
   onMount(() => {
-    addDial(roomID);
+   
+
+
   });
+  
 </script>
-
-<!-- <div>
-  <h1>roomID {roomID}!</h1>
-  <label for="inpuT">Name change</label>
-  <input bind:value={$name} id="inpuT"/>
-  <hr>
-  <p>Rooms value: {$rooms[roomID].name}</p>
-
-      
-</div> -->
-<!-- <p>{console.log($rooms[roomID])}</p> -->
 
 {#if $rooms[roomID].temp}
   <div class="room_element sha_temp_body">
-    <div id="encoder-{$rooms[roomID].id}" class="enc">
+    <div id="encoder-{$rooms[roomID].id}" class="enc" use:focus>
       <input
         class="dial noselect"
-        value="0"
         data-min="12"
         data-max="30"
         data-step="0.1"
+        value="{$rooms[roomID].minTemp}"
       />
       <div class="backx">
         <div class="heat_value">{$rooms[roomID].minTemp}</div>
@@ -131,6 +101,7 @@
             {/if}
 
             <hr class="line_" />
+            <Battery level={$rooms[roomID].bat}/>
             {#if $rooms[roomID].humidity}
               {#if $rooms[roomID].humidity.toString().includes(".")}
                 <span class="hum-data"

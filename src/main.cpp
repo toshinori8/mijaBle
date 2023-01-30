@@ -1,16 +1,17 @@
 //////////////////// LIBS ////////////////////
 #include "ESPConnect.h"
 #include <Arduino.h>
-#include <ArduinoOTA.h>
+// #include <ArduinoOTA.h>
 #include <AsyncWebSocket.h>
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
 #include <ESPmDNS.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
+#include <AsyncElegantOTA.h>
 //////////////////////////////////PROGRAM LOGIC///
 #include <ble.h>
-#include <ota.h>
+// #include <ota.h>
 #include <time.h>
 #include <Timers.h>
 #include <routesSetup.h>
@@ -23,10 +24,6 @@ Timers<4> timers;
 bool littleFSinitialised = false;
 
 // attach clas define termostatRules
-
-
-
-
 
 void setup()
 {
@@ -49,13 +46,8 @@ void setup()
     DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
     DefaultHeaders::Instance().addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS");
     DefaultHeaders::Instance().addHeader("Access-Control-Allow-Headers", "*");
-    // CORS VALIDATION ENABLE
 
-// #ifdef CORS_DEBUG
-//     DefaultHeaders::Instance().addHeader(F("Access-Control-Allow-Origin"), F("*"));
-//     DefaultHeaders::Instance().addHeader(F("Access-Control-Allow-Headers"), F("content-type"));
-// #endif
-
+    AsyncElegantOTA.begin(&server);
     server.begin();
 
     Serial.println(F("ASYNC server started"));
@@ -64,7 +56,7 @@ void setup()
     Serial.print(F(".local at: "));
     Serial.println(WiFi.localIP());
   }
-  otaStart(hostName);
+  // otaStart(hostName);
 
   if (!LittleFS.begin())
   {
@@ -84,12 +76,8 @@ void setup()
   }
   else
   {
-    // set routes of webserver
     routesSetup();
-    // initWS();
-    // loadDevices();
-    // initBluetooth();
-    // read contetnt of /rooms.json
+    loadRoomsToMemory();
     roomsF = LittleFS.open("/rooms.json", "r");
     if (!roomsF)
     {
@@ -104,19 +92,21 @@ void setup()
       }
       littleFSinitialised = true;
       // set routes of webserver
+      loadDevicesToMemory();
       routesSetup();
       initWS();
-      loadDevicesToMemory();
       initBluetooth();
     }
   }
+
   // init timers
-  // timers.attach(0, 1000, function01);
+  timers.attach(0, 3000000, saveDevicesToFile);
+  // timers.attach(1, 5000000, saveRoomsToFile);
 }
 
 void loop()
 {
-  ArduinoOTA.handle();
+  // ArduinoOTA.handle();
   if (!littleFSinitialised)
   {
     return;

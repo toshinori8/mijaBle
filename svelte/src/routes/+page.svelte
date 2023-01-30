@@ -1,4 +1,5 @@
 <script>
+	import Battery from './battery.svelte';
   // @ts-nocheck
   // let jq = window.$;
   // import Counter from './Counter.svelte';
@@ -13,37 +14,44 @@
   let errorMessage = "";
   let loadingDataState = false;
 
-
+  /**
+     * @type {any[]}
+     */
   let jsonRoomsData = [];
+  /**
+     * @type {any[]}
+     */
   let jsonDevicesData = [];
-  
-  
-	let roomsWithoutDevices = 0;
+
+  let roomsWithoutDevices = 0;
   let retry = true;
 
-  let name = 'world';
-	let nameStore = writable(name)
-	
-	$: nameStore.set(name)
-	
-	setContext('initial', name)
-	setContext('name', nameStore)
+  let name = "world";
+  let nameStore = writable(name);
 
-  // let rooms = jsonRoomsData; 
+  $: nameStore.set(name);
+
+  setContext("initial", name);
+  setContext("name", nameStore);
+
+  // let rooms = jsonRoomsData;
   let rooms = "some data";
-  let roomsStore = writable(rooms)
-  $: roomsStore.set(rooms)
-  setContext('rooms', roomsStore)
+  let roomsStore = writable(rooms);
+  $: roomsStore.set(rooms);
+  setContext("rooms", roomsStore);
 
+
+  // @ts-ignore
   function updateRoomStore(dataIn) {
     console.log("updating room store");
 
     roomsStore.set(dataIn);
-    
   }
 
-  export async function updateRoom(id) {
-    
+  /**
+     * @param {any} id
+     */
+   export async function updateRoom(id) {
     let room = jsonRoomsData.find(
       (/** @type {{ id: any; }} */ room) => room.id == id
     );
@@ -71,63 +79,34 @@
 
   function updateData() {
     //// updates data on page & roomsData
-      document.getElementById("loading_dot").classList.remove("hidden");
+    // @ts-ignore
+    document.getElementById("loading_dot").classList.remove("hidden");
 
-      fetchData().then(() => {
-        // updateRoomStore(jsonRoomsData);
-        document.getElementById("loading_dot").classList.add("hidden");
-      });
-
+    fetchData().then(() => {
+      // updateRoomStore(jsonRoomsData);
+      // @ts-ignore
+      document.getElementById("loading_dot").classList.add("hidden");
+    });
   }
 
-  async function changeData(e) {
-
-      console.log('fetching new data');
+  async function changeData() {
+ 
     //// updates data on page & roomsData
-      document.getElementById("loading_dot").classList.toggle("hidden");
-
-      // loadingDataState = true;
-        const response = await fetch(
-          "http://cleargrasstermostat.local/data/JSONdevices"
-        );
-
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        let DevicesData = await response.json();
-        console.log('fetching new data from devices');
-        DevicesData.forEach((dev) => {
-          
-          console.log(dev.mac);
-              jsonRoomsData.forEach((room) => {
-                  if(dev.mac == room.mac){
-                    room.temp = dev.temp;
-                    room.humidity = dev.hum;
-                    console.log('updated room');
-                  }
-
-              });
-                 
-        });
-                 updateRoomStore(jsonRoomsData);
-
-        // jsonRoomsData = await response.json();
-      // change room data in jsonRoomsData
-        // jsonRoomsData.forEach((room) => {
-        //   room.humidity = 99;
-        
-        // });
-        
-        // jsonRoomsData[0].name = "changed name";
-        // jsonRoomsData[0].temp = 99;
-
-        // document.getElementById("loading_dot").classList.add("hidden");
+    // @ts-ignore
+    jsonRoomsData.forEach((room) => {
+      
+        room.bat = 30;
+      
      
+    });
+
+   
+    updateRoomStore(jsonRoomsData);
 
   }
 
   async function fetchData() {
-    console.log("fetching data");
+  
     while (retry) {
       try {
         loadingDataState = true;
@@ -146,25 +125,29 @@
         if (!responseDevices.ok) {
           throw new Error(responseDevices.statusText);
         }
-         jsonDevicesData = await responseDevices.json();
+        jsonDevicesData = await responseDevices.json();
         // jsonDevices.set(jsonDevicesData);
-        
+
         loadingDataState = false;
         jsonRoomsData.forEach((room) => {
           jsonDevicesData.forEach((device) => {
             if (device.mac == room.mac) {
               if (device.temp != null) {
                 room.temp = device.temp;
-                // room.temp = random(10,2);
-                // console.log(device.temp);
+               
               } else {
                 room.temp = 0;
               }
-              // console.log(device);
+              
               if (device.hum != null) {
                 room.humidity = device.hum;
               } else {
                 room.humidity = 0;
+              }
+              if (device.bat != null) {
+                room.bat = device.bat;
+              } else {
+                room.bat = 0;
               }
             } else {
               roomsWithoutDevices++;
@@ -187,45 +170,50 @@
   }
 
   const connectWebsocket = () => {
-  // Create a new websocket
-  const ws = new WebSocket("ws://cleargrasstermostat.local/data/ws");
-  ws.addEventListener("message", (response) => {
-    let type = response.data.split("*")[0];
-    let data = response.data.split("*")[1]; 
-    const incomingData = JSON.parse(data);
-    
-    if(incomingData){
-      console.log(incomingData);
-      console.log(type);
-    }
-    if(type=="devices"){
-
-              jsonDevicesData = incomingData;
-              jsonRoomsData.forEach((room) => {
-                jsonDevicesData.forEach((device) => {
-                  if (device.mac == room.mac) {
-                    if (device.temp != null) {
-                      room.temp = device.temp;
-                     } else {
-                      room.temp = 0;
-                    }
-                    if (device.hum != null) {
-                      room.humidity = device.hum;
-                    } else {
-                      room.humidity = 0;
-                    }
-                  } else {
-                    roomsWithoutDevices++;
-                  }
-                  updateRoomStore(jsonRoomsData);
-                });
-              });
+    console.log("connecting to websocket");
+    const ws = new WebSocket("ws://cleargrasstermostat.local/data/ws");
+    ws.addEventListener("message", (response) => {
+      let type = response.data.split("*")[0];
+      let data = response.data.split("*")[1];
 
 
-    }
-  
-  });
-};
+      if (data != null) {
+        let incomingData = JSON.parse(data);
+        console.log(incomingData);
+        incomingData.forEach((/** @type {{ mac: any; temp: number; humidity: number; bat: number; }} */ room) => {
+          jsonDevicesData.forEach((device) => {
+            if (device.mac == room.mac) {
+              if (device.temp != null) {
+                room.temp = device.temp;
+              } else {
+                room.temp = 0;
+              }
+              if (device.hum != null) {
+                room.humidity = device.hum;
+              } else {
+                room.humidity = 0;
+              }
+              // if(device.bat != null){
+              //   room.bat = device.bat;
+              // } else {
+              //   room.bat = 0;
+              // }
+              room.bat=30;
+            } else {
+              roomsWithoutDevices++;
+            }
+            updateRoomStore(jsonRoomsData);
+          });
+        });
+        
+        updateRoomStore(jsonRoomsData);
+      
+      }
+
+      if (type == "rooms") {
+      }
+    });
+  };
 
   onMount(async () => {
     await fetchData();
@@ -240,35 +228,26 @@
 
 <p>{errorMessage}</p>
 
-
-<input bind:value={name}>
-
-
-
 <!-- <button on:click={updateData}>pobierz dane</button> -->
 <button on:click={(e) => changeData(e)}>zmień dane2</button>
 <section>
-  <!-- {#if roomsWithoutDevices > 0}
+  {#if roomsWithoutDevices > 0}
     <div class="errorMessage">{errorMessage}</div>
     <div id="alert-modal-body" class="modal-body">
       {roomsWithoutDevices} pokojów bez przyporządkowanych urzadzeń, sprawdź
       <a href="/settings">ustawienia</a>
     </div>
-  {/if} -->
-
-  {#if loadingDataState === true}
-  <Loader />
   {/if}
 
-
+  {#if loadingDataState === true}
+    <Loader />
+  {/if}
 
   {#await jsonRoomsData then devices}
     {#each devices as device}
       {#each jsonRoomsData as room}
         {#if device.mac === room.mac}
-            
-          <Room roomID={room.id}  {updateRoom}/>
-
+          <Room roomID={room.id} {updateRoom} />
         {/if}
       {/each}
     {/each}

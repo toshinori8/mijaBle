@@ -676,6 +676,12 @@ margin-right: 10px;
     background: transparent;
 
 }
+
+.room_element.heat .sha_temp{
+
+    border: solid 7px indianred;
+    margin: 11px;
+}
 .room_element .mac_device{
 display:none;
 

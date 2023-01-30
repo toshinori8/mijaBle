@@ -2,6 +2,8 @@
 // @ts-nocheck
 
   import { page } from "$app/stores";
+  import Update_icon from "./update_icon.svelte";
+  import Sensor_icon from "./sensor_icon.svelte";
 </script>
 
 <header>
@@ -17,10 +19,18 @@
     </svg>
     <ul>
       <li aria-current={$page.url.pathname === "/" ? "page" : undefined}>
-        <a href="/">Pokoje</a>
+        <a href="/">
+          
+          <Sensor_icon />
+
+        </a>
       </li>
-      <li aria-current={$page.url.pathname === "/about" ? "page" : undefined}>
-        <a href="/abo">abo</a>
+      <li>
+        <a href="http://cleargrasstermostat.local/update">
+          
+          <Update_icon />
+
+        </a>
       </li>
       <!-- <li aria-current={$page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
 				<a href="/sverdle">Sverdle</a>
@@ -39,7 +49,7 @@
     <svg
       id="loading_dot"
       class="loading_dot_on hidden"
-      fill="rgba(252, 62, 0, 1.000)"
+      fill="rgba(252, 62, 0, 0.8)"
       width="800px"
       height="800px"
       viewBox="0 0 64 64"
@@ -84,19 +94,19 @@
     height: 3em;
   }
 
-  .corner a {
+  /* .corner a {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
-  }
+  } */
 
-  .corner img {
+  /* .corner img {
     width: 2em;
     height: 2em;
     object-fit: contain;
-  }
+  } */
 
   nav {
     display: flex;
