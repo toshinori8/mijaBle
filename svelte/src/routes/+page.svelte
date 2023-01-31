@@ -1,16 +1,10 @@
 <script>
-  import Battery from "./battery.svelte";
-  // @ts-nocheck
-  // let jq = window.$;
-  // import Counter from './Counter.svelte';
   import { onMount } from "svelte";
   import { setContext } from "svelte";
   import Room from "./room.svelte";
   import { writable } from "svelte/store";
   import Loader from "./loader.svelte";
-  import Layout from "./+layout.svelte";
 
-  let retryInterval = 3000;
   let errorMessage = "";
   let loadingDataState = false;
 
@@ -20,7 +14,8 @@
   let roomsWithoutDevices = 0;
   let retry = true;
   
- 
+
+
   let rooms = "rooms data";
   let roomsStore = writable(rooms);
   $: roomsStore.set(rooms);
@@ -110,7 +105,15 @@
     });
   };
 
+  let url = ``;
+
+  onMount(() => url = window.location.href);
+
+
   onMount(async () => {
+
+
+
     await connectWebsocket();
   });
 </script>

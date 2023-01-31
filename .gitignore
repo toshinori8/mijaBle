@@ -12,3 +12,4 @@ svelte/src/routes/.DS_Store
 svelte/.DS_Store
 data/.DS_Store
 svelte/src/routes/.DS_Store
+svelte/build/
