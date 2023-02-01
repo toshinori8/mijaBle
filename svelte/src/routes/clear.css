@@ -220,16 +220,24 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', e
     
 }
 
-.sha_temp_body.heat{
+.sha_temp_body .sha_temp{
 
-    opacity: 1;
-
+    transition: all ease-out .5s;
 }
-.sha_temp_body.noheat{
+.sha_temp_body.heat .sha_temp{
+    box-shadow: 1px 4px 20px -4px rgb(252 119 16), 3px 3px 5px -1px rgba(0,0,0,0.15), -6px -6px 10px -1px rgba(255,255,255,0.7);
 
-    opacity: 0.5;
+    /* animation: rotatew 4s ease infinite; */
+}
 
-
+@keyframes rotatew {
+    0% {
+    }
+    50% {
+        box-shadow: -3px -3px 20px -4px rgb(252 119 16), 1px 2px 15px 5px rgba(0,0,0,0.15), -2px 3px 10px -1px rgba(255,255,255,1);
+    }
+    100% {
+    }
 }
 
 .sha_temp_body .sha_temp

@@ -8,14 +8,11 @@
   import { fade } from "svelte/transition";
   import Battery from "./battery.svelte";
 
-
-
-  let animate = false
+  let animate = false;
 
   function focus(node) {
     addDial(node.id.split("-")[1]);
   }
-
 
   const name = getContext("name");
   const initial = getContext("initial");
@@ -36,18 +33,18 @@
         dynamicDraw: true,
         fgColor: "#7ba8c9",
         bgColor: "none",
-        displayPrevious:true,
-        linecap:"round",
+        displayPrevious: true,
+        linecap: "round",
         cursor: 20,
-        
+
         release: function (/** @type {any} */ v) {
           $rooms[roomID].minTemp = v.toFixed(1).toString();
           updateRoom($rooms[roomID].id);
-          updHeatState()
+          updHeatState();
         },
         change: function (/** @type {any} */ v) {
           $rooms[roomID].minTemp = v.toFixed(1).toString();
-          updHeatState()
+          updHeatState();
         },
       });
   }
@@ -55,34 +52,66 @@
   function random(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
+  // send heat on/off signal to relay
+  function switchRealay(roomID, state) {
+    // try to connect to server
 
-  let heatState = false;
 
-    function updHeatState() {
-      if ($rooms[roomID].temp < $rooms[roomID].minTemp) {
-        heatState = true;
-      } else {
-        heatState = false;
-      }
+
+    let url = "http://cleargrasstermostat.local/data/relay/" + roomID + "/" + state;
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+  }
+
+  // let heatState = $rooms[roomID].heatState;
+  let heatState = () => {
+    $rooms[roomID].heatState ? "heat" : "noheat" | "noheat";
+  };
+
+  $: updHeatState(
+    $rooms[roomID].temp,
+    $rooms[roomID].minTemp,
+    $rooms[roomID].heatState
+  );
+
+  function updHeatState() {
+    console.log("updHeatState");
+    if ($rooms[roomID].temp < $rooms[roomID].minTemp) {
+      heatState = true;
+      switchRealay(roomID, true);
+    } else {
+      switchRealay(roomID, false);
+      heatState = false;
     }
-  
+  }
 
-
-  
-
-  onMount(() => {
-
-
-
-  });
-
-
-
+  onMount(() => {});
 </script>
 
+<!-- svelte-ignore missing-declaration -->
 {#if $rooms[roomID].temp}
-  <div class="room_element sha_temp_body {heatState ? 'heat' : 'noheat'}" transition:fade="{{delay: random(0,1000), duration: 500}}">
-    <div id="encoder-{$rooms[roomID].id}" class="enc" use:focus use:updHeatState>
+  <div
+    class="room_element sha_temp_body {heatState ? 'heat' : 'noheat'}"
+    transition:fade={{ delay: random(0, 1000), duration: 500 }}
+  >
+    <div
+      id="encoder-{$rooms[roomID].id}"
+      class="enc"
+      use:focus
+      use:updHeatState
+    >
       <input
         class="dial noselect"
         data-min="12"
@@ -107,7 +136,9 @@
                 <sup>°C</sup>
               </span>
             {:else}
-              <span class="temp-data">{$rooms[roomID].temp}<sup>°C</sup></span>
+              <span class="temp-data" on:change={updHeatState()}
+                >{$rooms[roomID].temp}<sup>°C</sup></span
+              >
             {/if}
 
             <hr class="line_" />

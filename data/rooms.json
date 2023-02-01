@@ -1,9 +1,0 @@
-[
-  { "id": "0", "name": "Łazienka","minTemp": "25", "mac": "00:11:22:33:44:55"},
-  { "id": "1", "name": "Poduszkarnia (Pracownia Ewa)","minTemp": "25", "mac": "58:2d:34:10:d6:00"},
-  { "id": "2", "name": "Pracownia Adam","minTemp": "25", "mac": "00:11:22:33:44:34"},
-  { "id": "3", "name": "Pralnia", "minTemp": "25", "mac": "58:2d:34:10:d6:0d"},
-  { "id": "4", "name": "Czytelnia","minTemp": "25", "mac": "66:77:88:99:AA:BB"},
-  { "id": "5", "name": "Przedpokój","minTemp": "25", "mac": "66:77:88:99:AA:BB"},
-  { "id": "6", "name": "Spiarnia","minTemp": "25", "mac": "66:77:88:99:AA:BB"}
-]

@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include <LittleFS.h>
 #include <ArduinoJson.h>
-#include <termostatRules.h>
+#include <termostatClass.h>
+#include <relayClass.h>
 
 DynamicJsonDocument rooms(2048); // Json document for storing rooms data
 DynamicJsonDocument devices(2048); // Json document for storing devices data
@@ -21,7 +22,7 @@ int SLEEP_TIME = 10; // seconds
 #define BLUETOOTH_SCAN_TIME 10 // seconds
 
 Thermostat termostat;
-
+Relay relay;
 // define files
 
 File devicesF;

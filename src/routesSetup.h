@@ -37,6 +37,8 @@ bool routesSetup()
             { request->send(204);
             });
 
+
+
   server.on("/data/updateRoom", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL, [](AsyncWebServerRequest *request, uint8_t *data, size_t len,
          size_t index, size_t total)
       {
@@ -89,7 +91,8 @@ bool routesSetup()
                   roomsData[i]["name"] = jsonData["name"];       
                   roomsData[i]["minTemp"] = jsonData["minTemp"]; 
                   roomsData[i]["mac"] = jsonData["mac"];          
-                  
+                  roomsData[i]["heatState"] = jsonData["heatState"];
+
                   // save updated rooms file
                   String jsonStr;
                   serializeJson(roomsData, jsonStr);
@@ -135,6 +138,37 @@ bool routesSetup()
           request->send(500, "application/json", "{\"error\":\"saveFailed\"}");
         }
       });
+
+
+
+    server.on("/data/relay", HTTP_OPTIONS, [](AsyncWebServerRequest *request)
+            { request->send(204);
+            });
+    // let url = "http://cleargrasstermostat.local/data/relay/" + roomID + "/" + state;
+    server.on("/data/relay", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+              String data = request->url();
+              // split url to get roomID and state
+              int roomID = data.substring(data.lastIndexOf("/") - 1, data.lastIndexOf("/")).toInt();
+              bool state = data.substring(data.lastIndexOf("/") + 1).toInt();
+              
+              
+
+              // int roomID = request->arg("roomID").toInt();
+              // bool state = request->arg("state") == "true";
+
+              // bool state = request->arg("state");
+
+              Serial.println("Relay state: " + String(state));
+              Serial.println("Relay roomID: " + String(roomID));
+
+              //relay.switchZone(roomID,state);
+
+              request->send(200, "text/plain", "{\"response\":\"ok\"}");
+            
+            });
+
+
 
   server.on("/setup", HTTP_GET, [](AsyncWebServerRequest *request){ request->send(LittleFS, "/rooms.html", "text/html"); });
 

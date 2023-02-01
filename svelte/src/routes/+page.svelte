@@ -7,14 +7,12 @@
 
   let errorMessage = "";
   let loadingDataState = false;
+  let url = ``;
 
   let jsonRoomsData = []; 
   let jsonDevicesData = [];
 
   let roomsWithoutDevices = 0;
-  let retry = true;
-  
-
 
   let rooms = "rooms data";
   let roomsStore = writable(rooms);
@@ -105,17 +103,18 @@
     });
   };
 
-  let url = ``;
+ 
 
   onMount(() => url = window.location.href);
 
-
   onMount(async () => {
 
-
+  
 
     await connectWebsocket();
   });
+
+
 </script>
 
 <svelte:head>
@@ -130,7 +129,7 @@
   {#if roomsWithoutDevices > 0}
     <div class="errorMessage">{errorMessage}</div>
     <div id="alert-modal-body" class="modal-body">
-      {roomsWithoutDevices} pokojów bez przyporządkowanych urzadzeń, sprawdź
+      {roomsWithoutDevices} pokoi bez przyporządkowanych urzadzeń, sprawdź
       <a href="/settings">ustawienia</a>
     </div>
   {/if}
