@@ -8,32 +8,12 @@
 
 
     let data: { current: { temp: any; feels_like: number; humidity: number; weather: { icon: any; }[]; }; hourly: any; } | null;
+   
+    
+
   
-  
-    let currentTime = ()=>
-    {
-          
-      let date = new Date();
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
-      let seconds = date.getSeconds();
-      let day = date.getDate();
-      let month = date.getMonth() + 1;
-      let year = date.getFullYear();
-  
-      let returnTime:any={};
-      returnTime[hours]= hours;
-      returnTime[minutes]= minutes;
-      returnTime[seconds]= seconds;
-      returnTime[day]= day;
-      returnTime[month]= month;
-      returnTime[year]= year;
-      
-  
-  
-      return returnTime;
-    }
-  
+    
+
     let convertTimestamp = (timestamp: any, type: string) =>
     {
   
@@ -53,50 +33,38 @@
           return `${hours}:${minutes}:${seconds}`;
       }
       else if (type == "day"){
-          return `${day}`;
+          return day;
       }
       else if (type == "month"){
-          return `${month}`;
+          return month;
       }
       else if (type == "year"){
-          return `${year}`;
+          return year;
       }
       else if (type == "hours"){
-          return `${hours}`;
+          return hours;
       }
       else if (type == "minutes"){
-          return `${minutes}`;
+          return minutes;
       }
       else if (type == "seconds"){
-          return `${seconds}`;
+          return seconds;
       }else return false;
     }
-  
-    let checkTimestampHours = (timsestamp: number, hoursNext: any) =>
-    {
-      let date = new Date(timsestamp * 1000);
-      let hours = date.getHours();
-      let minutes = date.getMinutes();
+
+
+
       
   
-      let currentTimev = currentTime();
-          if(convertTimestamp(timsestamp, "hours") <=  currentTimev.hours+ hoursNext)
-          {
-              return true;
-          }
-          else
-          {
-              return false;
-          }
+
   
-    }
-  
+    
+    // @ts-ignore
+    let srcOfImage = "";
   
     // get forecast
     function getForecast() {
       fetch(
-      //   "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/klecza%20dolna%2C%2034-124%20Poland%2C%20%20ul.spacerowa%20324/today?unitGroup=metric&elements=datetime%2Cname%2Caddress%2Ctempmax%2Ctempmin%2Ctemp%2Cfeelslike%2Chumidity%2Csnow%2Cwindspeed%2Cpressure%2Ccloudcover%2Cvisibility%2Csunrise%2Csunset%2Cicon&include=current%2Cdays%2Chours%2Calerts&key=5CVKAYPUXP5MPJ84S7E4L49QF&contentType=json"
-          // "https://api.openweathermap.org/data/2.5/weather?lat=49.880870&lon=19.563030&appid=f055d509de51700a688e61d5f8e3da76&units=metric"
       // new API 
       "https://api.openweathermap.org/data/3.0/onecall?lat="+lat+"&lon="+lon+"&appid="+owapikey+"&units=metric"
       
@@ -104,9 +72,13 @@
         .then((response) => response.json())
         .then((data_) => {
           data = data_;
+          // @ts-ignore
+          srcOfImage="http://openweathermap.org/img/wn/"+data_.current.weather[0].icon+"@2x.png";
         });
     }
   
+  
+
     onMount(async () => {
       getForecast();
     });
@@ -125,41 +97,36 @@
             <span class="text-6xl font-bold lcd"
               >{data.current.temp}<span class="text-3xl">°C</span></span
             >
-            <span class="font-light mt-1 text-gray-500"
-              >Odczywalna : {data.current.feels_like.toFixed(1)}</span
-            >
+            <span class="font-light mt-1 text-gray-500">Odczywalna : {data.current.feels_like.toFixed(1)}</span>
             <!-- <span class="font-semibold mt-1 text-gray-500">{data.name}</span> -->
           </div>
           <div class="flex flex-col">
             <span class="text-6xl font-bold lcd"
               >{data.current.humidity.toFixed(0)}<span class="text-3xl"
-                ><span class="upperTop">o</span> /o</span
-              ></span>
+                ><span class="upperTop">o</span> /o</span></span>
            
             <!-- <span class="font-semibold mt-1 text-gray-500">{data.name}</span> -->
           </div>
           <div class="h-24 w-24 ">
               <!-- {data.current.weather[0].icon} -->
-            <img
-              src="http://openweathermap.org/img/wn/{data.current.weather[0].icon}@2x.png"
-              alt=""
-            />
+            
+            
+            <img  src="{srcOfImage}" alt=""/>
+
+            
           </div>
         </div>
-            <div class="flex justify-between mt-12">
+            <div class="flex justify-between mt-12 " style="overflow-x: scroll; width:auto;">
   
                   {#each data.hourly as nexthour}
                       <!-- {nexthour.dt} -->
-                      {convertTimestamp(nexthour.dt, "hours")}
                       
-                      {#if checkTimestampHours(nexthour.dt, 6) == true}
-                          <div class="flex flex-col items-center">
+                          <div class="flex flex-col items-center" style="margin-right:30px; padding-bottom: 20px;">
                               <span class="font-semibold text-lg lcd">{nexthour.temp.toFixed(0)}°C</span>
-                              <img alt="" src="http://openweathermap.org/img/wn/{nexthour.weather[0].icon}.png" />	
-                              <span class="font-semibold mt-1 text-sm lcd">{nexthour.dt}</span>
+                              <img alt="" src="http://openweathermap.org/img/wn/{nexthour.weather[0].icon}@2x.png" width="120px" />	
+                              <span class="font-semibold mt-1 text-sm lcd">{convertTimestamp(nexthour.dt,"hours")}:{convertTimestamp(nexthour.dt,"minutes")}</span>
                               <span class="text-xs font-semibold text-gray-400 lcd">PM</span>
                           </div>
-                      {/if}
                       
                   {/each }
   
