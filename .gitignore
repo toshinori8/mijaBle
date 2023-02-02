@@ -19,3 +19,4 @@ svelte/weather-icons-master/
 images/
 svelte/weather-icons-master.zip
 svelte/src/lib/components/owapi.js
+svelte/src/lib/components/owapikey.js

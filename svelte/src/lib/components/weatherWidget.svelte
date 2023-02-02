@@ -1,6 +1,12 @@
 <script lang="ts">
+
     import { onMount } from "svelte";
-  
+    import { owapikey } from "../components/owapikey";
+    import { lon } from "../components/owapikey";
+    import { lat } from "../components/owapikey";
+
+
+
     let data: { current: { temp: any; feels_like: number; humidity: number; weather: { icon: any; }[]; }; hourly: any; } | null;
   
   
@@ -92,8 +98,8 @@
       //   "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/klecza%20dolna%2C%2034-124%20Poland%2C%20%20ul.spacerowa%20324/today?unitGroup=metric&elements=datetime%2Cname%2Caddress%2Ctempmax%2Ctempmin%2Ctemp%2Cfeelslike%2Chumidity%2Csnow%2Cwindspeed%2Cpressure%2Ccloudcover%2Cvisibility%2Csunrise%2Csunset%2Cicon&include=current%2Cdays%2Chours%2Calerts&key=5CVKAYPUXP5MPJ84S7E4L49QF&contentType=json"
           // "https://api.openweathermap.org/data/2.5/weather?lat=49.880870&lon=19.563030&appid=f055d509de51700a688e61d5f8e3da76&units=metric"
       // new API 
-      "https://api.openweathermap.org/data/3.0/onecall?lat=49.880870&lon=19.563030&appid=c9eb7dafaf1068ad6654df45dee8ae81&units=metric"
-      // (49.880870, 19.563030)
+      "https://api.openweathermap.org/data/3.0/onecall?lat="+lat+"&lon="+lon+"&appid="+owapikey+"&units=metric"
+      
           )
         .then((response) => response.json())
         .then((data_) => {
