@@ -1,9 +1,9 @@
 <script>
   import { onMount } from "svelte";
   import { setContext } from "svelte";
-  import Room from "./room.svelte";
+  import Room from "../lib/components/roomWidget.svelte";
   import { writable } from "svelte/store";
-  import Loader from "./loader.svelte";
+  import Loader from "../lib/components/loader.svelte";
 
   let errorMessage = "";
   let loadingDataState = false;

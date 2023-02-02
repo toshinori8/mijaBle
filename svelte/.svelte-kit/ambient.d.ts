@@ -26,9 +26,11 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const NVM_INC: string;
 	export const TERM_PROGRAM: string;
 	export const NODE: string;
 	export const INIT_CWD: string;
+	export const NVM_CD_FLAGS: string;
 	export const SHELL: string;
 	export const TERM: string;
 	export const npm_config_metrics_registry: string;
@@ -42,6 +44,7 @@ declare module '$env/static/private' {
 	export const npm_config_local_prefix: string;
 	export const LC_ALL: string;
 	export const NO_PROXY: string;
+	export const NVM_DIR: string;
 	export const USER: string;
 	export const COMMAND_MODE: string;
 	export const npm_config_globalconfig: string;
@@ -49,8 +52,8 @@ declare module '$env/static/private' {
 	export const __CF_USER_TEXT_ENCODING: string;
 	export const npm_execpath: string;
 	export const PLATFORMIO_PATH: string;
-	export const VSCODE_AMD_ENTRYPOINT: string;
 	export const ELECTRON_RUN_AS_NODE: string;
+	export const VSCODE_AMD_ENTRYPOINT: string;
 	export const PATH: string;
 	export const npm_package_json: string;
 	export const _: string;
@@ -63,6 +66,7 @@ declare module '$env/static/private' {
 	export const npm_lifecycle_event: string;
 	export const EDITOR: string;
 	export const npm_package_name: string;
+	export const LOCAL_GIT_DIRECTORY: string;
 	export const LANG: string;
 	export const XPC_FLAGS: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
@@ -70,8 +74,8 @@ declare module '$env/static/private' {
 	export const npm_config_node_gyp: string;
 	export const npm_package_version: string;
 	export const XPC_SERVICE_NAME: string;
-	export const HOME: string;
 	export const SHLVL: string;
+	export const HOME: string;
 	export const APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
 	export const VSCODE_NLS_CONFIG: string;
@@ -82,6 +86,7 @@ declare module '$env/static/private' {
 	export const VSCODE_CODE_CACHE_PATH: string;
 	export const VSCODE_IPC_HOOK: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
+	export const NVM_BIN: string;
 	export const npm_config_user_agent: string;
 	export const VSCODE_PID: string;
 	export const GIT_ASKPASS: string;
@@ -121,9 +126,11 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		NVM_INC: string;
 		TERM_PROGRAM: string;
 		NODE: string;
 		INIT_CWD: string;
+		NVM_CD_FLAGS: string;
 		SHELL: string;
 		TERM: string;
 		npm_config_metrics_registry: string;
@@ -137,6 +144,7 @@ declare module '$env/dynamic/private' {
 		npm_config_local_prefix: string;
 		LC_ALL: string;
 		NO_PROXY: string;
+		NVM_DIR: string;
 		USER: string;
 		COMMAND_MODE: string;
 		npm_config_globalconfig: string;
@@ -144,8 +152,8 @@ declare module '$env/dynamic/private' {
 		__CF_USER_TEXT_ENCODING: string;
 		npm_execpath: string;
 		PLATFORMIO_PATH: string;
-		VSCODE_AMD_ENTRYPOINT: string;
 		ELECTRON_RUN_AS_NODE: string;
+		VSCODE_AMD_ENTRYPOINT: string;
 		PATH: string;
 		npm_package_json: string;
 		_: string;
@@ -158,6 +166,7 @@ declare module '$env/dynamic/private' {
 		npm_lifecycle_event: string;
 		EDITOR: string;
 		npm_package_name: string;
+		LOCAL_GIT_DIRECTORY: string;
 		LANG: string;
 		XPC_FLAGS: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
@@ -165,8 +174,8 @@ declare module '$env/dynamic/private' {
 		npm_config_node_gyp: string;
 		npm_package_version: string;
 		XPC_SERVICE_NAME: string;
-		HOME: string;
 		SHLVL: string;
+		HOME: string;
 		APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
 		VSCODE_NLS_CONFIG: string;
@@ -177,6 +186,7 @@ declare module '$env/dynamic/private' {
 		VSCODE_CODE_CACHE_PATH: string;
 		VSCODE_IPC_HOOK: string;
 		VSCODE_GIT_IPC_HANDLE: string;
+		NVM_BIN: string;
 		npm_config_user_agent: string;
 		VSCODE_PID: string;
 		GIT_ASKPASS: string;

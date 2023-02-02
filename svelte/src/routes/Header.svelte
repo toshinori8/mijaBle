@@ -2,8 +2,8 @@
 // @ts-nocheck
 
   import { page } from "$app/stores";
-  import Update_icon from "./update_icon.svelte";
-  import Sensor_icon from "./sensor_icon.svelte";
+  import Update_icon from "../lib/components/update_icon.svelte";
+  import Sensor_icon from "../lib/components/sensor_icon.svelte";
 </script>
 
 <header>
