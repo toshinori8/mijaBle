@@ -1,5 +1,5 @@
 {
-	"name": "MijaBle_panel",
+	"name": "Mija_ble",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
@@ -15,6 +15,7 @@
 		"@sveltejs/kit": "^1.0.0",
 		"@types/cookie": "^0.5.1",
 		"svelte": "^3.54.0",
+		"svelte-carousel": "^1.0.22",
 		"svelte-check": "^3.0.1",
 		"typescript": "^4.9.3",
 		"vite": "^4.0.0"
@@ -23,6 +24,8 @@
 	"dependencies": {
 		"autoprefixer": "^10.4.13",
 		"dayjs": "^1.11.7",
+		"simply-reactive": "^4.1.0",
+		"svelte-morphing-modal": "^2.2.0",
 		"tailwindcss": "^3.2.4"
 	}
 }

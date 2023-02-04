@@ -1,0 +1,42 @@
+{
+    "name": "svelte-morphing-modal",
+    "version": "2.2.0",
+    "description": "Morphing modal component for Svelte 3",
+    "svelte": "src/index.js",
+    "main": "index.js",
+    "module": "index.mjs",
+    "scripts": {
+        "build": "rollup -c",
+        "prepublishOnly": "npm run lint & npm run build",
+        "lint": "eslint src/*.svelte"
+    },
+    "files": [
+        "src",
+        "index.mjs",
+        "index.js"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/PaulMaly/svelte-morphing-modal.git"
+    },
+    "keywords": [
+        "svelte"
+    ],
+    "author": "PaulMaly",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/PaulMaly/svelte-morphing-modal/issues"
+    },
+    "homepage": "https://github.com/PaulMaly/svelte-morphing-modal#readme",
+    "devDependencies": {
+        "eslint": "^7.10.0",
+        "eslint-plugin-svelte3": "^2.7.3",
+        "rollup": "^2.3.4",
+        "@rollup/plugin-node-resolve": "^8.0.0",
+        "rollup-plugin-svelte": "^6.0.0",
+        "svelte": "^3.0.0"
+    },
+    "dependencies": {
+        "svelte-transitions-morph": "latest"
+    }
+}

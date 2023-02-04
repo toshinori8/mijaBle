@@ -521,6 +521,21 @@ lilconfig@^2.0.5, lilconfig@^2.0.6:
   resolved "https://registry.npmjs.org/lilconfig/-/lilconfig-2.0.6.tgz"
   integrity sha512-9JROoBW7pobfsx+Sq2JsASvCo6Pfo6WWoUW79HuB1BCoBXD4PLWJPqDF6fNj67pqBYTbAHkE57M1kS/+L1neOg==
 
+lodash.clonedeep@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.npmjs.org/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz"
+  integrity sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==
+
+lodash.get@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.npmjs.org/lodash.get/-/lodash.get-4.4.2.tgz"
+  integrity sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==
+
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz"
+  integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
+
 magic-string@^0.27.0:
   version "0.27.0"
   resolved "https://registry.npmjs.org/magic-string/-/magic-string-0.27.0.tgz"
@@ -788,6 +803,19 @@ set-cookie-parser@^2.5.1:
   resolved "https://registry.npmjs.org/set-cookie-parser/-/set-cookie-parser-2.5.1.tgz"
   integrity sha512-1jeBGaKNGdEq4FgIrORu/N570dwoPYio8lSoYLWmX7sQ//0JY08Xh9o5pBcgmHQ/MbsYp/aZnOe1s1lIsbLprQ==
 
+simply-reactive@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.npmjs.org/simply-reactive/-/simply-reactive-4.1.0.tgz"
+  integrity sha512-6SrhUHHhaOTbbvuh2wLn7JkVKiqM+j/h2BtJCAU67xc/RjPsbarCS5SfJIGAVSN1mSPxKbil71DwO7PL7LtsfA==
+
+"simply-reactive@github:vadimkorr/simply-reactive#1.0.2":
+  version "1.0.0"
+  resolved "git+ssh://git@github.com/vadimkorr/simply-reactive.git#f403097d695030306bdfd0f849411fd28ad7d474"
+  dependencies:
+    lodash.clonedeep "^4.5.0"
+    lodash.get "^4.4.2"
+    lodash.isequal "^4.5.0"
+
 sirv@^2.0.2:
   version "2.0.2"
   resolved "https://registry.npmjs.org/sirv/-/sirv-2.0.2.tgz"
@@ -829,6 +857,13 @@ supports-preserve-symlinks-flag@^1.0.0:
   resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
+svelte-carousel@^1.0.22:
+  version "1.0.22"
+  resolved "https://registry.npmjs.org/svelte-carousel/-/svelte-carousel-1.0.22.tgz"
+  integrity sha512-s00UL7lhAIQACooM4xYW5LdNbwKztdpYZLnRyW0qL0vdaZayLeiHsZj/JxQZHk9vbddVqGo1kn+pQSaSVhJqWA==
+  dependencies:
+    simply-reactive "github:vadimkorr/simply-reactive#1.0.2"
+
 svelte-check@^3.0.1:
   version "3.0.2"
   resolved "https://registry.npmjs.org/svelte-check/-/svelte-check-3.0.2.tgz"
@@ -848,6 +883,13 @@ svelte-hmr@^0.15.1:
   resolved "https://registry.npmjs.org/svelte-hmr/-/svelte-hmr-0.15.1.tgz"
   integrity sha512-BiKB4RZ8YSwRKCNVdNxK/GfY+r4Kjgp9jCLEy0DuqAKfmQtpL38cQK3afdpjw4sqSs4PLi3jIPJIFp259NkZtA==
 
+svelte-morphing-modal@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.npmjs.org/svelte-morphing-modal/-/svelte-morphing-modal-2.2.0.tgz"
+  integrity sha512-kjpQUzJzwlarCNMc34057eKDmNopvKu1jm8T8+juNnfC3xoBkJM9vUN4Giq6Myvsyha91giYacAPdo9JaZd/Dg==
+  dependencies:
+    svelte-transitions-morph latest
+
 svelte-preprocess@^5.0.0:
   version "5.0.1"
   resolved "https://registry.npmjs.org/svelte-preprocess/-/svelte-preprocess-5.0.1.tgz"
@@ -859,6 +901,11 @@ svelte-preprocess@^5.0.0:
     magic-string "^0.27.0"
     sorcery "^0.11.0"
     strip-indent "^3.0.0"
+
+svelte-transitions-morph@latest:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/svelte-transitions-morph/-/svelte-transitions-morph-1.1.0.tgz"
+  integrity sha512-qRyHI2uCe9txfBFF9wE5WNLZRF1Zw3/xDJKxU5JnK19jfKnDafDR9TlATsCfHBDjtFPRWLFHB+ZgsZCc9Eya0Q==
 
 svelte@^3.23.0, svelte@^3.54.0, svelte@^3.55.0, svelte@>=3.19.0:
   version "3.55.1"

@@ -1,6 +1,9 @@
 <script>
   // @ts-ignore
   const jq = window.$;
+
+  // import * as jq from 'jquery';
+  console.log(jq);
   export let updateRoom;
   export let roomID;
 
@@ -8,9 +11,10 @@
   import { fade } from "svelte/transition";
   import Battery from "./battery.svelte";
 
+  let sendingOn = false;
   let animate = false;
 
-  function focus(node) {
+  function addDialOnstart(node) {
     addDial(node.id.split("-")[1]);
   }
 
@@ -52,26 +56,36 @@
   function random(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
+
+
+
+
   // send heat on/off signal to relay
   function switchRealay(roomID, state) {
-    // try to connect to server
-
-
-
-    let url = "http://cleargrasstermostat.local/data/relay/" + roomID + "/" + state;
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
+    
+    
+    if (sendingOn == true) {
+      sendingOn=false;
+      let url =
+        "http://cleargrasstermostat.local/data/relay/" + roomID + "/" + state;
+      fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+          sendingOn=false;
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+
+
+
 
   }
 
@@ -109,7 +123,7 @@
     <div
       id="encoder-{$rooms[roomID].id}"
       class="enc"
-      use:focus
+      use:addDialOnstart
       use:updHeatState
     >
       <input

@@ -1,7 +1,6 @@
-<script>
-import WeatherWidget from '../../lib/components/weatherWidget.svelte';
-  </script>
+<script lang="ts">
+	
+</script>
 
 
-
-<WeatherWidget />
+ 

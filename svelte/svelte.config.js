@@ -7,6 +7,12 @@ import { vitePreprocess } from '@sveltejs/kit/vite';
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   kit: {
+    // vite: {
+    //   optimizeDeps: {
+    //     include: ['lodash.get', 'lodash.isequal', 'lodash.clonedeep']
+    //   }
+    //   // plugins: []
+    // },
     adapter: adapter({
       pages: 'build',
       assets: 'build',
@@ -14,7 +20,8 @@ const config = {
       precompress: false,
       strict: true,
 	  outDir: 'builda',
-    }),
+    }
+    ),
   },
   preprocess: vitePreprocess()
 

@@ -1,16 +1,30 @@
 <script lang="ts">
+  // @ts-ignore
+    import Carousel from 'svelte-carousel';
+    // @ts-ignore
 
     import { onMount } from "svelte";
-    import { owapikey } from "../components/owapikey";
-    import { lon } from "../components/owapikey";
-    import { lat } from "../components/owapikey";
+    import { owapikey, lat, lon } from "../components/owapikey";
+    import IconHumidity from "../components/iconHumidity.svelte";
+    import { crossfade, fade,  } from "svelte/transition";
+ 
 
+    import dayjs from 'dayjs';
+    import localePL from "dayjs/locale/pl";
+    // import calendar from "dayjs/plugin/calendar";
+    // console.log(localePL);
+    dayjs.locale('pl') // use locale globally
+    // dayjs().locale('pl').format() // use locale in a specific instance
+ 
 
-
-    let data: { current: { temp: any; feels_like: number; humidity: number; weather: { icon: any; }[]; }; hourly: any; } | null;
+    let data: {
+        daily: any; current: { temp: any; feels_like: number; humidity: number; weather: { icon: any; }[]; }; hourly: any; 
+} | null;
    
     
-
+function random(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
   
     
 
@@ -52,12 +66,6 @@
       }else return false;
     }
 
-
-
-      
-  
-
-  
     
     // @ts-ignore
     let srcOfImage = "";
@@ -71,26 +79,77 @@
           )
         .then((response) => response.json())
         .then((data_) => {
-          data = data_;
+         
           // @ts-ignore
+          if (data_.current.temp= -0){data_.current.temp=0}
+          data = data_;
           srcOfImage="http://openweathermap.org/img/wn/"+data_.current.weather[0].icon+"@2x.png";
         });
     }
   
+    let x = 0;
+    let list: HTMLDivElement;
+
+    
   
+
+    /// async function
+
+    let setDragable = async () => {
+
+     // @ts-ignore
+     const jqs = window.$;
+    
+
+
+      // @ts-ignore
+      jqs(".dragable-container").draggable({
+        cursor: "move",
+        containment: "parent-window",
+        stop: function () {
+          // @ts-ignore
+          if (jqs(".child-window").position().left < 1) jqs(".child-window").css("left", "720px");
+        },
+      });
+          };
+
+ 
+
+
+
+
 
     onMount(async () => {
       getForecast();
-    });
-  </script>
+
+
+      // get forecast 60 minutes
+      setInterval(() => getForecast(), 1000 * 60 * 60);
   
+  
+      setDragable();
+   
+
+    
+
+    });
+  
+
+    function jqs(arg0: string) {
+        throw new Error("Function not implemented.");
+    }
+</script>
+
+
+
+
+
   {#if data != null}
-    <div
-      class="weather_widget flex flex-col items-center justify-center w-screen min-h-screen text-gray-700 p-10 "
-    >
+    <div class="weather_widget weather_section flex flex-col items-center justify-center min-h-screen text-gray-700 p-10 " >
       <!-- Component Start -->
-      <div
-        class="w-full max-w-screen-sm bg-white p-10 rounded-xl ring-8 ring-white ring-opacity-40"
+      <!-- svelte-ignore missing-declaration -->
+      <div transition:fade={{ delay: 200, duration: 300 }}
+        class="w-full max-w-screen-sm owHidden bg-white p-10 rounded-xl ring-8 ring-white ring-opacity-40"
       >
         <div class="flex justify-between">
           <div class="flex flex-col">
@@ -116,177 +175,116 @@
             
           </div>
         </div>
-            <div class="flex justify-between mt-12 " style="overflow-x: scroll; width:auto;">
-  
+
+
+        <br>
+        <br>
+       
+<hr>
+        <Carousel
+        particlesToShow={8}
+        particlesToScroll={8}
+        dots={true}
+  arrows={false}
+  infinite={false}
+      >
+      {#each data.hourly as nexthour}
+         
+      
+      <div class="flex time_items flex-col items-center noSelect" style="margin-right:30px; padding-bottom: 20px;">
+        <span class="font-semibold mt-1 text-sm lcd noSelect time_dis">{convertTimestamp(nexthour.dt,"hours")}:{convertTimestamp(nexthour.dt,"minutes")} </span>
+        <!-- <span class="text-xs font-semibold text-gray-400 lcd noSelect">PM</span> -->
+        
+        <img alt="" src="http://openweathermap.org/img/wn/{nexthour.weather[0].icon}@2x.png" width="120px" class="noSelect" style="pointer-events: none;"/>	
+        <span class="font-semibold text-lg lcd noSelect">{nexthour.temp.toFixed(1)}°C</span>
+        <span class="text-sm lcd noSelect">{nexthour.feels_like}</span>
+        
+    </div>
+
+
+
+        {/each}
+      </Carousel>
+<hr>
+
+
+<!-- 
+          <div class="dragable-container"  style="overflow-x: auto;">
+
+            <div class="flex justify-between mt-12 parent-w">
+                 
+              
                   {#each data.hourly as nexthour}
-                      <!-- {nexthour.dt} -->
+                    
                       
-                          <div class="flex flex-col items-center" style="margin-right:30px; padding-bottom: 20px;">
-                              <span class="font-semibold text-lg lcd">{nexthour.temp.toFixed(0)}°C</span>
+                          <div class="flex time_items flex-col items-center" style="margin-right:30px; padding-bottom: 20px;">
+                              <span class="font-semibold text-lg lcd">{nexthour.temp.toFixed(1)}°C</span>
                               <img alt="" src="http://openweathermap.org/img/wn/{nexthour.weather[0].icon}@2x.png" width="120px" />	
                               <span class="font-semibold mt-1 text-sm lcd">{convertTimestamp(nexthour.dt,"hours")}:{convertTimestamp(nexthour.dt,"minutes")}</span>
                               <span class="text-xs font-semibold text-gray-400 lcd">PM</span>
                           </div>
                       
                   {/each }
-  
+           
               
-          </div>
+          </div> -->
+
+          <!-- </div> -->
       </div>
   
-      <div
-        class="flex flex-col space-y-6 w-full max-w-screen-sm bg-white p-10 mt-10 rounded-xl ring-8 ring-white ring-opacity-40"
-      >
+
+
+      <!-- svelte-ignore missing-declaration -->
+
+      <div transition:fade={{ delay: 500, duration: 500 }} class="flex flex-col space-y-6 w-full max-w-screen-sm bg-white p-10 mt-10 rounded-xl ring-8 ring-white ring-opacity-40">
+      
+        <div class="scrollHandle">
+
+        {#each data.daily as day}
+        
+        
+
+
         <div class="flex justify-between items-center">
-          <span class="font-semibold text-lg w-1/4">Fri, 22 Jan</span>
+          <span class="font-semibold text-lg w-1/4 firstLetterUp">  
+          
+            {dayjs.unix(day.dt).format('dddd')}<br>
+            {dayjs.unix(day.dt).locale('pl').format('D')} {dayjs.unix(day.dt).format('MMM')}
+          </span>
+            <!-- <br> Fri, 22 Jan</span> -->
           <div class="flex items-center justify-end w-1/4 pr-10">
-            <span class="font-semibold">12%</span>
-            <svg
-              class="w-6 h-6  ml-1"
-              viewBox="0 0 16 20"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="matrix(1,0,0,1,-4,-2)">
-                <path
-                  d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                  style="fill-rule:nonzero;"
-                />
-              </g>
-            </svg>
+            
+            <span class="font-semibold humidityForecast">
+                  {day.humidity}%
+
+            </span>
+          
+              <IconHumidity></IconHumidity>
+
           </div>
-          <svg
-            class="h-8 w-8  w-1/4"
-            xmlns="http://www.w3.org/2000/svg"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            ><path d="M0 0h24v24H0V0z" fill="none" /><path
-              d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM1 10.5h3v2H1zM11 .55h2V3.5h-2zm8.04 2.495l1.408 1.407-1.79 1.79-1.407-1.408zm-1.8 15.115l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5h3v2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1 4h2v2.95h-2zm-7.45-.96l1.41 1.41 1.79-1.8-1.41-1.41z"
-            /></svg
-          >
-          <span class="font-semibold text-lg w-1/4 text-right">18° / 32°</span>
+          <img alt="" src="http://openweathermap.org/img/wn/{day.weather[0].icon}@2x.png" width="" />	
+
+            <!-- {day.weather[0].icon} -->
+
+          <span class="font-semibold text-lg w-1/4 text-right temp_primary">{day.temp.day}°</span>
+          <span class="under">
+
+          <span class="fontTemp w-1/2 text-right temp_secondary"><span class="labelTemp">min </span>{day.temp.min}°</span>
+          <span class="fontTemp w-1/2 text-right temp_secondary"><span class="labelTemp">max </span>{day.temp.max}°</span>
+        </span>
+          
+        
         </div>
-        <div class="flex justify-between items-center">
-          <span class="font-semibold text-lg w-1/4">Sat, 23 Jan</span>
-          <div class="flex items-center justify-end pr-10 w-1/4">
-            <span class="font-semibold">0%</span>
-            <svg
-              class="w-6 h-6  ml-1"
-              viewBox="0 0 16 20"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="matrix(1,0,0,1,-4,-2)">
-                <path
-                  d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                  style="fill-rule:nonzero;"
-                />
-              </g>
-            </svg>
-          </div>
-          <svg
-            class="h-8 w-8  w-1/4"
-            xmlns="http://www.w3.org/2000/svg"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            ><path d="M0 0h24v24H0V0z" fill="none" /><path
-              d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM1 10.5h3v2H1zM11 .55h2V3.5h-2zm8.04 2.495l1.408 1.407-1.79 1.79-1.407-1.408zm-1.8 15.115l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5h3v2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1 4h2v2.95h-2zm-7.45-.96l1.41 1.41 1.79-1.8-1.41-1.41z"
-            /></svg
-          >
-          <span class="font-semibold text-lg w-1/4 text-right">22° / 34°</span>
+
+
+
+        {/each}
+      
         </div>
-        <div class="flex justify-between items-center">
-          <span class="font-semibold text-lg w-1/4">Sun, 24 Jan</span>
-          <div class="flex items-center justify-end pr-10 w-1/4">
-            <span class="font-semibold">20%</span>
-            <svg
-              class="w-6 h-6  ml-1"
-              viewBox="0 0 16 20"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="matrix(1,0,0,1,-4,-2)">
-                <path
-                  d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                  style="fill-rule:nonzero;"
-                />
-              </g>
-            </svg>
-          </div>
-          <svg
-            class="h-8 w-8  w-1/4"
-            xmlns="http://www.w3.org/2000/svg"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            ><path d="M0 0h24v24H0V0z" fill="none" /><path
-              d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79zM1 10.5h3v2H1zM11 .55h2V3.5h-2zm8.04 2.495l1.408 1.407-1.79 1.79-1.407-1.408zm-1.8 15.115l1.79 1.8 1.41-1.41-1.8-1.79zM20 10.5h3v2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1 4h2v2.95h-2zm-7.45-.96l1.41 1.41 1.79-1.8-1.41-1.41z"
-            /></svg
-          >
-          <span class="font-semibold text-lg w-1/4 text-right">21° / 32°</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="font-semibold text-lg w-1/4">Mon, 25 Jan</span>
-          <div class="flex items-center justify-end pr-10 w-1/4">
-            <span class="font-semibold">50%</span>
-            <svg
-              class="w-6 h-6  ml-1"
-              viewBox="0 0 16 20"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="matrix(1,0,0,1,-4,-2)">
-                <path
-                  d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                  style="fill-rule:nonzero;"
-                />
-              </g>
-            </svg>
-          </div>
-          <svg
-            class="h-8 w-8  w-1/4"
-            xmlns="http://www.w3.org/2000/svg"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            ><path d="M0 0h24v24H0V0z" fill="none" /><path
-              d="M12.01 6c2.61 0 4.89 1.86 5.4 4.43l.3 1.5 1.52.11c1.56.11 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3h-13c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.95 6 12.01 6m0-2C9.12 4 6.6 5.64 5.35 8.04 2.35 8.36.01 10.91.01 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96C18.68 6.59 15.65 4 12.01 4z"
-            /></svg
-          >
-          <span class="font-semibold text-lg w-1/4 text-right">18° / 29°</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="font-semibold text-lg w-1/4">Tue, 26 Jan</span>
-          <div class="flex items-center justify-center w-1/4">
-            <span class="font-semibold">80%</span>
-            <svg
-              class="w-6 h-6  ml-1"
-              viewBox="0 0 16 20"
-              version="1.1"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="matrix(1,0,0,1,-4,-2)">
-                <path
-                  d="M17.66,8L12.71,3.06C12.32,2.67 11.69,2.67 11.3,3.06L6.34,8C4.78,9.56 4,11.64 4,13.64C4,15.64 4.78,17.75 6.34,19.31C7.9,20.87 9.95,21.66 12,21.66C14.05,21.66 16.1,20.87 17.66,19.31C19.22,17.75 20,15.64 20,13.64C20,11.64 19.22,9.56 17.66,8ZM6,14C6.01,12 6.62,10.73 7.76,9.6L12,5.27L16.24,9.65C17.38,10.77 17.99,12 18,14C18.016,17.296 14.96,19.809 12,19.74C9.069,19.672 5.982,17.655 6,14Z"
-                  style="fill-rule:nonzero;"
-                />
-              </g>
-            </svg>
-          </div>
-          <svg
-            class="h-8 w-8  w-1/4"
-            xmlns="http://www.w3.org/2000/svg"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            ><path d="M0 0h24v24H0V0z" fill="none" /><path
-              d="M12.01 6c2.61 0 4.89 1.86 5.4 4.43l.3 1.5 1.52.11c1.56.11 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3h-13c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.95 6 12.01 6m0-2C9.12 4 6.6 5.64 5.35 8.04 2.35 8.36.01 10.91.01 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96C18.68 6.59 15.65 4 12.01 4z"
-            /></svg
-          >
-          <span class="font-semibold text-lg w-1/4 text-right">20° / 29°</span>
-        </div>
+
+
+    
+       
       </div>
       <!-- Component End  -->
     </div>
@@ -297,7 +295,27 @@
       font-family: "lcd";
       src: url("././aclock.ttf") format("truetype"); /* Safari, Android, iOS */
     }
-  
+    .time_dis{
+
+      background-color: rgba(230, 230, 230, 1.000);
+    width: 47px;
+    height: 21px;
+    text-align: center;
+    color: gray;
+    border-radius: 40px;
+
+    }
+    .noSelect{
+
+        user-select: none;
+        
+
+    }
+
+    .weather_widget{
+      padding-top: 220px;
+
+    }
     .weather_widget .lcd {
       font-family: "lcd", Fallback, sans-serif !important;
     }
@@ -306,4 +324,45 @@
       margin-top: 8px;
       margin-left: 7px;
     }
+    .firstLetterUp::first-letter{
+     /* uppercase */
+     text-transform: capitalize;
+    }
+    .labelTemp{
+
+      font-size: 10px !important;
+      /* position: absolute; */
+      margin-right: 4px;
+
+    }
+    .temp_primary{
+      font-size: 1.4em;
+    
+    }
+      .temp_secondary{
+     
+    display: flex;
+    /* width: 27px; */
+    font-size: 0.7em !important;
+       
+    margin-left: 2px;
+       
+     
+    }
+    .under{
+
+      border-left: 1px solid gray;
+    margin-left: 5px;
+    padding-left: 5px;
+          
+    }
+
+    .owHidden{
+      overflow: hidden;
+    }
+
+
+
+
+
   </style>

@@ -32,6 +32,13 @@
 
         </a>
       </li>
+      <li>
+        <a href="/wea">
+          
+          test
+
+        </a>
+      </li>
       <!-- <li aria-current={$page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
 				<a href="/sverdle">Sverdle</a>
 			</li> -->
