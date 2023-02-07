@@ -6,5 +6,5 @@
         "string": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled",
-    "Codegeex.EnableExtension": true
+    "Codegeex.EnableExtension": false
 }

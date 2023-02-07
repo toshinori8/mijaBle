@@ -215,16 +215,17 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
     client->printf("Hello Client %u", client->id());
 
         // open file rooms.json   
-        Serial.println(F("Sending rooms data"));
+        Serial.println(F("WS connection init for rooms.json"));
         roomsF = LittleFS.open("/rooms.json", "r");
 
         while (roomsF.available())
         {
-          // send data to client
+          // send data to client  
           client->text("rooms*"+roomsF.readString());
+          
+        }    
           roomsF.close();
-          client->ping();
-        }        
+          client->ping();    
   }
   else if (type == WS_EVT_DISCONNECT)
   {

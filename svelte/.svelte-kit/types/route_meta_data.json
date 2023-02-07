@@ -4,7 +4,7 @@
 		"src/routes/+layout.js",
 		"src/routes/+layout.js"
 	],
-	"/wea": [
+	"/setup": [
 		"src/routes/+layout.js"
 	]
 }

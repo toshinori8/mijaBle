@@ -14,7 +14,7 @@ server = "//cleargrasstermostat.local";
 
 function getDevices(){
 
-  getJSON(server+"/JSONdevices")
+  getJSON(server+"/data/JSONdevices")
     .then((data) => {
       devices = data;
       
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM loaded");
 
   if (getDevices()){
-    getJSON(server+"/JSONrooms")
+    getJSON(server+"/data/JSONrooms")
     .then((data) => {
       
       rooms = data;
