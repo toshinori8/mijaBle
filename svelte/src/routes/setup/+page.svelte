@@ -1,4 +1,4 @@
-<script lang>
+<script lang="ts">
   import { fade } from "svelte/transition";
   import { bind, subscribe } from "svelte/internal";
   // import FormEditRoom from "$lib/components/formEditRoom.svelte";
@@ -10,6 +10,11 @@
 
   let showEditModal = false;
   let showAddModal = false;
+  let jsonRoomsData: any[] = [];
+  let jsonDevicesData: any[] = [];
+
+  let [rooms, devices, loading, error, saveRooms] = fetchStore();
+
 
   let curr_roomID=0;
 
@@ -17,6 +22,44 @@
   const handleAddModal = (e) => {
     showAddModal = !showAddModal;
   };
+
+  //
+  //
+  // Handle funcions for edit modal 
+  
+  const handle_EditModal_save = () => {
+    
+    // showEditModal = !showEditModal;
+  };
+  const handle_EditModal_del = () => {
+    // delete key iin jsonRoomsData
+    console.log("delete " + curr_roomID);
+   
+    let newTempArray: any[] = [];
+    let i=0;
+
+    for (i = 0; i < jsonRoomsData.length; i++) {
+      if (i!=curr_roomID) {
+        newTempArray.push(jsonRoomsData[i]);
+        console.log("pushing " + i);
+      }
+
+    }
+     
+
+      jsonRoomsData=newTempArray;
+    
+    
+     
+
+  
+      
+
+    showEditModal = false;
+
+  };
+  
+
   const handle_EditModal_open = (e) => {
     curr_roomID = e;
     showEditModal = !showEditModal;
@@ -24,11 +67,10 @@
   const handle_EditModal_close = () => {
     showEditModal = false;
   };
-  let jsonRoomsData = {};
-  let jsonDevicesData = {};
 
-  let [rooms, devices, loading, error, saveRooms] = fetchStore();
-
+  //
+  //
+  //
   function changeData() {
     jsonRoomsData[0].name = "zmieniony";
     rooms.set(jsonRoomsData);
@@ -37,10 +79,15 @@
   onMount(() => {
     rooms.subscribe((value) => {
       jsonRoomsData = value;
+      console.log(jsonRoomsData);
     });
     devices.subscribe((value) => {
       jsonDevicesData = value;
+      
+      console.log(jsonDevicesData);
+
     });
+
   });
 </script>
 
@@ -65,7 +112,7 @@
               >
               <th
                 class="bg-gray-600 p-2 text-white font-bold md:border md:border-grey-500 text-left block md:table-cell"
-                >Device MAC</th
+                >Device</th
               >
               <!-- <th class="bg-gray-600 p-2 text-white font-bold md:border md:border-grey-500 text-left block md:table-cell">Email Address</th>
       <th class="bg-gray-600 p-2 text-white font-bold md:border md:border-grey-500 text-left block md:table-cell">Mobile</th> -->
@@ -90,8 +137,25 @@
                   class="p-2 md:border md:border-grey-500 text-left block md:table-cell"
                   ><span
                     class="inline-block w-1/3 md:hidden font-bold"
-                  />{room.mac}</td
-                >
+                  />{room.mac}
+
+
+                  {#if !jsonDevicesData[0]}
+                  
+                    {#await jsonDevicesData}
+                      {#each jsonDevicesData as device}
+                        {#if device.mac === room.mac}
+                          {device.name}
+                        {/if}  
+
+                      {/each}
+                      
+                    {/await}
+
+                  {/if}
+
+                  
+                  </td>
                 <!-- <td class="p-2 md:border md:border-grey-500 text-left block md:table-cell"><span class="inline-block w-1/3 md:hidden font-bold"></span>mkoch@yahoo.com</td>
         <td class="p-2 md:border md:border-grey-500 text-left block md:table-cell"><span class="inline-block w-1/3 md:hidden font-bold"></span>582-400-3X36</td> -->
                 <td
@@ -105,10 +169,7 @@
                     on:click={() => handle_EditModal_open(room.id)}
                     >Edycja</button
                   >
-                  <button
-                    class="mr-1 rounded bg-red-600 px-4 py-2 text-xs font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-md focus:outline-none active:bg-pink-600"
-                    type="button">Usuń</button
-                  >
+                  
                 </td>
               </tr>
             </tbody>
@@ -140,10 +201,10 @@
 <!-- <button on:click={() => handleToggleModal()}>Open modal</button> -->
 
 <Modal
-  title="edit room"
+  title="Edycja pokoju"
   open={showEditModal}
-  close={() => handle_EditModal_close()}
->
+  on:close={() => handle_EditModal_close()}
+  >
   <svelte:fragment slot="body">
     <label
       class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
@@ -154,7 +215,7 @@
     <input
       type="text"
       class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-      value="Lucky"
+      value= {jsonRoomsData[curr_roomID].name}
     />
 
     <br /><br />
@@ -183,23 +244,24 @@
   
     </select>
 
-    <input
-      type="text" disabled
-      class="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-      value={jsonDevicesData[0].name}
-    />
+   
 
   </svelte:fragment>
 
   <svelte:fragment slot="footer">
     <p />
     <button
+      on:click={() => handle_EditModal_del()}
+      class="mr-1 rounded bg-white px-4 py-2 text-xs font-bold uppercase text-black shadow outline-none transition-all duration-150 ease-linear hover:shadow-md focus:outline-none active:bg-pink-600"
+      type="button">Usuń</button
+    >
+    <button
       on:click={() => handle_EditModal_close()}
       class="mr-1 rounded bg-white px-4 py-2 text-xs font-bold uppercase text-black shadow outline-none transition-all duration-150 ease-linear hover:shadow-md focus:outline-none active:bg-pink-600"
       type="button">Anuluj</button
     >
     <button
-      on:click={() => handle_EditModal_close()}
+      on:click={() => handle_EditModal_save()}
       class="mr-1 rounded bg-red-600 px-4 py-2 text-xs font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-md focus:outline-none active:bg-pink-600"
       type="button">Zapisz</button
     >
