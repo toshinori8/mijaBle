@@ -33,9 +33,9 @@
         </a>
       </li>
       <li>
-        <a href="/wea">
+        <a href="/setup">
           
-          test
+          setup
 
         </a>
       </li>

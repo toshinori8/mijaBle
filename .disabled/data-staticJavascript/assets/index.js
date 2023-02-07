@@ -343,7 +343,7 @@ function getForecast() {
 }
 
 function getDevicesActualData() {
-  getJSON("http://cleargrasstermostat.local/JSONdevices").then((data) => {
+  getJSON("http://cleargrasstermostat.local/data/JSONdevices").then((data) => {
     // update devices with new data
     for (let device of data) {
       termostat.devices.find((d) => d.mac == device.mac).temp = device.temp;
@@ -391,10 +391,10 @@ function getDevicesActualData() {
 let termostat = new Termostat();
 document.addEventListener("DOMContentLoaded", function () {
   // get devices from JSON file
-  getJSON("http://cleargrasstermostat.local/JSONdevices").then((data) => {
+  getJSON("http://cleargrasstermostat.local/data/JSONdevices").then((data) => {
     termostat.devices = data;
 
-    fetch("http://cleargrasstermostat.local/JSONrooms")
+    fetch("http://cleargrasstermostat.local/data/JSONrooms")
       .then((response) => response.json())
       .then((data) => {
         // create rooms

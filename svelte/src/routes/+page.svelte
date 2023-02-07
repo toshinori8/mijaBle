@@ -1,32 +1,20 @@
 <script>
   import { onMount } from "svelte";
-  import { setContext } from "svelte";
   import Room from "../lib/components/roomWidget.svelte";
-  import { writable } from "svelte/store";
   import Loader from "../lib/components/loader.svelte";
-  import WeatherWidget from "../lib/components/weatherWidget.svelte";
-  import MorphingModal from "$lib/svelte-morphing-modal";
 
   let errorMessage = "";
   let loadingDataState = false;
-  let url = ``;
 
-  let jsonRoomsData = [];
-  let jsonDevicesData = [];
-
+  let jsonRoomsData = {};
+  let jsonDevicesData = {};
   let roomsWithoutDevices = 0;
 
-  let rooms = "rooms data";
-  let roomsStore = writable(rooms);
-  $: roomsStore.set(rooms);
-  setContext("rooms", roomsStore);
+  import fetchStore from "../lib/components/fetchData.js";
+  import Battery from "$lib/components/battery.svelte";
+  import { fade, crossfade } from "svelte/transition";
 
-  let open = false;
-
-  function updateRoomStore(dataIn) {
-    roomsStore.set(dataIn);
-    dataIn = dataIn;
-  }
+  let [rooms, devices, loading, error] = fetchStore();
 
   export async function updateRoom(id) {
     let room = jsonRoomsData.find((room) => room.id == id);
@@ -61,7 +49,7 @@
     jsonRoomsData.forEach((room) => {
       room.temp = random(20, 30);
     });
-    updateRoomStore(jsonRoomsData);
+    // roomsStore.updateRoomStore(jsonRoomsData);
 
     document.getElementById("loading_dot").classList.add("hidden");
     // });
@@ -71,44 +59,53 @@
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  let connectWebsocket = () => {
-    loadingDataState = true;
+  // let connectWebsocket = () => {
+  //   loadingDataState = true;
 
-    console.log("connecting to websocket");
-    const ws = new WebSocket("ws://cleargrasstermostat.local/data/ws");
-    ws.addEventListener("message", (response) => {
-      let type = response.data.split("*")[0];
-      let data = response.data.split("*")[1];
+  //   const ws = new WebSocket("ws://cleargrasstermostat.local/data/ws");
+  //   ws.addEventListener("message", (response) => {
+  //     let type = response.data.split("*")[0];
+  //     let data = response.data.split("*")[1];
 
-      if (data != null && type == "devices") {
-        let incomingData = JSON.parse(data);
+  //     if (data != null && type == "devices") {
 
-        incomingData.forEach((device) => {
-          roomsWithoutDevices = jsonRoomsData.filter(
-            (room) => room.mac != device.mac
-          ).length;
+  //       let incomingData = JSON.parse(data);
+  //       console.log("incoming data DEVICES");
+  //       incomingData.forEach((device) => {
+  //         roomsWithoutDevices = jsonRoomsData.filter(
+  //           (room) => room.mac != device.mac
+  //         ).length;
 
-          jsonRoomsData.find((room) => room.mac == device.mac).temp =
-            device.temp;
-          jsonRoomsData.find((room) => room.mac == device.mac).hum = device.hum;
-          jsonRoomsData.find((room) => room.mac == device.mac).bat = device.bat;
-          jsonRoomsData.find((room) => room.mac == device.mac).lastUpdate =
-            device.lastUpdate;
+  //         jsonRoomsData.find((room) => room.mac == device.mac).temp =
+  //           device.temp;
+  //         jsonRoomsData.find((room) => room.mac == device.mac).hum = device.hum;
+  //         jsonRoomsData.find((room) => room.mac == device.mac).bat = device.bat;
+  //         jsonRoomsData.find((room) => room.mac == device.mac).lastUpdate =
+  //           device.lastUpdate;
+  //         loadingDataState = false;
+  //       });
 
-          loadingDataState = false;
-        });
-        updateRoomStore(jsonRoomsData);
-      }
-      if (data != null && type == "rooms") {
-        jsonRoomsData = JSON.parse(data);
-      }
-    });
-  };
+  //       updateRoomStore(jsonRoomsData);
 
-  onMount(() => (url = window.location.href));
+  //     }
+  //     if (data != null && type == "rooms") {
+  //       console.log("incoming data ROOMS");
+  //       jsonRoomsData = JSON.parse(data);
+  //       //updateRoomStore(jsonRoomsData);
+
+  //     }
+  //   });
+  // };
 
   onMount(async () => {
-    await connectWebsocket();
+    // await connectWebsocket();
+
+    rooms.subscribe((value) => {
+      jsonRoomsData = value;
+    });
+    devices.subscribe((value) => {
+      jsonDevicesData = value;
+    });
   });
 </script>
 
@@ -118,56 +115,45 @@
 </svelte:head>
 
 <p>{errorMessage}</p>
-
-<!-- <button on:click={(e) => updateData()}>zmień dane2</button> -->
-<section>
-  {#if roomsWithoutDevices > 0}
-    <div class="errorMessage">{errorMessage}</div>
-    <div id="alert-modal-body" class="modal-body">
-      {roomsWithoutDevices} pokoi bez przyporządkowanych urzadzeń, sprawdź
-      <a href="/settings">ustawienia</a>
-    </div>
-  {/if}
-
-  {#if loadingDataState === true}
-    <Loader />
-  {/if}
-
-  {#await jsonRoomsData then devices}
-    {#each devices as device}
-      {#each jsonRoomsData as room}
-        {#if device.mac === room.mac}
-          <Room roomID={room.id} {updateRoom} />
-        {/if}
-      {/each}
-    {/each}
-  {/await}
-</section>
-
-<WeatherWidget />
-<button on:click={() => (open = true)}>Open</button>
-<MorphingModal
-  {open}
-  on:open={() => (open = true)}
-  on:close={() => (open = false)}
->
-  <div slot="content" class="modal-content">
-    
-    <div class="modal z-50 fixed w-full h-full top-0 left-0 flex items-center justify-center p-8 lg:p-0">
-      <div class="modal-overlay fixed w-full h-full bg-gray-900 opacity-50"></div>
-      <div class="bg-white w-full lg:h-max lg:w-1/2  mx-auto rounded-lg shadow-xl z-50 overflow-y-auto">
-        <div class="head bg-gray-100 py-5 px-8 text-2xl font-extrabold">
-          <button class="p-2 bg-gray-200 hover:bg-gray-300 rounded-full ml-4" on:click={() => (open = false)}>
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-          </button>
+<!-- h-screen -->
+<div class="  pt-20">
+  <div
+    class="mx-auto max-w-11/12 justify-center px-6 md:flex md:space-x-6 xl:px-0"
+  >
+    <div class="rounded-lg md:w-2/3">
+      {#if roomsWithoutDevices > 0}
+        <div class="errorMessage">{errorMessage}</div>
+        <div id="alert-modal-body" class="modal-body">
+          {roomsWithoutDevices} pokoi bez przyporządkowanych urzadzeń, sprawdź
+          <a href="/settings">ustawienia</a>
         </div>
-        <div class="content p-8">
-        </div>
-      </div>
-    </div>
+      {/if}
 
-    
-    
+      {#if loadingDataState === true}
+        <Loader />
+      {/if}
+
+
+      {#if !jsonRoomsData[0] || !jsonDevicesData[0]}
+        <div transition:fade><Loader /></div>
+      {:else}
+        {#each jsonDevicesData as device}
+          {#each jsonRoomsData as room}
+            {#if device.mac === room.mac}
+            
+            <div  transition:fade={{ delay: 500, duration: 500 }} style="display:flex">
+              
+              <p>{room.name}  {room.id} :device: {room.mac}</p>
+
+            </div>
+            
+              <!-- <Room roomID={room.id} {updateRoom} />  -->
+            {/if}
+          {/each}
+        {/each}
+      {/if}
+
+   
+    </div>
   </div>
-</MorphingModal>
-
+</div>
