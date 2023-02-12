@@ -25,7 +25,8 @@
   // const name = getContext("name");
   // const initial = getContext("initial");
   const rooms = getContext("rooms");
-
+  const devices = getContext("devices");
+  
   function addDial(element_id) {
     jq("#encoder-" + element_id)
       .find(".dial")
@@ -108,7 +109,19 @@
   onMount(() => {});
 </script>
 
-{#if $rooms[roomID].temp}
+
+
+  {#each $devices as device}
+      {#if device.mac == $rooms[roomID].mac}
+     <p style="display: none">
+      {$rooms[roomID].temp = device.temp}
+      {$rooms[roomID].hum = device.hum}
+      {$rooms[roomID].bat = device.bat}
+      </p>
+      {/if}
+  {/each}
+
+    {#if $rooms[roomID].temp}
   <div class="justify-between mb-6 sm:flex sm:justify-start">
     <!-- <img src="http://127.0.0.1:5500/serve/wac.png" alt="product-image" class="w-full rounded-lg sm:w-56" /> -->
 
@@ -153,8 +166,8 @@
                 >
               {/if}
 
-              <hr class="line_" />
-              <Battery level={$rooms[roomID].bat} />
+              <!-- <hr class="line_" /> -->
+              <Battery level={$rooms[roomID].bat} class="" />
               {#if $rooms[roomID].hum}
                 {#if $rooms[roomID].hum.toString().includes(".")}
                   <span class="hum-data"
@@ -272,11 +285,8 @@
   </Modal>
 
 <style>
-  @font-face {
-    font-family: "lcd";
-    src: url("././aclock.ttf") format("truetype"); /* Safari, Android, iOS */
-  }
 
+  
   .room_menu ._title {
     color: rgba(0, 0, 0, 0.5);
     padding: 12px;
@@ -347,8 +357,8 @@
     display: inline-block;
     transform: translateY(-60%);
     position: absolute;
-    top: 123px;
-    left: 22px;
+    top: 111px;
+    left: 17px;
     -ms-user-select: none;
     user-select: none;
   }
@@ -369,7 +379,7 @@
   }
   .room_element .small_01 {
     position: absolute;
-    margin-top: 30px;
+    margin-top: 37px;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -413,7 +423,7 @@
     -ms-user-select: none;
     user-select: none;
     position: absolute;
-    top: 5px;
+    top: 31px;
     left: 56px;
     /* left: 120px; */
     font-size: 15px;
@@ -431,8 +441,8 @@
     position: absolute;
     font-size: 15px;
     font-weight: 500;
-    top: 16%;
-    margin-left: 87px;
+    top: 30%;
+    margin-left: 96px;
   }
 
   .room_element .sha_temp:before {
@@ -457,15 +467,7 @@
     width: 200px;
     height: 300px;
   }
-  .room_element .sha_temp hr.line_ {
-    width: 160px;
-    position: absolute;
-    top: 6px;
-    left: 10px;
-    color: black;
-    opacity: 0.25;
-  }
-
+  
   .room_element .sha_temp:after {
     position: absolute;
     content: "";
@@ -510,7 +512,7 @@
     height: 229px;
     z-index: 8;
     /* height: 229px; */
-    margin-top: 25px;
+    margin-top: 45px;
     /* border-radius: 122px; */
     /* padding-top: 120px; */
     /* background-color: rgba(0,0,0,0.1); */
@@ -522,19 +524,18 @@
 
   .room_element .enc .backx {
     position: absolute;
-    width: 158px;
+    width: 161px;
     background: rgba(235, 235, 235, 0.98);
-    /* height: 95px; */
-    height: 141px;
-    margin-top: -182px;
+    height: 166px;
+    margin-top: -188px;
     margin-left: 33px;
     border-radius: 99px;
     transition: all ease 0.5s;
     opacity: 1;
     z-index: 90000000;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
   }
 
   .room_element .enc:hover {
@@ -547,9 +548,10 @@
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
     font-size: 63px;
-    margin-left: 11px;
+    margin-left: 9px;
     font-weight: bold;
-    margin-top: 33px;
+    backdrop-filter: 1px;
+    margin-top: 28px;
     font-family: "lcd", Fallback, sans-serif;
     color: rgba(48, 67, 104, 1);
     background: transparent;

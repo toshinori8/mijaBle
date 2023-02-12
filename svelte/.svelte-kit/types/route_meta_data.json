@@ -6,5 +6,8 @@
 	],
 	"/setup": [
 		"src/routes/+layout.js"
+	],
+	"/setup/devices": [
+		"src/routes/+layout.js"
 	]
 }

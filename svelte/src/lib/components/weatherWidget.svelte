@@ -156,7 +156,7 @@ function random(min: number, max: number) {
             <span class="text-6xl font-bold lcd"
               >{data.current.temp}<span class="text-3xl">°C</span></span
             >
-            <span class="font-light mt-1 text-gray-500">Odczywalna : {data.current.feels_like.toFixed(1)}</span>
+            <span class="font-light mt-1 text-gray-500">Odczuwalna : {data.current.feels_like.toFixed(1)}</span>
             <!-- <span class="font-semibold mt-1 text-gray-500">{data.name}</span> -->
           </div>
           <div class="flex flex-col">
@@ -291,10 +291,7 @@ function random(min: number, max: number) {
   {/if}
   
   <style>
-    @font-face {
-      font-family: "lcd";
-      src: url("././aclock.ttf") format("truetype"); /* Safari, Android, iOS */
-    }
+  
     .time_dis{
 
       background-color: rgba(230, 230, 230, 1.000);

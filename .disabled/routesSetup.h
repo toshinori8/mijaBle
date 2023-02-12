@@ -111,6 +111,38 @@ bool routesSetup()
         }
       });
 
+  server.on("/data/saveDevices", HTTP_OPTIONS, [](AsyncWebServerRequest *request)
+            { request->send(204);
+            });
+  server.on("/data/saveDevices", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,[](AsyncWebServerRequest *request, uint8_t *data, size_t len,
+          size_t index, size_t total)
+      {
+        for (size_t i = 0; i < len; i++)
+        {
+          Serial.write(data[i]);
+        }
+        String jsonStr = (char *)data;
+        DynamicJsonDocument jsonData(2024);
+        DeserializationError error = deserializeJson(jsonData, jsonStr);
+        if (error)
+        {
+          request->send(400, "application/json", "{\"error\":\"invalidJson\"}");
+          return;
+        }
+        if (saveFile("/devices.json", jsonStr))
+        {
+          request->send(200, "application/json",
+                        "{\"response\":\"dataSaved\"}");
+        }
+        else
+        {
+          request->send(500, "application/json", "{\"error\":\"saveFailed\"}");
+        }
+      });
+
+  server.on("/data/saveRooms", HTTP_OPTIONS, [](AsyncWebServerRequest *request)
+            { request->send(204);
+            });
   server.on("/data/saveRooms", HTTP_POST, [](AsyncWebServerRequest *request) {}, NULL,[](AsyncWebServerRequest *request, uint8_t *data, size_t len,
          size_t index, size_t total)
       {

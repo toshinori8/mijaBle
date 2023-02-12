@@ -4,6 +4,7 @@
   import { page } from "$app/stores";
   import Update_icon from "../lib/components/update_icon.svelte";
   import Sensor_icon from "../lib/components/sensor_icon.svelte";
+  
 </script>
 
 <header>
@@ -25,18 +26,16 @@
 
         </a>
       </li>
-      <li>
+      <li aria-current={$page.url.pathname.startsWith('/update') ? 'page' : undefined}>
         <a href="http://cleargrasstermostat.local/update">
           
           <Update_icon />
 
         </a>
       </li>
-      <li>
+      <li aria-current={$page.url.pathname.startsWith('/setup') ? 'page' : undefined}>
         <a href="/setup">
-          
-          setup
-
+          <img src="/images/setup-icon.svg" width="28px" alt="setup"/>
         </a>
       </li>
       <!-- <li aria-current={$page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>

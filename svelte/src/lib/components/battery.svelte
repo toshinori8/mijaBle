@@ -69,15 +69,17 @@
     width: 30px;
     height: 10px;
     position: absolute;
-    margin-top: 22px;
-    margin-left: 27px;
+    margin-top: -75px;
+    margin-left: 84px;
    /* border: 0.1px solid black  ; */
     /* transform: scale(8.5); */
   }
   .meter{
     fill: none;
   }
-
+  .battery_level{
+    transform: scale(0.7);
+  }
   .battery_level .label{
     transition: all 0.5s ease;
     width: 120px;
@@ -165,7 +167,7 @@
   
   <path
     
-    class="fil_none"
+    class="fil_gray border"
     d="M581.25,374q-31,0-62,0c-9.24,0-13.56-4.2-13.57-13.34q0-37.74.06-75.49C505.77,276.17,510,272,519,272q62.25,0,124.49,0c8.71,0,12.9,4.17,12.9,12.79q0,38,0,76c0,9-4.15,13.11-13.11,13.12Q612.25,374,581.25,374Zm.5-91.84c-20.15,0-40.3.16-60.44-.11-4.59-.06-5.49,1.43-5.45,5.65q.3,35.46,0,70.93c0,4.07,1,5.37,5.23,5.35q60.18-.24,120.37,0c4.16,0,4.86-1.44,4.84-5.15q-.23-35.71,0-71.43c0-4.06-.92-5.38-5.18-5.33C621.38,282.26,601.56,282.13,581.75,282.11Z"
     transform="translate(-505.68 -272.03)"
   /><path

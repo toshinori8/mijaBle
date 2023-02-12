@@ -4,7 +4,7 @@
 #include <termostatClass.h>
 #include <relayClass.h>
 
-DynamicJsonDocument rooms(2048); // Json document for storing rooms data
+DynamicJsonDocument rooms(2048);   // Json document for storing rooms data
 DynamicJsonDocument devices(2048); // Json document for storing devices data
 
 AsyncWebServer server(80);
@@ -34,22 +34,25 @@ String floatToString(float f)
   return s;
 }
 
-
-
-void loadDevicesToMemory() {
-devicesF = LittleFS.open("/devices.json", "r");
-if (!devicesF) {
-  Serial.println(F("Failed to open devices.json for reading"));
-} else {
-  DeserializationError error = deserializeJson(devices, devicesF);
-  Serial.println(F("Devices loaded"));
-  serializeJson(devices, Serial);
-  if (error) {
-    Serial.print(F("deserializeJson() failed: "));
-    Serial.println(error.f_str());
+void loadDevicesToMemory()
+{
+  devicesF = LittleFS.open("/devices.json", "r");
+  if (!devicesF)
+  {
+    Serial.println(F("Failed to open devices.json for reading"));
   }
-  devicesF.close();
-}
+  else
+  {
+    DeserializationError error = deserializeJson(devices, devicesF);
+    Serial.println(F("Devices loaded"));
+    serializeJson(devices, Serial);
+    if (error)
+    {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+    }
+    devicesF.close();
+  }
 }
 
 void loadRoomsToMemory()
@@ -72,8 +75,6 @@ void loadRoomsToMemory()
     devicesF.close();
   }
 }
-
-
 
 // function to save data to file
 bool saveFile(String path, String data)
@@ -169,6 +170,3 @@ void sleepTrigger()
   Serial.println(F("After deep sleep"));
 #endif
 }
-
-
-

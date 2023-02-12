@@ -1,8 +1,7 @@
 <script>
-  import { onMount } from "svelte";
+  import {onMount } from "svelte";
   import Room from "../lib/components/roomWidget.svelte";
-  import Loader from "../lib/components/loader.svelte";
-
+  // import Loader from "../lib/components/loader.svelte";
   let errorMessage = "";
   let loadingDataState = false;
 
@@ -10,11 +9,12 @@
   let jsonDevicesData = {};
   let roomsWithoutDevices = 0;
 
-  import fetchStore from "../lib/components/fetchData.js";
-  import Battery from "$lib/components/battery.svelte";
-  import { fade, crossfade } from "svelte/transition";
+  import fetchStore from "../lib/stores/fetchData.js";
+  import { fade } from "svelte/transition";
+    import WeatherWidget from "$lib/components/weatherWidget.svelte";
 
   let [rooms, devices, loading, error] = fetchStore();
+  
 
   export async function updateRoom(id) {
     let room = jsonRoomsData.find((room) => room.id == id);
@@ -59,46 +59,48 @@
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  // let connectWebsocket = () => {
-  //   loadingDataState = true;
+  let connectWebsocket = () => {
+    loadingDataState = true;
 
-  //   const ws = new WebSocket("ws://cleargrasstermostat.local/data/ws");
-  //   ws.addEventListener("message", (response) => {
-  //     let type = response.data.split("*")[0];
-  //     let data = response.data.split("*")[1];
+    const ws = new WebSocket("ws://cleargrasstermostat.local/data/ws");
+    ws.addEventListener("message", (response) => {
+      let type = response.data.split("*")[0];
+      let data = response.data.split("*")[1];
 
-  //     if (data != null && type == "devices") {
+      if (data != null && type == "devices") {
 
-  //       let incomingData = JSON.parse(data);
-  //       console.log("incoming data DEVICES");
-  //       incomingData.forEach((device) => {
-  //         roomsWithoutDevices = jsonRoomsData.filter(
-  //           (room) => room.mac != device.mac
-  //         ).length;
+        let incomingData = JSON.parse(data);
+        console.log("incoming data DEVICES");
+        incomingData.forEach((device) => {
+          roomsWithoutDevices = jsonRoomsData.filter(
+            (room) => room.mac != device.mac
+          ).length;
 
-  //         jsonRoomsData.find((room) => room.mac == device.mac).temp =
-  //           device.temp;
-  //         jsonRoomsData.find((room) => room.mac == device.mac).hum = device.hum;
-  //         jsonRoomsData.find((room) => room.mac == device.mac).bat = device.bat;
-  //         jsonRoomsData.find((room) => room.mac == device.mac).lastUpdate =
-  //           device.lastUpdate;
-  //         loadingDataState = false;
-  //       });
+          jsonRoomsData.find((room) => room.mac == device.mac).temp =
+            device.temp;
+          jsonRoomsData.find((room) => room.mac == device.mac).hum = device.hum;
+          jsonRoomsData.find((room) => room.mac == device.mac).bat = device.bat;
+          jsonRoomsData.find((room) => room.mac == device.mac).lastUpdate =
+            device.lastUpdate;
+          loadingDataState = false;
+         });
 
-  //       updateRoomStore(jsonRoomsData);
+         $rooms.set(jsonRoomsData);
 
-  //     }
-  //     if (data != null && type == "rooms") {
-  //       console.log("incoming data ROOMS");
-  //       jsonRoomsData = JSON.parse(data);
-  //       //updateRoomStore(jsonRoomsData);
+        // updateRoomStore(jsonRoomsData);
 
-  //     }
-  //   });
-  // };
+      }
+      if (data != null && type == "rooms") {
+        console.log("incoming data ROOMS");
+         jsonRoomsData = JSON.parse(data);
+        // updateRoomStore(jsonRoomsData);
+
+      }
+    });
+  };
 
   onMount(async () => {
-    // await connectWebsocket();
+    await connectWebsocket();
 
     rooms.subscribe((value) => {
       jsonRoomsData = value;
@@ -115,7 +117,7 @@
 </svelte:head>
 
 <p>{errorMessage}</p>
-<!-- h-screen -->
+
 <div class="  pt-20">
   <div
     class="mx-auto max-w-11/12 justify-center px-6 md:flex md:space-x-6 xl:px-0"
@@ -125,34 +127,35 @@
         <div class="errorMessage">{errorMessage}</div>
         <div id="alert-modal-body" class="modal-body">
           {roomsWithoutDevices} pokoi bez przyporządkowanych urzadzeń, sprawdź
-          <a href="/settings">ustawienia</a>
+          <a href="/setup">ustawienia</a>
         </div>
       {/if}
 
-      {#if loadingDataState === true}
+      <!-- {#if loadingDataState === true}
         <Loader />
-      {/if}
+      {/if} -->
 
 
       {#if !jsonRoomsData[0] || !jsonDevicesData[0]}
-        <div transition:fade><Loader /></div>
+        <!-- <div transition:fade><Loader /></div> -->
       {:else}
         {#each jsonDevicesData as device}
           {#each jsonRoomsData as room}
             {#if device.mac === room.mac}
             
-            <div  transition:fade={{ delay: 500, duration: 500 }} style="display:flex">
+            <!-- <div  transition:fade={{ delay: 500, duration: 500 }} style="display:flex"> -->
               
-              <p>{room.name}  {room.id} :device: {room.mac}</p>
+              <!-- <p>{room.name}  {room.id} :device: {room.mac}</p> -->
 
-            </div>
+            <!-- </div> -->
             
-              <!-- <Room roomID={room.id} {updateRoom} />  -->
+              <Room roomID={room.id} {updateRoom} /> 
             {/if}
           {/each}
         {/each}
       {/if}
 
+      <WeatherWidget></WeatherWidget>
    
     </div>
   </div>

@@ -1,8 +1,33 @@
+// import adapter from '@sveltejs/adapter-static';
+// import preprocess from 'svelte-preprocess';
+
+// /** @type {import('@sveltejs/kit').Config} */
+// const config = {
+//   preprocess: preprocess(),
+
+//   kit: {
+//     adapter: adapter(
+//       { fallback: '200.html' }
+//     ),
+//     prerender: { enabled: false },
+//     ssr: false,
+//     target: '#svelte',
+//     vite: {
+//       build: {
+//         rollupOptions: {
+//           output: {
+//             manualChunks: undefined
+//           }
+//         }
+//       }
+//     }
+//   }
+// };
+
 // import adapter from '@sveltejs/adapter-auto';
 import adapter from '@sveltejs/adapter-static'
 
-import { vitePreprocess } from '@sveltejs/kit/vite';
-
+import { vitePreprocess } from '@sveltejs/kit/vite'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -14,17 +39,28 @@ const config = {
     //   // plugins: []
     // },
     adapter: adapter({
-      pages: 'build',
-      assets: 'build',
-      fallback: "index.html",
+      pages: '../data',
+      assets: '../data',
+      fallback: 'index.html',
       precompress: false,
       strict: true,
-	  outDir: 'builda',
-    }
-    ),
+      outDir: '../data',
+      prerender: { enabled: true },
+      ssr: false,
+      vite: {
+        build: {
+          rollupOptions: {
+            output: {
+              manualChunks: undefined,
+              cssCodeSplit: false,
+              outDir: '../data',
+            },
+          },
+        },
+      },
+    }),
   },
-  preprocess: vitePreprocess()
-
+  preprocess: vitePreprocess(),
 }
 
 export default config
