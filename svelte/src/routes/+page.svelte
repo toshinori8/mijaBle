@@ -127,7 +127,7 @@
         <div class="errorMessage">{errorMessage}</div>
         <div id="alert-modal-body" class="modal-body">
           {roomsWithoutDevices} pokoi bez przyporządkowanych urzadzeń, sprawdź
-          <a href="/setup">ustawienia</a>
+          <a href="/setup/rooms">ustawienia</a>
         </div>
       {/if}
 

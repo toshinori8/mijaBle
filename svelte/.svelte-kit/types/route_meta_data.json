@@ -4,10 +4,10 @@
 		"src/routes/+layout.js",
 		"src/routes/+layout.js"
 	],
-	"/setup": [
+	"/setup/devices": [
 		"src/routes/+layout.js"
 	],
-	"/setup/devices": [
+	"/setup/rooms": [
 		"src/routes/+layout.js"
 	]
 }

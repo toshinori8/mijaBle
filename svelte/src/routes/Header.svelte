@@ -34,7 +34,7 @@
         </a>
       </li>
       <li aria-current={$page.url.pathname.startsWith('/setup') ? 'page' : undefined}>
-        <a href="/setup">
+        <a href="/setup/rooms">
           <img src="/images/setup-icon.svg" width="28px" alt="setup"/>
         </a>
       </li>

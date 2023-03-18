@@ -1,13 +1,13 @@
 <script >
   import { fade, fly } from "svelte/transition";
   import Modal from "$lib/components/modal.svelte";
-  // import Loader from "$lib/components/loader.svelte";
-  import { onMount, setContext } from "svelte";
-  import fetchStore from "../../lib/stores/fetchData.js";
+  import { onMount} from "svelte";
+  import fetchStore from "../../../lib/stores/fetchData.js";
   import { createEventDispatcher } from 'svelte';
-    const dispatchRoomMac = createEventDispatcher();
-
   
+  import { page } from "$app/stores";
+
+  const dispatchRoomMac = createEventDispatcher();
 
   let showEditModal = false;
   let showAddModal = false;
@@ -33,9 +33,6 @@
   let curr_roomID=0;
 
 
-
-  //
-  //
   // Handle funcions for edit modal 
  
 
@@ -89,8 +86,14 @@
       
       const filteredRooms = jsonRoomsData.filter(room => room.id !== e)
       rooms.set(filteredRooms);
+  
+      saveRooms(jsonRoomsData).then(() => {
+    
+    console.log("saved");
       handle_Confirm_close(); 
       showEditModal = false;
+
+});
 
   }
   
@@ -105,7 +108,6 @@
   };
 
   
-
   onMount(() => {
     rooms.subscribe((value) => {
       jsonRoomsData = value;
@@ -154,8 +156,12 @@ out:fade >
 
 <div class="title flex place-content-start"> 
   
-  <a href="/setup" class="text-grayBlue-700  text-xl font-bold selectNONE ml-4">Pokoje</a>
-  <a href="/setup/devices" class="text-grayBlue-700  text-xl font-bold selectNONE ml-4">Urządzenia</a>
+  <a href="/setup/rooms" class="text-grayBlue-700  text-xl font-bold selectNONE ml-4"
+  aria-current={$page.url.pathname.startsWith('/setup/rooms') ? 'page' : undefined}>Pokoje</a>
+  <a href="/setup/devices" class="text-grayBlue-700  text-xl font-bold selectNONE ml-4"
+  aria-current={$page.url.pathname.startsWith('/setup/devices') ? 'page' : undefined}
+  >Urządzenia</a>
+
 </div>
 
 <div class="flex justify-between place-content-end">
@@ -470,7 +476,8 @@ out:fade >
   }
 
   .button_edit:hover{
-    background-color: rgba(253, 119, 22, 1.000);
+    background-color: white;
+    /* background-color: rgba(253, 119, 22, 1.000); */
     transform: rotate(45deg);
     animation: rotate 1s;
     transition: all ease 0.5s;

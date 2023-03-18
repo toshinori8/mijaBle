@@ -1,8 +1,8 @@
 [
   { "id": "0", "name": "Łazienka","heatState":false,"minTemp": "25", "mac": "00:11:22:33:44:55"},
-  { "id": "1", "name": "Poduszkarnia (Pracownia Ewa)","heatState":false,"minTemp": "25", "mac": "58:2d:34:10:d6:00"},
+  { "id": "1", "name": "Waleria","heatState":false,"minTemp": "25", "mac": "58:2d:34:10:d6:00"},
   { "id": "2", "name": "Pracownia Adam","heatState":false,"minTemp": "25", "mac": "00:11:22:33:44:34"},
-  { "id": "3", "name": "Pralnia","heatState":false, "minTemp": "25", "mac": "58:2d:34:10:d6:0d"},
+  { "id": "3", "name": "Sypialnia","heatState":false, "minTemp": "25", "mac": "58:2d:34:10:d6:0d"},
   { "id": "4", "name": "Czytelnia","heatState":false,"minTemp": "25", "mac": "66:77:88:99:AA:BB"},
   { "id": "5", "name": "Przedpokój","heatState":false,"minTemp": "25", "mac": "66:77:88:99:AA:BB"},
   { "id": "6", "name": "Spiarnia","heatState":false,"minTemp": "25", "mac": "66:77:88:99:AA:BB"}

@@ -57,8 +57,12 @@ bool routesSetup()
         {
           // parse data from request
           String jsonStr = (char *)data;
-            
-          DynamicJsonDocument jsonData(1024);
+           
+            Serial.println("JSON DATA INITIAL");
+            Serial.println(jsonStr);
+
+
+          DynamicJsonDocument jsonData(3072);
           DeserializationError error = deserializeJson(jsonData, jsonStr);
           if (error)
           {
@@ -72,7 +76,7 @@ bool routesSetup()
           String roomsString = roomsF.readString(); // read file to string
           roomsF.close();
         
-          DynamicJsonDocument roomsData(1024);
+          DynamicJsonDocument roomsData(3072);
           DeserializationError error2 = deserializeJson(roomsData, roomsString);
           if (error2)
           {
@@ -153,7 +157,7 @@ bool routesSetup()
 
         String jsonStr = (char *)data;
 
-        DynamicJsonDocument jsonData(2024);
+        DynamicJsonDocument jsonData(3072);
         DeserializationError error = deserializeJson(jsonData, jsonStr);
         if (error)
         {

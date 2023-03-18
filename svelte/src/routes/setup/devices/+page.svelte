@@ -1,10 +1,11 @@
 <script >
-	import { bind } from 'svelte/internal';
+	// import { bind } from 'svelte/internal';
   import { fade, fly } from "svelte/transition";
   import Modal from "$lib/components/modal.svelte";
-  // import Loader from "$lib/components/loader.svelte";
-  import { onMount, setContext } from "svelte";
+  import { onMount} from "svelte";
   import fetchStore from "../../../lib/stores/fetchData.js";
+
+  import { page } from "$app/stores";
 
   let showEditModal = false;
   let currentConfirm = 0;
@@ -97,11 +98,14 @@ out:fade >
 <div    class="head flex justify-between bg-gray-100 py-5 px-8 text-2xl font-extrabold w-full max-w-screen-sm owHidden p-10 rounded-xl ring-8 ring-white ring-opacity-40">
 
 <div class="title flex place-content-start"> 
-  <a href="/setup" class="text-grayBlue-700  text-xl font-bold selectNONE ml-4">Pokoje</a>
-  <a href="/setup/devices" class="text-grayBlue-700  text-xl font-bold selectNONE ml-4">Urządzenia</a>
+  <a href="/setup/rooms" class="text-grayBlue-700  text-xl font-bold selectNONE ml-4"
+  aria-current={$page.url.pathname.startsWith('/setup/rooms') ? 'page' : undefined}>Pokoje</a>
+  <a href="/setup/devices" class="text-grayBlue-700  text-xl font-bold selectNONE ml-4"
+  aria-current={$page.url.pathname.startsWith('/setup/devices') ? 'page' : undefined}>Urządzenia</a>
 </div>
 
 <div class="flex justify-between place-content-end">
+
 
 
 
@@ -299,14 +303,14 @@ out:fade >
   }
 
   .button_edit:hover{
-    background-color: rgba(253, 119, 22, 1.000);
+    background-color: white;
+    /* background-color: rgba(253, 119, 22, 1.000); */
     transform: rotate(45deg);
     animation: rotate 1s;
     transition: all ease 0.5s;
   } 
   .button_edit:hover img{
     transform: scale(1.2);
-
   }
 
   /* .button_del{
