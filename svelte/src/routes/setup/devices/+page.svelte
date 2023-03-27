@@ -13,7 +13,6 @@
   let deviceEdit = {};
   let deviceIndex;
 
-
   let jsonRoomsData = [];
   let jsonDevicesData = [];
 
@@ -34,9 +33,6 @@
       showEditModal = false;
     });
 
-  
-
-    
   };
  
   function handle_Confirm_close(e){

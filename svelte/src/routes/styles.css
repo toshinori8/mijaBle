@@ -5,7 +5,7 @@
 
 @font-face {
 	font-family: "lcd";
-	src: url("././aclock.ttf") format("truetype"); /* Safari, Android, iOS */
+	src: url("/_app/immutable/assets/aclock.ttf") format("truetype"); /* Safari, Android, iOS */
   }
 
 

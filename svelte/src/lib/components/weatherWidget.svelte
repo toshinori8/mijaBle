@@ -6,14 +6,16 @@
     import { onMount } from "svelte";
     import { owapikey, lat, lon } from "../components/owapikey";
     import IconHumidity from "../components/iconHumidity.svelte";
-    import { crossfade, fade,  } from "svelte/transition";
+    import {fade} from "svelte/transition";
  
 
-    import dayjs from 'dayjs';
     import localePL from "dayjs/locale/pl";
-    // import calendar from "dayjs/plugin/calendar";
-    // console.log(localePL);
+    import dayjs from 'dayjs';
+    
     dayjs.locale('pl') // use locale globally
+
+    // import calendar from "dayjs/plugin/calendar";
+   
     // dayjs().locale('pl').format() // use locale in a specific instance
  
 

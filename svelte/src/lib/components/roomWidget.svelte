@@ -167,7 +167,7 @@
               {/if}
 
               <!-- <hr class="line_" /> -->
-              <Battery level={$rooms[roomID].bat} class="" />
+              <Battery level={$rooms[roomID].bat}/>
               {#if $rooms[roomID].hum}
                 {#if $rooms[roomID].hum.toString().includes(".")}
                   <span class="hum-data"
