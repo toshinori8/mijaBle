@@ -35,7 +35,7 @@
       </li>
       <li aria-current={$page.url.pathname.startsWith('/setup') ? 'page' : undefined}>
         <a href="/setup/rooms">
-          <img src="/images/setup-icon.svg" width="28px" alt="setup"/>
+          <img src="/_app/immutable/assets/setup.svg" width="28px" alt="setup"/>
         </a>
       </li>
       <!-- <li aria-current={$page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
